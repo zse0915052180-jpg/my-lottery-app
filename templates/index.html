@@ -26,7 +26,7 @@
             box-shadow: 0 4px 15px rgba(0,0,0,0.5);
         }
         
-        /* 標題與彩種切換按鈕區域 */
+        /* 標題與切換按鈕區域 */
         .header-area {
             display: flex;
             justify-content: space-between;
@@ -81,6 +81,7 @@
             border-spacing: 0 6px;
         }
 
+        /* 表頭欄位 */
         .period-header {
             font-size: 11px;
             color: #718096;
@@ -160,7 +161,7 @@
             border: 1px solid #4299e1;
         }
 
-        /* 彈窗樣式 */
+        /* 小巧精緻的彈窗 */
         .modal-overlay {
             display: none;
             position: fixed;
@@ -212,7 +213,7 @@
 <body>
 
     <div class="container">
-        <!-- 頂部標題與彩種切換 Tab -->
+        <!-- 頂部標題與彩種切換 -->
         <div class="header-area">
             <h2>🎰 <span id="lotteryTitle">極速飛艇</span></h2>
             <div class="lottery-tabs">
@@ -271,20 +272,21 @@
         let globalFullData = [];
         let currentLotCode = '10059'; // 預設極速飛艇 (10059)
 
-        // 切換彩種
+        // 切換彩種邏輯
         function switchLottery(code, name) {
             if (currentLotCode === code) return;
             currentLotCode = code;
 
-            // 更新 UI 狀態
+            // 切換頁籤樣式與標題
             document.getElementById('lotteryTitle').innerText = name;
             document.querySelectorAll('.tab-btn').forEach(btn => btn.classList.remove('active'));
             document.getElementById(`btn${code}`).classList.add('active');
 
-            // 重新抓取資料
+            // 立刻重新抓取新彩種的資料
             fetchData();
         }
 
+        // 計算特定位置歷史出現順序 (頭五號、後五號)
         function getHeadTailForPosition(pastRecords, posIndex) {
             let seenNumbers = [];
             for (let item of pastRecords) {
@@ -304,6 +306,7 @@
             return { headList, tailList };
         }
 
+        // 點擊名次表頭顯示順反彈窗
         function showPositionModal(posIndex, titleName) {
             if (!globalFullData || globalFullData.length === 0) return;
 
@@ -311,9 +314,11 @@
 
             document.getElementById('modalTitle').innerText = `【${titleName}】當前對比`;
 
+            // 將號碼從小到大排序
             const sortedHead = [...headList].sort((a, b) => a - b);
             const sortedTail = [...tailList].sort((a, b) => a - b);
 
+            // 格式化為：不補零、以 " . " 間隔，尾端加上 "號"
             const headStr = sortedHead.join(' . ') + ' 號';
             const tailStr = sortedTail.join(' . ') + ' 號';
 
@@ -327,11 +332,12 @@
             document.getElementById('modalOverlay').style.display = 'none';
         }
 
+        // 抓取 API 並渲染表格數據
         async function fetchData() {
             const statusDiv = document.getElementById('status');
             const tableBody = document.getElementById('tableBody');
             
-            // 帶入當前選擇的彩種代碼 (lotCode)
+            // 將當前彩種代碼 (10059 或 10057) 帶入 API 參數
             const apiUrl = `/api/get-lottery?lotCode=${currentLotCode}`;
 
             try {
@@ -365,6 +371,7 @@
                                 }
                             }
 
+                            // 畫面上的號碼方塊維持雙位數 (01, 02...) 格式呈現
                             const displayNum = val < 10 ? `0${val}` : `${val}`;
                             return `<div class="num-box ${colorClass}">${displayNum}</div>`;
                         }).join('');
@@ -390,7 +397,10 @@
             }
         }
 
+        // 開頁面立即載入一次
         fetchData();
+
+        // 每 5 秒自動重新整理
         setInterval(fetchData, 5000);
     </script>
 
