@@ -61,13 +61,34 @@
 
         .info-bar {
             text-align: center;
-            font-size: 11px;
+            font-size: 12px;
             color: #a0aec0;
             margin-bottom: 8px;
             background: #1a2838;
-            padding: 6px;
+            padding: 8px 6px;
             border-radius: 6px;
-            line-height: 1.4;
+            line-height: 1.5;
+        }
+        .countdown-box {
+            display: flex;
+            justify-content: space-around;
+            align-items: center;
+            background: #0d1926;
+            padding: 5px 8px;
+            border-radius: 5px;
+            margin-top: 5px;
+            font-size: 13px;
+            font-weight: bold;
+            color: #e2e8f0;
+            border: 1px solid #2b3e50;
+        }
+        .timer-highlight {
+            color: #f6ad55;
+            font-size: 14px;
+            font-family: monospace;
+        }
+        .timer-highlight.red {
+            color: #fc8181;
         }
 
         .table-wrapper {
@@ -213,18 +234,18 @@
         <div class="header-area">
             <h2>🎰 <span id="lotteryTitle">極速飛艇</span></h2>
             <div class="lottery-tabs">
-                <!-- 正確對應代碼：極速 10035，幸運 10057 -->
                 <button id="btn10035" class="tab-btn active" onclick="switchLottery('10035', '極速飛艇')">🚀 極速飛艇</button>
                 <button id="btn10057" class="tab-btn" onclick="switchLottery('10057', '幸運飛艇')">⛵ 幸運飛艇</button>
             </div>
         </div>
 
         <div class="info-bar">
-            💡 點擊上方的 <b>冠~十</b> 可查看當前順反號碼<br>
-            🟢 <b>頭五</b> | 🔴 <b>後五</b> | 最新 30 期
+            🟢 <b>頭五</b> | 🔴 <b>後五</b> | 點擊<b>「冠~十」</b>查順反
+            <div class="countdown-box">
+                <span id="nextPeriodText">下期: --</span>
+                <span id="timerText" class="timer-highlight">🎲 距開獎: 00 : 00</span>
+            </div>
         </div>
-        
-        <div id="status" style="text-align: center; margin-bottom: 6px; font-weight: bold; font-size: 11px;"></div>
 
         <div class="table-wrapper">
             <table class="lottery-table">
@@ -266,7 +287,9 @@
 
     <script>
         let globalFullData = [];
-        let currentLotCode = '10035'; // 預設極速飛艇 (10035)
+        let currentLotCode = '10035';
+        let countdownTimer = null;
+        let remainingSeconds = -1;
 
         function switchLottery(code, name) {
             if (currentLotCode === code) return;
@@ -275,6 +298,10 @@
             document.getElementById('lotteryTitle').innerText = name;
             document.querySelectorAll('.tab-btn').forEach(btn => btn.classList.remove('active'));
             document.getElementById(`btn${code}`).classList.add('active');
+
+            if (countdownTimer) clearInterval(countdownTimer);
+            remainingSeconds = -1;
+            document.getElementById('timerText').innerText = '🎲 距開獎: 00 : 00';
 
             fetchData();
         }
@@ -321,10 +348,29 @@
             document.getElementById('modalOverlay').style.display = 'none';
         }
 
+        // 開獎時間動態倒數（00 : 00 格式）
+        function startCountdown() {
+            if (countdownTimer) clearInterval(countdownTimer);
+
+            countdownTimer = setInterval(() => {
+                const timerEl = document.getElementById('timerText');
+
+                if (remainingSeconds > 0) {
+                    const mm = String(Math.floor(remainingSeconds / 60)).padStart(2, '0');
+                    const ss = String(remainingSeconds % 60).padStart(2, '0');
+                    timerEl.className = "timer-highlight";
+                    timerEl.innerText = `🎲 距開獎: ${mm} : ${ss}`;
+                    remainingSeconds--;
+                } else {
+                    timerEl.className = "timer-highlight red";
+                    timerEl.innerText = `🎰 開獎中...`;
+                    fetchData();
+                }
+            }, 1000);
+        }
+
         async function fetchData() {
-            const statusDiv = document.getElementById('status');
             const tableBody = document.getElementById('tableBody');
-            
             const apiUrl = `/api/get-lottery?lotCode=${currentLotCode}`;
 
             try {
@@ -333,9 +379,21 @@
 
                 if (data && data.result && data.result.data && data.result.data.length > 0) {
                     globalFullData = data.result.data;
-                    const displayData = globalFullData.slice(0, 30);
 
-                    statusDiv.innerHTML = '<span style="color: #68d391;">✅ 即時同步中 (點擊冠~十查看順反)</span>';
+                    // 1. 推算下一期期號
+                    const latestPeriod = BigInt(globalFullData[0].period);
+                    const nextPeriodStr = (latestPeriod + 1n).toString();
+                    const shortNextPeriod = nextPeriodStr.length > 7 ? nextPeriodStr.slice(-6) : nextPeriodStr;
+                    document.getElementById('nextPeriodText').innerText = `下期: ${shortNextPeriod}`;
+
+                    // 2. 更新精準倒數秒數
+                    if (data.remSeconds !== null && data.remSeconds !== undefined) {
+                        remainingSeconds = parseInt(data.remSeconds, 10);
+                        startCountdown();
+                    }
+
+                    // 3. 渲染歷史 30 期號碼表
+                    const displayData = globalFullData.slice(0, 30);
                     tableBody.innerHTML = "";
 
                     displayData.forEach((item, index) => {
@@ -376,17 +434,14 @@
                         `;
                         tableBody.innerHTML += row;
                     });
-                } else {
-                    statusDiv.innerHTML = '<span style="color: #fc8181;">⚠️ API 連線中，無資料回傳...</span>';
                 }
             } catch (error) {
                 console.error(error);
-                statusDiv.innerHTML = '<span style="color: #fc8181;">⚠️ 請確認 Python 後端是否啟動中！</span>';
             }
         }
 
         fetchData();
-        setInterval(fetchData, 5000);
+        setInterval(fetchData, 3000);
     </script>
 
 </body>
