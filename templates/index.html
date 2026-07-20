@@ -2,70 +2,91 @@
 <html lang="zh-TW">
 <head>
     <meta charset="UTF-8">
-    <title>歷史頭尾數據動態對比看板 (完整功能版)</title>
+    <!-- 關鍵：加上 Viewport，讓手機自動以 1:1 比例呈現，字體與按鈕才會變大 -->
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+    <title>歷史頭尾數據動態對比看板</title>
     <style>
+        * {
+            box-sizing: border-box;
+        }
         body {
-            font-family: "Segoe UI", Arial, sans-serif;
+            font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, "Helvetica Neue", Arial, sans-serif;
             background-color: #0b141e;
             color: #ffffff;
-            padding: 30px 10px;
+            margin: 0;
+            padding: 15px 8px;
         }
         .container {
-            max-width: 850px;
+            max-width: 100%;
             margin: 0 auto;
             background: #121e2b;
-            padding: 25px;
+            padding: 15px 10px;
             border-radius: 12px;
             box-shadow: 0 8px 20px rgba(0,0,0,0.4);
         }
-        h2 { text-align: center; color: #4da6ff; margin-bottom: 10px; }
+        h2 { 
+            text-align: center; 
+            color: #4da6ff; 
+            margin: 5px 0 12px 0;
+            font-size: 22px;
+        }
         
         .info-bar {
             text-align: center;
-            font-size: 14px;
+            font-size: 13px;
             color: #a0aec0;
-            margin-bottom: 15px;
+            margin-bottom: 12px;
             background: #1a2838;
             padding: 10px;
-            border-radius: 6px;
-            line-height: 1.6;
+            border-radius: 8px;
+            line-height: 1.5;
+        }
+
+        .table-wrapper {
+            width: 100%;
+            overflow-x: auto; /* 支援手機橫向滑動 */
+            -webkit-overflow-scrolling: touch;
         }
 
         .lottery-table {
             width: 100%;
             border-collapse: separate;
-            border-spacing: 0 10px;
+            border-spacing: 0 8px;
+            min-width: 580px; /* 確保 10 個號碼有足夠寬度不被壓扁 */
         }
         .lottery-row {
             background-color: #1a2838;
             border-radius: 8px;
         }
         .period-cell {
-            padding: 12px 15px;
-            font-size: 16px;
+            padding: 10px 8px;
+            font-size: 16px; /* 加大期數字體 */
             font-weight: bold;
-            color: #a0aec0;
+            color: #cbd5e0;
             text-align: center;
-            width: 100px;
+            width: 90px;
+            white-space: nowrap;
         }
         .numbers-cell {
-            padding: 10px;
+            padding: 8px 5px;
             display: flex;
-            gap: 8px;
+            gap: 6px;
+            justify-content: flex-start;
         }
 
-        /* 號碼方塊基本樣式 (圓角與立體感) */
+        /* 放大號碼方塊與字體 */
         .num-box {
-            width: 42px;
-            height: 48px;
+            min-width: 42px;
+            height: 52px; /* 加高方塊，手機更好按更清晰 */
             color: #ffffff;
-            font-size: 20px;
+            font-size: 22px; /* 加大號碼字體 */
             font-weight: 800;
             display: flex;
             align-items: center;
             justify-content: center;
             border-radius: 8px;
             box-shadow: inset 0 1px 1px rgba(255,255,255,0.4), 0 2px 4px rgba(0,0,0,0.3);
+            flex: 1;
         }
 
         /* 頭五號：綠色 */
@@ -80,7 +101,7 @@
             border: 1px solid #fc8181;
         }
 
-        /* 無足夠歷史紀錄時備用：藍色 */
+        /* 備用：藍色 */
         .num-box.blue {
             background: linear-gradient(180deg, #3182ce 0%, #2b6cb0 100%);
             border: 1px solid #4299e1;
@@ -92,23 +113,22 @@
     <div class="container">
         <h2>🎰 歷史順序動態對比看板</h2>
         <div class="info-bar">
-            💡 <b>計算規則：</b> 每期開獎皆採計「該期前 30 期歷史」動態推算 1~10 名的頭尾歸屬<br>
-            🟢 <b>頭五號</b> (綠色) | 🔴 <b>後五號</b> (紅色) | 固定顯示最新 30 期
+            💡 <b>計算規則：</b> 每期採計「該期前 30 期歷史」推算頭尾歸屬<br>
+            🟢 <b>頭五號</b> (綠色) | 🔴 <b>後五號</b> (紅色) | 最新 30 期
         </div>
         
-        <div id="status" style="text-align: center; margin-bottom: 15px; font-weight: bold;"></div>
+        <div id="status" style="text-align: center; margin-bottom: 10px; font-weight: bold; font-size: 13px;"></div>
 
-        <table class="lottery-table">
-            <tbody id="tableBody"></tbody>
-        </table>
+        <div class="table-wrapper">
+            <table class="lottery-table">
+                <tbody id="tableBody"></tbody>
+            </table>
+        </div>
     </div>
 
     <script>
-        // 核心邏輯：計算特定位置 (posIndex) 在該期之前的歷史頭五號與後五號
         function getHeadTailForPosition(pastRecords, posIndex) {
             let seenNumbers = [];
-            
-            // 從過去歷史逐筆記錄該位置出現的號碼先後順序
             for (let item of pastRecords) {
                 const nums = item.number.replace(/\s+/g, '').split(',');
                 if (nums[posIndex] !== undefined) {
@@ -117,7 +137,6 @@
                         seenNumbers.push(val);
                     }
                 }
-                // 當 10 個號碼都出現過即停止
                 if (seenNumbers.length === 10) break;
             }
 
@@ -130,8 +149,6 @@
         async function fetchData() {
             const statusDiv = document.getElementById('status');
             const tableBody = document.getElementById('tableBody');
-            
-            // 已修改為相對路徑：雲端及本機皆可自動適應 API 請求
             const apiUrl = "/api/get-lottery";
 
             try {
@@ -139,30 +156,22 @@
                 const data = await response.json();
 
                 if (data && data.result && data.result.data) {
-                    const fullData = data.result.data; // 全量數據陣列
-                    
-                    // 1. 畫面限制僅呈現最新 30 期
+                    const fullData = data.result.data;
                     const displayData = fullData.slice(0, 30);
 
-                    statusDiv.innerHTML = '<span style="color: #68d391;">✅ 即時同步中 (自動進行滾動式近 30 期頭尾比對)</span>';
+                    statusDiv.innerHTML = '<span style="color: #68d391;">✅ 即時同步中 (近 30 期頭尾動態比對)</span>';
                     tableBody.innerHTML = "";
 
-                    // 2. 逐期渲染畫面
                     displayData.forEach((item, index) => {
-                        // 💡 關鍵：只截取「該期之後」的陣列（即該期開出前的歷史紀錄）
                         const pastRecords = fullData.slice(index + 1);
-
                         const nums = item.number.replace(/\s+/g, '').split(',');
 
-                        // 3. 處理第 1 至第 10 名的顏色與格式
                         const numBoxesHtml = nums.map((n, posIndex) => {
                             const val = parseInt(n, 10);
                             let colorClass = 'blue';
 
                             if (pastRecords.length > 0) {
-                                // 獨立計算此位置在歷史中的頭五號與後五號
                                 const { headSet, tailSet } = getHeadTailForPosition(pastRecords, posIndex);
-
                                 if (headSet.has(val)) {
                                     colorClass = 'green';
                                 } else if (tailSet.has(val)) {
@@ -170,9 +179,7 @@
                                 }
                             }
 
-                            // 統一呈現雙位數格式 (如: 01, 02)
                             const displayNum = val < 10 ? `0${val}` : `${val}`;
-
                             return `<div class="num-box ${colorClass}">${displayNum}</div>`;
                         }).join('');
 
@@ -191,14 +198,11 @@
                 }
             } catch (error) {
                 console.error(error);
-                statusDiv.innerHTML = '<span style="color: #fc8181;">⚠️ 請確認 Python 後端 (server.py) 是否啟動中！</span>';
+                statusDiv.innerHTML = '<span style="color: #fc8181;">⚠️ 請確認 Python 後端是否啟動中！</span>';
             }
         }
 
-        // 開頁面即時載入一次
         fetchData();
-
-        // 設定每 5 秒自動刷新（即時輪詢）
         setInterval(fetchData, 5000);
     </script>
 
