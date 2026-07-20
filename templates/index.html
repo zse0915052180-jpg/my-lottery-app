@@ -2,7 +2,6 @@
 <html lang="zh-TW">
 <head>
     <meta charset="UTF-8">
-    <!-- 啟用 Viewport 與強制縮放比例，確保手機直立時完美滿版 -->
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
     <title>歷史頭尾數據動態對比看板</title>
     <style>
@@ -27,7 +26,6 @@
             box-shadow: 0 4px 15px rgba(0,0,0,0.5);
         }
         
-        /* 精簡頂部區域 */
         h2 { 
             text-align: center; 
             color: #4da6ff; 
@@ -52,10 +50,10 @@
         .lottery-table {
             width: 100%;
             border-collapse: separate;
-            border-spacing: 0 6px; /* 控制上下每期的間距 */
+            border-spacing: 0 6px;
         }
 
-        /* 表頭樣式（冠~十） */
+        /* 表頭欄位 */
         .period-header {
             font-size: 11px;
             color: #718096;
@@ -72,10 +70,17 @@
         .rank-header-item {
             flex: 1;
             text-align: center;
-            font-size: 13px; /* 明亮清晰的標題字體 */
+            font-size: 13px;
             font-weight: bold;
-            color: #63b3ed; /* 亮藍灰色，清晰醒目 */
-            padding-bottom: 4px;
+            color: #63b3ed;
+            padding: 2px 0;
+            cursor: pointer;
+            border-radius: 4px;
+            transition: background-color 0.2s;
+            background-color: rgba(99, 179, 237, 0.1);
+        }
+        .rank-header-item:active {
+            background-color: rgba(99, 179, 237, 0.3);
         }
 
         .lottery-row {
@@ -83,7 +88,6 @@
             border-radius: 6px;
         }
         
-        /* 期數欄位 */
         .period-cell {
             padding: 8px 2px;
             font-size: 11px;
@@ -97,11 +101,10 @@
         .numbers-cell {
             padding: 6px 4px 6px 0;
             display: flex;
-            gap: 3px; /* 緊湊間距，確保 10 個方塊全顯 */
+            gap: 3px;
             justify-content: space-between;
         }
 
-        /* 號碼方塊 */
         .num-box {
             flex: 1;
             height: 44px;
@@ -115,23 +118,68 @@
             box-shadow: inset 0 1px 1px rgba(255,255,255,0.3), 0 2px 4px rgba(0,0,0,0.3);
         }
 
-        /* 頭五號：綠色 */
         .num-box.green {
             background: linear-gradient(180deg, #38a169 0%, #2f855a 100%);
             border: 1px solid #68d391;
         }
 
-        /* 後五號：紅色 */
         .num-box.red {
             background: linear-gradient(180deg, #e53e3e 0%, #c53030 100%);
             border: 1px solid #fc8181;
         }
 
-        /* 備用：藍色 */
         .num-box.blue {
             background: linear-gradient(180deg, #3182ce 0%, #2b6cb0 100%);
             border: 1px solid #4299e1;
         }
+
+        /* 小巧精緻的彈窗 */
+        .modal-overlay {
+            display: none;
+            position: fixed;
+            top: 0; left: 0;
+            width: 100%; height: 100%;
+            background-color: rgba(0, 0, 0, 0.65);
+            z-index: 1000;
+            align-items: center;
+            justify-content: center;
+        }
+        .modal-card {
+            background-color: #121e2b;
+            border: 1px solid #2b3e50;
+            border-radius: 10px;
+            padding: 15px;
+            width: 80%;
+            max-width: 290px;
+            box-shadow: 0 8px 20px rgba(0,0,0,0.8);
+            position: relative;
+        }
+        .modal-close {
+            position: absolute;
+            top: 6px; right: 10px;
+            font-size: 20px;
+            color: #a0aec0;
+            cursor: pointer;
+        }
+        .modal-title {
+            color: #4da6ff;
+            font-size: 15px;
+            font-weight: bold;
+            text-align: center;
+            margin-bottom: 10px;
+            border-bottom: 1px solid #2b3e50;
+            padding-bottom: 6px;
+        }
+        .modal-content-box {
+            background: #1a2838;
+            padding: 10px 12px;
+            border-radius: 6px;
+            font-size: 14px;
+            line-height: 1.8;
+            font-weight: bold;
+        }
+        .text-green { color: #68d391; }
+        .text-red { color: #fc8181; }
     </style>
 </head>
 <body>
@@ -139,7 +187,7 @@
     <div class="container">
         <h2>🎰 歷史頭尾動態看板</h2>
         <div class="info-bar">
-            💡 採計該期前 30 期推算頭尾歸屬<br>
+            💡 點擊上方的 <b>冠~十</b> 可查看當前順反號碼<br>
             🟢 <b>頭五</b> | 🔴 <b>後五</b> | 最新 30 期
         </div>
         
@@ -152,16 +200,16 @@
                         <th class="period-header">期號</th>
                         <th>
                             <div class="rank-header-container">
-                                <div class="rank-header-item">冠</div>
-                                <div class="rank-header-item">亞</div>
-                                <div class="rank-header-item">三</div>
-                                <div class="rank-header-item">四</div>
-                                <div class="rank-header-item">五</div>
-                                <div class="rank-header-item">六</div>
-                                <div class="rank-header-item">七</div>
-                                <div class="rank-header-item">八</div>
-                                <div class="rank-header-item">九</div>
-                                <div class="rank-header-item">十</div>
+                                <div class="rank-header-item" onclick="showPositionModal(0, '冠')">冠</div>
+                                <div class="rank-header-item" onclick="showPositionModal(1, '亞')">亞</div>
+                                <div class="rank-header-item" onclick="showPositionModal(2, '三')">三</div>
+                                <div class="rank-header-item" onclick="showPositionModal(3, '四')">四</div>
+                                <div class="rank-header-item" onclick="showPositionModal(4, '五')">五</div>
+                                <div class="rank-header-item" onclick="showPositionModal(5, '六')">六</div>
+                                <div class="rank-header-item" onclick="showPositionModal(6, '七')">七</div>
+                                <div class="rank-header-item" onclick="showPositionModal(7, '八')">八</div>
+                                <div class="rank-header-item" onclick="showPositionModal(8, '九')">九</div>
+                                <div class="rank-header-item" onclick="showPositionModal(9, '十')">十</div>
                             </div>
                         </th>
                     </tr>
@@ -171,7 +219,22 @@
         </div>
     </div>
 
+    <!-- 點擊空白處自動關閉的小彈窗 -->
+    <div id="modalOverlay" class="modal-overlay" onclick="closeModalDirect()">
+        <div class="modal-card" onclick="event.stopPropagation()">
+            <span class="modal-close" onclick="closeModalDirect()">&times;</span>
+            <div id="modalTitle" class="modal-title">名次對比</div>
+            
+            <div class="modal-content-box">
+                <div class="text-green">順 : <span id="headText"></span></div>
+                <div class="text-red">反 : <span id="tailText"></span></div>
+            </div>
+        </div>
+    </div>
+
     <script>
+        let globalFullData = [];
+
         function getHeadTailForPosition(pastRecords, posIndex) {
             let seenNumbers = [];
             for (let item of pastRecords) {
@@ -185,10 +248,35 @@
                 if (seenNumbers.length === 10) break;
             }
 
-            const headSet = new Set(seenNumbers.slice(0, 5));
-            const tailSet = new Set(seenNumbers.slice(5, 10));
+            const headList = seenNumbers.slice(0, 5);
+            const tailList = seenNumbers.slice(5, 10);
 
-            return { headSet, tailSet };
+            return { headList, tailList };
+        }
+
+        function showPositionModal(posIndex, titleName) {
+            if (!globalFullData || globalFullData.length === 0) return;
+
+            const { headList, tailList } = getHeadTailForPosition(globalFullData, posIndex);
+
+            document.getElementById('modalTitle').innerText = `【${titleName}】當前對比`;
+
+            // 將號碼從小到大排序
+            const sortedHead = [...headList].sort((a, b) => a - b);
+            const sortedTail = [...tailList].sort((a, b) => a - b);
+
+            // 格式化為：01.03.06.07.09號
+            const headStr = sortedHead.map(n => n < 10 ? `0${n}` : `${n}`).join('.') + '號';
+            const tailStr = sortedTail.map(n => n < 10 ? `0${n}` : `${n}`).join('.') + '號';
+
+            document.getElementById('headText').innerText = headStr;
+            document.getElementById('tailText').innerText = tailStr;
+
+            document.getElementById('modalOverlay').style.display = 'flex';
+        }
+
+        function closeModalDirect() {
+            document.getElementById('modalOverlay').style.display = 'none';
         }
 
         async function fetchData() {
@@ -201,14 +289,14 @@
                 const data = await response.json();
 
                 if (data && data.result && data.result.data) {
-                    const fullData = data.result.data;
-                    const displayData = fullData.slice(0, 30);
+                    globalFullData = data.result.data;
+                    const displayData = globalFullData.slice(0, 30);
 
-                    statusDiv.innerHTML = '<span style="color: #68d391;">✅ 即時同步中 (近 30 期滾動比對)</span>';
+                    statusDiv.innerHTML = '<span style="color: #68d391;">✅ 即時同步中 (點擊冠~十查看順反)</span>';
                     tableBody.innerHTML = "";
 
                     displayData.forEach((item, index) => {
-                        const pastRecords = fullData.slice(index + 1);
+                        const pastRecords = globalFullData.slice(index + 1);
                         const nums = item.number.replace(/\s+/g, '').split(',');
 
                         const numBoxesHtml = nums.map((n, posIndex) => {
@@ -216,7 +304,10 @@
                             let colorClass = 'blue';
 
                             if (pastRecords.length > 0) {
-                                const { headSet, tailSet } = getHeadTailForPosition(pastRecords, posIndex);
+                                const { headList, tailList } = getHeadTailForPosition(pastRecords, posIndex);
+                                const headSet = new Set(headList);
+                                const tailSet = new Set(tailList);
+
                                 if (headSet.has(val)) {
                                     colorClass = 'green';
                                 } else if (tailSet.has(val)) {
@@ -228,7 +319,6 @@
                             return `<div class="num-box ${colorClass}">${displayNum}</div>`;
                         }).join('');
 
-                        // 截取期數後半段，避免佔用空間
                         const shortPeriod = item.period.length > 7 ? item.period.slice(-6) : item.period;
 
                         const row = `
