@@ -287,9 +287,9 @@
 
     <script>
         let globalFullData = [];
-        let currentLotCode = '10035'; // 預設極速飛艇 (10035)
+        let currentLotCode = '10035';
         let countdownTimer = null;
-        let remainingSeconds = 0; // 當前剩餘秒數
+        let targetDrawTimeMs = 0; // 下一期絕對開獎毫秒數
 
         function switchLottery(code, name) {
             if (currentLotCode === code) return;
@@ -298,6 +298,10 @@
             document.getElementById('lotteryTitle').innerText = name;
             document.querySelectorAll('.tab-btn').forEach(btn => btn.classList.remove('active'));
             document.getElementById(`btn${code}`).classList.add('active');
+
+            // 切換時先清空舊的計時器，避免畫面跳動
+            if (countdownTimer) clearInterval(countdownTimer);
+            document.getElementById('timerText').innerText = '同步中...';
 
             fetchData();
         }
@@ -344,33 +348,30 @@
             document.getElementById('modalOverlay').style.display = 'none';
         }
 
-        // 啟動實時每秒倒數計時器
+        // 精準時間動態計算
         function startCountdown() {
             if (countdownTimer) clearInterval(countdownTimer);
 
             countdownTimer = setInterval(() => {
+                const now = Date.now();
+                const totalRemSec = Math.floor((targetDrawTimeMs - now) / 1000);
                 const timerEl = document.getElementById('timerText');
 
-                // 封盤門檻：極速飛艇 17 秒，幸運飛艇 80 秒 (1分20秒)
+                // 封盤門檻：極速 17秒，幸運 80秒
                 const closeThreshold = (currentLotCode === '10035') ? 17 : 80;
 
-                if (remainingSeconds > closeThreshold) {
-                    // 距離封盤時間 = 剩餘總秒數 - 封盤門檻秒數
-                    const closeSec = remainingSeconds - closeThreshold;
+                if (totalRemSec > closeThreshold) {
+                    const closeSec = totalRemSec - closeThreshold;
                     const mm = String(Math.floor(closeSec / 60)).padStart(2, '0');
                     const ss = String(closeSec % 60).padStart(2, '0');
                     timerEl.className = "timer-highlight";
                     timerEl.innerText = `⏳ 距封盤: ${mm}:${ss}`;
-                    remainingSeconds--;
-                } else if (remainingSeconds > 0) {
-                    // 進入封盤後：距離開獎時間倒數
-                    const mm = String(Math.floor(remainingSeconds / 60)).padStart(2, '0');
-                    const ss = String(remainingSeconds % 60).padStart(2, '0');
+                } else if (totalRemSec > 0) {
+                    const mm = String(Math.floor(totalRemSec / 60)).padStart(2, '0');
+                    const ss = String(totalRemSec % 60).padStart(2, '0');
                     timerEl.className = "timer-highlight red";
                     timerEl.innerText = `🎲 距開獎: ${mm}:${ss}`;
-                    remainingSeconds--;
                 } else {
-                    // 秒數歸零，開獎中！啟動密集抓取
                     timerEl.className = "timer-highlight red";
                     timerEl.innerText = `🎰 開獎中...`;
                     fetchData(); 
@@ -387,10 +388,7 @@
                 const data = await response.json();
 
                 if (data && data.result && data.result.data && data.result.data.length > 0) {
-                    const newFullData = data.result.data;
-
-                    const isNewDrawArrived = !globalFullData.length || (newFullData[0].period !== globalFullData[0].period);
-                    globalFullData = newFullData;
+                    globalFullData = data.result.data;
 
                     // 1. 推算下一期期號
                     const latestPeriod = BigInt(globalFullData[0].period);
@@ -398,12 +396,19 @@
                     const shortNextPeriod = nextPeriodStr.length > 7 ? nextPeriodStr.slice(-6) : nextPeriodStr;
                     document.getElementById('nextPeriodText').innerText = `下期: ${shortNextPeriod}`;
 
-                    // 2. 處理剩餘開獎秒數 (若 API 有提供 drawTimeRem 則用 API，否則用預設值極速 75s / 幸運 300s)
-                    if (isNewDrawArrived || remainingSeconds <= 0) {
-                        const intervalSec = (currentLotCode === '10035') ? 75 : 300;
-                        remainingSeconds = data.drawTimeRem ? parseInt(data.drawTimeRem, 10) : intervalSec;
-                        startCountdown();
+                    // 2. 精準解析官方開獎時間 (nextDrawTime，格式範例: "2026-03-30 18:30:00")
+                    if (data.nextDrawTime) {
+                        const parsedMs = Date.parse(data.nextDrawTime.replace(/-/g, '/'));
+                        if (!isNaN(parsedMs)) {
+                            targetDrawTimeMs = parsedMs;
+                        }
+                    } else {
+                        // 備用推算：極速 75s，幸運 300s
+                        const intervalMs = (currentLotCode === '10035') ? 75000 : 300000;
+                        targetDrawTimeMs = Date.now() + intervalMs;
                     }
+
+                    startCountdown();
 
                     // 3. 渲染歷史 30 期號碼表
                     const displayData = globalFullData.slice(0, 30);
