@@ -130,7 +130,9 @@
         async function fetchData() {
             const statusDiv = document.getElementById('status');
             const tableBody = document.getElementById('tableBody');
-            const apiUrl = "http://127.0.0.1:5000/api/get-lottery";
+            
+            // 已修改為相對路徑：雲端及本機皆可自動適應 API 請求
+            const apiUrl = "/api/get-lottery";
 
             try {
                 const response = await fetch(apiUrl);
