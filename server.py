@@ -1,5 +1,6 @@
 import os
 import time
+from datetime import datetime
 from flask import Flask, jsonify, request, render_template
 from flask_cors import CORS
 import requests
@@ -14,7 +15,7 @@ def home():
 
 @app.route('/api/get-lottery', methods=['GET'])
 def get_lottery():
-    # 預設 10035 (極速飛艇)
+    # 極速飛艇: 10035, 幸運飛艇: 10057
     lot_code = request.args.get('lotCode', '10035')
     timestamp = int(time.time() * 1000)
     
@@ -28,8 +29,9 @@ def get_lottery():
     }
     
     formatted_data = []
+    rem_seconds = None
 
-    # 1. 主力：抓取歷史清單 (最重要)
+    # 1. 抓歷史列表
     try:
         history_res = requests.get(history_url, headers=headers, timeout=8)
         if history_res.status_code == 200:
@@ -41,27 +43,40 @@ def get_lottery():
                 if number:
                     formatted_data.append({"period": str(period), "number": str(number)})
     except Exception as e_hist:
-        print(f"[{lot_code}] 歷史 API 讀取失敗：", e_hist)
+        print(f"[{lot_code}] 歷史 API 失敗：", e_hist)
 
-    # 2. 輔助：嘗試抓取最新一期置頂 (若失敗不影響歷史資料)
-    if formatted_data:
-        try:
-            latest_res = requests.get(latest_url, headers=headers, timeout=5)
-            if latest_res.status_code == 200:
-                latest_json = latest_res.json()
-                latest_item = latest_json.get("result", {}).get("data", {})
-                
-                latest_period = str(latest_item.get("preDrawIssue", ""))
-                latest_number = str(latest_item.get("preDrawCode", ""))
-                
-                if latest_period and latest_number:
-                    if formatted_data[0]["period"] != latest_period:
-                        formatted_data.insert(0, {"period": latest_period, "number": latest_number})
-        except Exception as e_latest:
-            print(f"[{lot_code}] 即時 API 讀取略過：", e_latest)
+    # 2. 抓即時最新一期與開獎倒數秒數
+    try:
+        latest_res = requests.get(latest_url, headers=headers, timeout=5)
+        if latest_res.status_code == 200:
+            latest_json = latest_res.json()
+            latest_item = latest_json.get("result", {}).get("data", {})
+            
+            latest_period = str(latest_item.get("preDrawIssue", ""))
+            latest_number = str(latest_item.get("preDrawCode", ""))
+            
+            # 優先讀取 API 提供的剩餘秒數，或透過時間字串推算
+            if "drawTimeRem" in latest_item and latest_item["drawTimeRem"] != "":
+                rem_seconds = int(latest_item["drawTimeRem"])
+            else:
+                draw_time_str = latest_item.get("drawTime") or latest_item.get("drawDate") or latest_item.get("nextDrawTime") or ""
+                if draw_time_str:
+                    try:
+                        target_dt = datetime.strptime(draw_time_str, "%Y-%m-%d %H:%M:%S")
+                        now_dt = datetime.now()
+                        rem_seconds = max(0, int((target_dt - now_dt).total_seconds()))
+                    except Exception as e_p:
+                        pass
+
+            if latest_period and latest_number and formatted_data:
+                if formatted_data[0]["period"] != latest_period:
+                    formatted_data.insert(0, {"period": latest_period, "number": latest_number})
+    except Exception as e_latest:
+        print(f"[{lot_code}] 即時 API 略過：", e_latest)
 
     return jsonify({
         "errorCode": 0,
+        "remSeconds": rem_seconds,
         "result": {
             "data": formatted_data
         }
