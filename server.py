@@ -1,5 +1,6 @@
 import os
 import time
+from datetime import datetime
 from flask import Flask, jsonify, request, render_template
 from flask_cors import CORS
 import requests
@@ -27,9 +28,9 @@ def get_lottery():
     }
     
     formatted_data = []
-    next_draw_time = "" # 儲存官方下一期開獎時間
+    rem_seconds = None  # 伺服器直接計算出的精準剩餘秒數
 
-    # 1. 抓歷史數據
+    # 1. 抓取歷史列表
     try:
         history_res = requests.get(history_url, headers=headers, timeout=8)
         if history_res.status_code == 200:
@@ -43,7 +44,7 @@ def get_lottery():
     except Exception as e_hist:
         print(f"[{lot_code}] 歷史 API 失敗：", e_hist)
 
-    # 2. 抓最新一期與精準開獎時間
+    # 2. 抓取最新一期與精準開獎剩餘秒數
     try:
         latest_res = requests.get(latest_url, headers=headers, timeout=5)
         if latest_res.status_code == 200:
@@ -52,8 +53,20 @@ def get_lottery():
             
             latest_period = str(latest_item.get("preDrawIssue", ""))
             latest_number = str(latest_item.get("preDrawCode", ""))
-            next_draw_time = str(latest_item.get("drawTime", "")) # 取得精準開獎時間
             
+            # 多重兼容抓取下期開獎時間欄位
+            draw_time_str = latest_item.get("drawTime") or latest_item.get("drawDate") or latest_item.get("nextDrawTime") or ""
+            
+            if draw_time_str:
+                try:
+                    # 解析開獎時間並計算相差秒數
+                    target_dt = datetime.strptime(draw_time_str, "%Y-%m-%d %H:%M:%S")
+                    now_dt = datetime.now()
+                    diff = (target_dt - now_dt).total_seconds()
+                    rem_seconds = int(diff)
+                except Exception as e_parse:
+                    print(f"[{lot_code}] 時間解析失敗：", e_parse)
+
             if latest_period and latest_number and formatted_data:
                 if formatted_data[0]["period"] != latest_period:
                     formatted_data.insert(0, {"period": latest_period, "number": latest_number})
@@ -62,7 +75,7 @@ def get_lottery():
 
     return jsonify({
         "errorCode": 0,
-        "nextDrawTime": next_draw_time, # 將精準開獎時間回傳給前端
+        "remSeconds": rem_seconds,  # 精準秒數直接交給前端
         "result": {
             "data": formatted_data
         }
