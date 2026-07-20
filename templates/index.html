@@ -213,6 +213,7 @@
         <div class="header-area">
             <h2>🎰 <span id="lotteryTitle">極速飛艇</span></h2>
             <div class="lottery-tabs">
+                <!-- 正確對應代碼：極速 10035，幸運 10057 -->
                 <button id="btn10035" class="tab-btn active" onclick="switchLottery('10035', '極速飛艇')">🚀 極速飛艇</button>
                 <button id="btn10057" class="tab-btn" onclick="switchLottery('10057', '幸運飛艇')">⛵ 幸運飛艇</button>
             </div>
@@ -251,7 +252,6 @@
         </div>
     </div>
 
-    <!-- 點擊空白處自動關閉的小彈窗 -->
     <div id="modalOverlay" class="modal-overlay" onclick="closeModalDirect()">
         <div class="modal-card" onclick="event.stopPropagation()">
             <span class="modal-close" onclick="closeModalDirect()">&times;</span>
@@ -324,6 +324,7 @@
         async function fetchData() {
             const statusDiv = document.getElementById('status');
             const tableBody = document.getElementById('tableBody');
+            
             const apiUrl = `/api/get-lottery?lotCode=${currentLotCode}`;
 
             try {
@@ -375,6 +376,8 @@
                         `;
                         tableBody.innerHTML += row;
                     });
+                } else {
+                    statusDiv.innerHTML = '<span style="color: #fc8181;">⚠️ API 連線中，無資料回傳...</span>';
                 }
             } catch (error) {
                 console.error(error);
