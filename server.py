@@ -1,6 +1,6 @@
 import os
 import time
-from datetime import datetime
+from datetime import datetime, timedelta, timezone
 from flask import Flask, jsonify, request, render_template
 from flask_cors import CORS
 import requests
@@ -9,13 +9,15 @@ template_dir = os.path.abspath(os.path.join(os.path.dirname(__file__), 'template
 app = Flask(__name__, template_folder=template_dir)
 CORS(app)
 
+# 定義北京/台灣時區 (UTC+8)
+CST_TZ = timezone(timedelta(hours=8))
+
 @app.route('/')
 def home():
     return render_template('index.html')
 
 @app.route('/api/get-lottery', methods=['GET'])
 def get_lottery():
-    # 極速飛艇: 10035, 幸運飛艇: 10057
     lot_code = request.args.get('lotCode', '10035')
     timestamp = int(time.time() * 1000)
     
@@ -31,7 +33,7 @@ def get_lottery():
     formatted_data = []
     rem_seconds = None
 
-    # 1. 抓歷史列表
+    # 1. 抓取歷史列表
     try:
         history_res = requests.get(history_url, headers=headers, timeout=8)
         if history_res.status_code == 200:
@@ -45,7 +47,7 @@ def get_lottery():
     except Exception as e_hist:
         print(f"[{lot_code}] 歷史 API 失敗：", e_hist)
 
-    # 2. 抓即時最新一期與開獎倒數秒數
+    # 2. 抓取最新一期與精準開獎倒數秒數
     try:
         latest_res = requests.get(latest_url, headers=headers, timeout=5)
         if latest_res.status_code == 200:
@@ -55,18 +57,26 @@ def get_lottery():
             latest_period = str(latest_item.get("preDrawIssue", ""))
             latest_number = str(latest_item.get("preDrawCode", ""))
             
-            # 優先讀取 API 提供的剩餘秒數，或透過時間字串推算
-            if "drawTimeRem" in latest_item and latest_item["drawTimeRem"] != "":
+            # 優先嘗試讀取 drawTimeRem
+            if "drawTimeRem" in latest_item and str(latest_item["drawTimeRem"]).isdigit():
                 rem_seconds = int(latest_item["drawTimeRem"])
             else:
                 draw_time_str = latest_item.get("drawTime") or latest_item.get("drawDate") or latest_item.get("nextDrawTime") or ""
                 if draw_time_str:
                     try:
-                        target_dt = datetime.strptime(draw_time_str, "%Y-%m-%d %H:%M:%S")
-                        now_dt = datetime.now()
-                        rem_seconds = max(0, int((target_dt - now_dt).total_seconds()))
+                        # 將字串轉為指定 UTC+8 時區的時間物件
+                        target_dt = datetime.strptime(draw_time_str, "%Y-%m-%d %H:%M:%S").replace(tzinfo=CST_TZ)
+                        now_dt = datetime.now(CST_TZ)  # 取得當前 UTC+8 時間
+                        diff = int((target_dt - now_dt).total_seconds())
+                        
+                        # 安全保護：極速飛艇最多不超過 120 秒，幸運飛艇最多不超過 360 秒
+                        max_allowed = 120 if lot_code == '10035' else 360
+                        if 0 <= diff <= max_allowed:
+                            rem_seconds = diff
+                        elif diff > max_allowed:
+                            rem_seconds = max_allowed
                     except Exception as e_p:
-                        pass
+                        print(f"[{lot_code}] 時間計算例外：", e_p)
 
             if latest_period and latest_number and formatted_data:
                 if formatted_data[0]["period"] != latest_period:
