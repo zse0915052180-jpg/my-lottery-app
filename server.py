@@ -66,11 +66,11 @@ def get_lottery():
                     try:
                         # 將字串轉為指定 UTC+8 時區的時間物件
                         target_dt = datetime.strptime(draw_time_str, "%Y-%m-%d %H:%M:%S").replace(tzinfo=CST_TZ)
-                        now_dt = datetime.now(CST_TZ)  # 取得當前 UTC+8 時間
+                        now_dt = datetime.now(CST_TZ)
                         diff = int((target_dt - now_dt).total_seconds())
                         
-                        # 安全保護：極速飛艇最多不超過 120 秒，幸運飛艇最多不超過 360 秒
-                        max_allowed = 120 if lot_code == '10035' else 360
+                        # 極速飛艇(10035) 75秒一期，上限設90秒；幸運飛艇(10057) 5分鐘一期，上限設310秒
+                        max_allowed = 90 if lot_code == '10035' else 310
                         if 0 <= diff <= max_allowed:
                             rem_seconds = diff
                         elif diff > max_allowed:
