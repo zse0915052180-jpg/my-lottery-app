@@ -27,7 +27,7 @@
             box-shadow: 0 4px 15px rgba(0,0,0,0.5);
         }
         
-        /* 精簡頂部區域，釋放直向高度空間 */
+        /* 精簡頂部區域 */
         h2 { 
             text-align: center; 
             color: #4da6ff; 
@@ -54,12 +54,36 @@
             border-collapse: separate;
             border-spacing: 0 6px; /* 控制上下每期的間距 */
         }
+
+        /* 表頭樣式（冠~十） */
+        .period-header {
+            font-size: 11px;
+            color: #718096;
+            font-weight: bold;
+            text-align: center;
+            width: 60px;
+            padding-bottom: 4px;
+        }
+        .rank-header-container {
+            display: flex;
+            gap: 3px;
+            padding-right: 4px;
+        }
+        .rank-header-item {
+            flex: 1;
+            text-align: center;
+            font-size: 13px; /* 明亮清晰的標題字體 */
+            font-weight: bold;
+            color: #63b3ed; /* 亮藍灰色，清晰醒目 */
+            padding-bottom: 4px;
+        }
+
         .lottery-row {
             background-color: #1a2838;
             border-radius: 6px;
         }
         
-        /* 期數欄位：縮緊寬度，把所有空間留給 10 個號碼 */
+        /* 期數欄位 */
         .period-cell {
             padding: 8px 2px;
             font-size: 11px;
@@ -73,16 +97,16 @@
         .numbers-cell {
             padding: 6px 4px 6px 0;
             display: flex;
-            gap: 3px; /* 緊湊間距，確保 10 個方塊全顯不爆開 */
+            gap: 3px; /* 緊湊間距，確保 10 個方塊全顯 */
             justify-content: space-between;
         }
 
-        /* 號碼方塊：依手機寬度自動平分，10 個號碼一目瞭然 */
+        /* 號碼方塊 */
         .num-box {
             flex: 1;
-            height: 44px; /* 加高方塊，視覺效果更大器 */
+            height: 44px;
             color: #ffffff;
-            font-size: 16px; /* 數字大且醒目 */
+            font-size: 16px;
             font-weight: 800;
             display: flex;
             align-items: center;
@@ -123,6 +147,25 @@
 
         <div class="table-wrapper">
             <table class="lottery-table">
+                <thead>
+                    <tr>
+                        <th class="period-header">期號</th>
+                        <th>
+                            <div class="rank-header-container">
+                                <div class="rank-header-item">冠</div>
+                                <div class="rank-header-item">亞</div>
+                                <div class="rank-header-item">三</div>
+                                <div class="rank-header-item">四</div>
+                                <div class="rank-header-item">五</div>
+                                <div class="rank-header-item">六</div>
+                                <div class="rank-header-item">七</div>
+                                <div class="rank-header-item">八</div>
+                                <div class="rank-header-item">九</div>
+                                <div class="rank-header-item">十</div>
+                            </div>
+                        </th>
+                    </tr>
+                </thead>
                 <tbody id="tableBody"></tbody>
             </table>
         </div>
@@ -185,7 +228,7 @@
                             return `<div class="num-box ${colorClass}">${displayNum}</div>`;
                         }).join('');
 
-                        // 截取期數後半段，避免字體過長佔用空間
+                        // 截取期數後半段，避免佔用空間
                         const shortPeriod = item.period.length > 7 ? item.period.slice(-6) : item.period;
 
                         const row = `
