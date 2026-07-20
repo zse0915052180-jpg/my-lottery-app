@@ -348,7 +348,6 @@
             document.getElementById('modalOverlay').style.display = 'none';
         }
 
-        // 開獎時間動態倒數（00 : 00 格式）
         function startCountdown() {
             if (countdownTimer) clearInterval(countdownTimer);
 
@@ -358,7 +357,14 @@
                 if (remainingSeconds > 0) {
                     const mm = String(Math.floor(remainingSeconds / 60)).padStart(2, '0');
                     const ss = String(remainingSeconds % 60).padStart(2, '0');
-                    timerEl.className = "timer-highlight";
+                    
+                    // 剩餘時間少於 20 秒時文字變紅提示
+                    if (remainingSeconds <= 20) {
+                        timerEl.className = "timer-highlight red";
+                    } else {
+                        timerEl.className = "timer-highlight";
+                    }
+                    
                     timerEl.innerText = `🎲 距開獎: ${mm} : ${ss}`;
                     remainingSeconds--;
                 } else {
