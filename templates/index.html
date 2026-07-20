@@ -59,15 +59,37 @@
             box-shadow: 0 0 8px rgba(49, 130, 206, 0.5);
         }
 
+        /* 精簡資訊欄與倒數計時列 */
         .info-bar {
             text-align: center;
-            font-size: 11px;
+            font-size: 12px;
             color: #a0aec0;
             margin-bottom: 8px;
             background: #1a2838;
-            padding: 6px;
+            padding: 8px 6px;
             border-radius: 6px;
-            line-height: 1.4;
+            line-height: 1.5;
+        }
+        .countdown-box {
+            display: flex;
+            justify-content: space-around;
+            align-items: center;
+            background: #0d1926;
+            padding: 5px 8px;
+            border-radius: 5px;
+            margin-top: 5px;
+            font-size: 13px;
+            font-weight: bold;
+            color: #e2e8f0;
+            border: 1px solid #2b3e50;
+        }
+        .timer-highlight {
+            color: #f6ad55;
+            font-size: 14px;
+            font-family: monospace;
+        }
+        .timer-highlight.red {
+            color: #fc8181;
         }
 
         .table-wrapper {
@@ -159,6 +181,7 @@
             border: 1px solid #4299e1;
         }
 
+        /* 彈窗樣式 */
         .modal-overlay {
             display: none;
             position: fixed;
@@ -213,18 +236,19 @@
         <div class="header-area">
             <h2>🎰 <span id="lotteryTitle">極速飛艇</span></h2>
             <div class="lottery-tabs">
-                <!-- 正確對應代碼：極速 10035，幸運 10057 -->
                 <button id="btn10035" class="tab-btn active" onclick="switchLottery('10035', '極速飛艇')">🚀 極速飛艇</button>
                 <button id="btn10057" class="tab-btn" onclick="switchLottery('10057', '幸運飛艇')">⛵ 幸運飛艇</button>
             </div>
         </div>
 
+        <!-- 精簡後的提示與倒數欄位 -->
         <div class="info-bar">
-            💡 點擊上方的 <b>冠~十</b> 可查看當前順反號碼<br>
-            🟢 <b>頭五</b> | 🔴 <b>後五</b> | 最新 30 期
+            🟢 <b>頭五</b> | 🔴 <b>後五</b> | 點擊<b>「冠~十」</b>查順反
+            <div class="countdown-box">
+                <span id="nextPeriodText">下一期: --</span>
+                <span id="timerText" class="timer-highlight">載入中...</span>
+            </div>
         </div>
-        
-        <div id="status" style="text-align: center; margin-bottom: 6px; font-weight: bold; font-size: 11px;"></div>
 
         <div class="table-wrapper">
             <table class="lottery-table">
@@ -267,6 +291,8 @@
     <script>
         let globalFullData = [];
         let currentLotCode = '10035'; // 預設極速飛艇 (10035)
+        let countdownTimer = null;
+        let targetDrawTime = 0; // 下一期預計開獎時間戳
 
         function switchLottery(code, name) {
             if (currentLotCode === code) return;
@@ -321,10 +347,39 @@
             document.getElementById('modalOverlay').style.display = 'none';
         }
 
+        // 啟動實時每秒倒數計時器
+        function startCountdown() {
+            if (countdownTimer) clearInterval(countdownTimer);
+
+            countdownTimer = setInterval(() => {
+                const now = Date.now();
+                const totalRemSec = Math.floor((targetDrawTime - now) / 1000);
+
+                const timerEl = document.getElementById('timerText');
+
+                if (totalRemSec > 17) {
+                    // 距離封盤時間 (總剩餘秒數 - 17秒)
+                    const closeSec = totalRemSec - 17;
+                    const mm = String(Math.floor(closeSec / 60)).padStart(2, '0');
+                    const ss = String(closeSec % 60).padStart(2, '0');
+                    timerEl.className = "timer-highlight";
+                    timerEl.innerText = `⏳ 距封盤: ${mm}:${ss}`;
+                } else if (totalRemSec > 0) {
+                    // 進入最後 17 秒：距離開獎時間
+                    const ss = String(totalRemSec).padStart(2, '0');
+                    timerEl.className = "timer-highlight red";
+                    timerEl.innerText = `🎲 距開獎: 00:${ss}`;
+                } else {
+                    // 倒數結束，開獎中，加速重新抓取
+                    timerEl.className = "timer-highlight red";
+                    timerEl.innerText = `🎰 開獎中...`;
+                    fetchData();
+                }
+            }, 1000);
+        }
+
         async function fetchData() {
-            const statusDiv = document.getElementById('status');
             const tableBody = document.getElementById('tableBody');
-            
             const apiUrl = `/api/get-lottery?lotCode=${currentLotCode}`;
 
             try {
@@ -335,7 +390,20 @@
                     globalFullData = data.result.data;
                     const displayData = globalFullData.slice(0, 30);
 
-                    statusDiv.innerHTML = '<span style="color: #68d391;">✅ 即時同步中 (點擊冠~十查看順反)</span>';
+                    // 1. 推算下一期期號與預計開獎秒數 (極速 75秒 / 幸運 300秒)
+                    const latestPeriod = BigInt(globalFullData[0].period);
+                    const nextPeriodStr = (latestPeriod + 1n).toString();
+                    const shortNextPeriod = nextPeriodStr.length > 7 ? nextPeriodStr.slice(-6) : nextPeriodStr;
+                    
+                    document.getElementById('nextPeriodText').innerText = `下期: ${shortNextPeriod}`;
+
+                    // 每期週期 (極速 10035 75秒，幸運 10057 300秒)
+                    const intervalSec = (currentLotCode === '10035') ? 75 : 300;
+                    targetDrawTime = Date.now() + (intervalSec * 1000);
+
+                    startCountdown();
+
+                    // 2. 渲染歷史 30 期號碼表
                     tableBody.innerHTML = "";
 
                     displayData.forEach((item, index) => {
@@ -376,16 +444,14 @@
                         `;
                         tableBody.innerHTML += row;
                     });
-                } else {
-                    statusDiv.innerHTML = '<span style="color: #fc8181;">⚠️ API 連線中，無資料回傳...</span>';
                 }
             } catch (error) {
                 console.error(error);
-                statusDiv.innerHTML = '<span style="color: #fc8181;">⚠️ 請確認 Python 後端是否啟動中！</span>';
             }
         }
 
         fetchData();
+        // 輪詢維持 5 秒一次向後端確認新開獎
         setInterval(fetchData, 5000);
     </script>
 
