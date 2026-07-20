@@ -2,91 +2,93 @@
 <html lang="zh-TW">
 <head>
     <meta charset="UTF-8">
-    <!-- 關鍵：加上 Viewport，讓手機自動以 1:1 比例呈現，字體與按鈕才會變大 -->
+    <!-- 啟用 Viewport 與強制縮放比例，確保手機直立時完美滿版 -->
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
     <title>歷史頭尾數據動態對比看板</title>
     <style>
         * {
             box-sizing: border-box;
+            margin: 0;
+            padding: 0;
         }
         body {
-            font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, "Helvetica Neue", Arial, sans-serif;
+            font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Arial, sans-serif;
             background-color: #0b141e;
             color: #ffffff;
-            margin: 0;
-            padding: 15px 8px;
+            padding: 8px 4px;
         }
         .container {
-            max-width: 100%;
+            width: 100%;
+            max-width: 500px;
             margin: 0 auto;
             background: #121e2b;
-            padding: 15px 10px;
-            border-radius: 12px;
-            box-shadow: 0 8px 20px rgba(0,0,0,0.4);
+            padding: 10px 6px;
+            border-radius: 10px;
+            box-shadow: 0 4px 15px rgba(0,0,0,0.5);
         }
+        
+        /* 精簡頂部區域，釋放直向高度空間 */
         h2 { 
             text-align: center; 
             color: #4da6ff; 
-            margin: 5px 0 12px 0;
-            font-size: 22px;
+            margin: 4px 0 6px 0;
+            font-size: 18px;
         }
-        
         .info-bar {
             text-align: center;
-            font-size: 13px;
+            font-size: 11px;
             color: #a0aec0;
-            margin-bottom: 12px;
+            margin-bottom: 8px;
             background: #1a2838;
-            padding: 10px;
-            border-radius: 8px;
-            line-height: 1.5;
+            padding: 6px;
+            border-radius: 6px;
+            line-height: 1.4;
         }
 
         .table-wrapper {
             width: 100%;
-            overflow-x: auto; /* 支援手機橫向滑動 */
-            -webkit-overflow-scrolling: touch;
         }
 
         .lottery-table {
             width: 100%;
             border-collapse: separate;
-            border-spacing: 0 8px;
-            min-width: 580px; /* 確保 10 個號碼有足夠寬度不被壓扁 */
+            border-spacing: 0 6px; /* 控制上下每期的間距 */
         }
         .lottery-row {
             background-color: #1a2838;
-            border-radius: 8px;
+            border-radius: 6px;
         }
+        
+        /* 期數欄位：縮緊寬度，把所有空間留給 10 個號碼 */
         .period-cell {
-            padding: 10px 8px;
-            font-size: 16px; /* 加大期數字體 */
+            padding: 8px 2px;
+            font-size: 11px;
             font-weight: bold;
             color: #cbd5e0;
             text-align: center;
-            width: 90px;
+            width: 60px;
             white-space: nowrap;
         }
+        
         .numbers-cell {
-            padding: 8px 5px;
+            padding: 6px 4px 6px 0;
             display: flex;
-            gap: 6px;
-            justify-content: flex-start;
+            gap: 3px; /* 緊湊間距，確保 10 個方塊全顯不爆開 */
+            justify-content: space-between;
         }
 
-        /* 放大號碼方塊與字體 */
+        /* 號碼方塊：依手機寬度自動平分，10 個號碼一目瞭然 */
         .num-box {
-            min-width: 42px;
-            height: 52px; /* 加高方塊，手機更好按更清晰 */
+            flex: 1;
+            height: 44px; /* 加高方塊，視覺效果更大器 */
             color: #ffffff;
-            font-size: 22px; /* 加大號碼字體 */
+            font-size: 16px; /* 數字大且醒目 */
             font-weight: 800;
             display: flex;
             align-items: center;
             justify-content: center;
-            border-radius: 8px;
-            box-shadow: inset 0 1px 1px rgba(255,255,255,0.4), 0 2px 4px rgba(0,0,0,0.3);
-            flex: 1;
+            border-radius: 5px;
+            box-shadow: inset 0 1px 1px rgba(255,255,255,0.3), 0 2px 4px rgba(0,0,0,0.3);
         }
 
         /* 頭五號：綠色 */
@@ -111,13 +113,13 @@
 <body>
 
     <div class="container">
-        <h2>🎰 歷史順序動態對比看板</h2>
+        <h2>🎰 歷史頭尾動態看板</h2>
         <div class="info-bar">
-            💡 <b>計算規則：</b> 每期採計「該期前 30 期歷史」推算頭尾歸屬<br>
-            🟢 <b>頭五號</b> (綠色) | 🔴 <b>後五號</b> (紅色) | 最新 30 期
+            💡 採計該期前 30 期推算頭尾歸屬<br>
+            🟢 <b>頭五</b> | 🔴 <b>後五</b> | 最新 30 期
         </div>
         
-        <div id="status" style="text-align: center; margin-bottom: 10px; font-weight: bold; font-size: 13px;"></div>
+        <div id="status" style="text-align: center; margin-bottom: 6px; font-weight: bold; font-size: 11px;"></div>
 
         <div class="table-wrapper">
             <table class="lottery-table">
@@ -159,7 +161,7 @@
                     const fullData = data.result.data;
                     const displayData = fullData.slice(0, 30);
 
-                    statusDiv.innerHTML = '<span style="color: #68d391;">✅ 即時同步中 (近 30 期頭尾動態比對)</span>';
+                    statusDiv.innerHTML = '<span style="color: #68d391;">✅ 即時同步中 (近 30 期滾動比對)</span>';
                     tableBody.innerHTML = "";
 
                     displayData.forEach((item, index) => {
@@ -183,9 +185,12 @@
                             return `<div class="num-box ${colorClass}">${displayNum}</div>`;
                         }).join('');
 
+                        // 截取期數後半段，避免字體過長佔用空間
+                        const shortPeriod = item.period.length > 7 ? item.period.slice(-6) : item.period;
+
                         const row = `
                             <tr class="lottery-row">
-                                <td class="period-cell">${item.period}</td>
+                                <td class="period-cell" title="${item.period}">${shortPeriod}</td>
                                 <td>
                                     <div class="numbers-cell">
                                         ${numBoxesHtml}
