@@ -1,9 +1,12 @@
+import os
 import time
-from flask import Flask, jsonify, render_template
+from flask import Flask, jsonify, request, render_template
 from flask_cors import CORS
 import requests
 
-app = Flask(__name__)
+# 指定模板資料夾絕對路徑，確保部署至 Render 等雲端平台時能正確找到 index.html
+template_dir = os.path.abspath(os.path.join(os.path.dirname(__file__), 'templates'))
+app = Flask(__name__, template_folder=template_dir)
 CORS(app)
 
 # 1. 首頁路由：自動讀取 templates/index.html 並顯示網頁
@@ -11,15 +14,18 @@ CORS(app)
 def home():
     return render_template('index.html')
 
-# 2. API 路由：供前端抓取即時與歷史開獎數據
+# 2. API 路由：支援傳入 lotCode (例如 10059 極速飛艇, 10057 幸運飛艇)
 @app.route('/api/get-lottery', methods=['GET'])
 def get_lottery():
-    # 取得當前毫秒時間戳記，避免 API 被伺服器快取
+    # 接收前端帶過來的 lotCode 參數，若無傳入則預設為極速飛艇 '10059'
+    lot_code = request.args.get('lotCode', '10059')
+    
+    # 取得當前毫秒時間戳記，避免 API 被伺服器或瀏覽器快取
     timestamp = int(time.time() * 1000)
     
-    # API 網址 (加上防快取參數 &t=...)
-    latest_url = f"https://api.api68.com/pks/getLotteryPksInfo.do?lotCode=10035&t={timestamp}"
-    history_url = f"https://api.api68.com/pks/getPksHistoryList.do?lotCode=10035&t={timestamp}"
+    # 動態拼接 API 網址 (加上防快取參數 &t=...)
+    latest_url = f"https://api.api68.com/pks/getLotteryPksInfo.do?lotCode={lot_code}&t={timestamp}"
+    history_url = f"https://api.api68.com/pks/getPksHistoryList.do?lotCode={lot_code}&t={timestamp}"
     
     # 請求標頭（完整偽裝成真實瀏覽器）
     headers = {
@@ -78,5 +84,4 @@ def get_lottery():
 
 if __name__ == '__main__':
     print("🚀 後端伺服器已啟動：http://127.0.0.1:5000")
-    # 設定 host='0.0.0.0' 方便本機區域網路連線與部署測試
     app.run(host='0.0.0.0', port=5000, debug=True)
