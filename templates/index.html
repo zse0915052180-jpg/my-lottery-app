@@ -149,8 +149,8 @@
             border: 1px solid #2b3e50;
             border-radius: 10px;
             padding: 15px;
-            width: 80%;
-            max-width: 290px;
+            width: 85%;
+            max-width: 320px;
             box-shadow: 0 8px 20px rgba(0,0,0,0.8);
             position: relative;
         }
@@ -265,9 +265,9 @@
             const sortedHead = [...headList].sort((a, b) => a - b);
             const sortedTail = [...tailList].sort((a, b) => a - b);
 
-            // 格式化為：01.03.06.07.09號
-            const headStr = sortedHead.map(n => n < 10 ? `0${n}` : `${n}`).join('.') + '號';
-            const tailStr = sortedTail.map(n => n < 10 ? `0${n}` : `${n}`).join('.') + '號';
+            // 不補零、中間以 " . " 間隔，尾端加上 "號"
+            const headStr = sortedHead.join(' . ') + ' 號';
+            const tailStr = sortedTail.join(' . ') + ' 號';
 
             document.getElementById('headText').innerText = headStr;
             document.getElementById('tailText').innerText = tailStr;
@@ -315,6 +315,7 @@
                                 }
                             }
 
+                            // 下方表格的方塊依然維持雙位數呈現（如 01, 02）
                             const displayNum = val < 10 ? `0${val}` : `${val}`;
                             return `<div class="num-box ${colorClass}">${displayNum}</div>`;
                         }).join('');
