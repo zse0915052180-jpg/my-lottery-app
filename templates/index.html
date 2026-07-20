@@ -26,7 +26,6 @@
             box-shadow: 0 4px 15px rgba(0,0,0,0.5);
         }
         
-        /* 標題與切換按鈕區域 */
         .header-area {
             display: flex;
             justify-content: space-between;
@@ -81,7 +80,6 @@
             border-spacing: 0 6px;
         }
 
-        /* 表頭欄位 */
         .period-header {
             font-size: 11px;
             color: #718096;
@@ -161,7 +159,6 @@
             border: 1px solid #4299e1;
         }
 
-        /* 小巧精緻的彈窗 */
         .modal-overlay {
             display: none;
             position: fixed;
@@ -213,11 +210,11 @@
 <body>
 
     <div class="container">
-        <!-- 頂部標題與彩種切換 -->
         <div class="header-area">
             <h2>🎰 <span id="lotteryTitle">極速飛艇</span></h2>
             <div class="lottery-tabs">
-                <button id="btn10059" class="tab-btn active" onclick="switchLottery('10059', '極速飛艇')">🚀 極速飛艇</button>
+                <!-- 正確對應代碼：極速 10035，幸運 10057 -->
+                <button id="btn10035" class="tab-btn active" onclick="switchLottery('10035', '極速飛艇')">🚀 極速飛艇</button>
                 <button id="btn10057" class="tab-btn" onclick="switchLottery('10057', '幸運飛艇')">⛵ 幸運飛艇</button>
             </div>
         </div>
@@ -255,7 +252,6 @@
         </div>
     </div>
 
-    <!-- 點擊空白處自動關閉的小彈窗 -->
     <div id="modalOverlay" class="modal-overlay" onclick="closeModalDirect()">
         <div class="modal-card" onclick="event.stopPropagation()">
             <span class="modal-close" onclick="closeModalDirect()">&times;</span>
@@ -270,23 +266,19 @@
 
     <script>
         let globalFullData = [];
-        let currentLotCode = '10059'; // 預設極速飛艇 (10059)
+        let currentLotCode = '10035'; // 預設極速飛艇 (10035)
 
-        // 切換彩種邏輯
         function switchLottery(code, name) {
             if (currentLotCode === code) return;
             currentLotCode = code;
 
-            // 切換頁籤樣式與標題
             document.getElementById('lotteryTitle').innerText = name;
             document.querySelectorAll('.tab-btn').forEach(btn => btn.classList.remove('active'));
             document.getElementById(`btn${code}`).classList.add('active');
 
-            // 立刻重新抓取新彩種的資料
             fetchData();
         }
 
-        // 計算特定位置歷史出現順序 (頭五號、後五號)
         function getHeadTailForPosition(pastRecords, posIndex) {
             let seenNumbers = [];
             for (let item of pastRecords) {
@@ -306,7 +298,6 @@
             return { headList, tailList };
         }
 
-        // 點擊名次表頭顯示順反彈窗
         function showPositionModal(posIndex, titleName) {
             if (!globalFullData || globalFullData.length === 0) return;
 
@@ -314,11 +305,9 @@
 
             document.getElementById('modalTitle').innerText = `【${titleName}】當前對比`;
 
-            // 將號碼從小到大排序
             const sortedHead = [...headList].sort((a, b) => a - b);
             const sortedTail = [...tailList].sort((a, b) => a - b);
 
-            // 格式化為：不補零、以 " . " 間隔，尾端加上 "號"
             const headStr = sortedHead.join(' . ') + ' 號';
             const tailStr = sortedTail.join(' . ') + ' 號';
 
@@ -332,19 +321,17 @@
             document.getElementById('modalOverlay').style.display = 'none';
         }
 
-        // 抓取 API 並渲染表格數據
         async function fetchData() {
             const statusDiv = document.getElementById('status');
             const tableBody = document.getElementById('tableBody');
             
-            // 將當前彩種代碼 (10059 或 10057) 帶入 API 參數
             const apiUrl = `/api/get-lottery?lotCode=${currentLotCode}`;
 
             try {
                 const response = await fetch(apiUrl);
                 const data = await response.json();
 
-                if (data && data.result && data.result.data) {
+                if (data && data.result && data.result.data && data.result.data.length > 0) {
                     globalFullData = data.result.data;
                     const displayData = globalFullData.slice(0, 30);
 
@@ -371,7 +358,6 @@
                                 }
                             }
 
-                            // 畫面上的號碼方塊維持雙位數 (01, 02...) 格式呈現
                             const displayNum = val < 10 ? `0${val}` : `${val}`;
                             return `<div class="num-box ${colorClass}">${displayNum}</div>`;
                         }).join('');
@@ -390,6 +376,8 @@
                         `;
                         tableBody.innerHTML += row;
                     });
+                } else {
+                    statusDiv.innerHTML = '<span style="color: #fc8181;">⚠️ API 連線中，無資料回傳...</span>';
                 }
             } catch (error) {
                 console.error(error);
@@ -397,10 +385,7 @@
             }
         }
 
-        // 開頁面立即載入一次
         fetchData();
-
-        // 每 5 秒自動重新整理
         setInterval(fetchData, 5000);
     </script>
 
