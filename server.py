@@ -14,7 +14,7 @@ def home():
 
 @app.route('/api/get-lottery', methods=['GET'])
 def get_lottery():
-    # 預設 10035 (極速飛艇)，若前端傳入 10057 則為 (幸運飛艇)
+    # 預設 10035 (極速飛艇)
     lot_code = request.args.get('lotCode', '10035')
     timestamp = int(time.time() * 1000)
     
@@ -29,7 +29,7 @@ def get_lottery():
     
     formatted_data = []
 
-    # 抓取歷史數據
+    # 1. 主力：抓取歷史清單 (最重要)
     try:
         history_res = requests.get(history_url, headers=headers, timeout=8)
         if history_res.status_code == 200:
@@ -41,9 +41,9 @@ def get_lottery():
                 if number:
                     formatted_data.append({"period": str(period), "number": str(number)})
     except Exception as e_hist:
-        print(f"[{lot_code}] 歷史 API 失敗：", e_hist)
+        print(f"[{lot_code}] 歷史 API 讀取失敗：", e_hist)
 
-    # 嘗試補最新一期
+    # 2. 輔助：嘗試抓取最新一期置頂 (若失敗不影響歷史資料)
     if formatted_data:
         try:
             latest_res = requests.get(latest_url, headers=headers, timeout=5)
@@ -58,7 +58,7 @@ def get_lottery():
                     if formatted_data[0]["period"] != latest_period:
                         formatted_data.insert(0, {"period": latest_period, "number": latest_number})
         except Exception as e_latest:
-            print(f"[{lot_code}] 即時 API 略過：", e_latest)
+            print(f"[{lot_code}] 即時 API 讀取略過：", e_latest)
 
     return jsonify({
         "errorCode": 0,
