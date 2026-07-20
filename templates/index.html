@@ -261,7 +261,7 @@
                                 <div class="rank-header-item" onclick="showPositionModal(4, '五')">五</div>
                                 <div class="rank-header-item" onclick="showPositionModal(5, '六')">六</div>
                                 <div class="rank-header-item" onclick="showPositionModal(6, '七')">七</div>
-                                <div class="rank-header-item" onclick="showPositionModal(7, '八')">八</div>
+                                <div class="rank-header-item" onclick="showPositionModal(8, '八')">八</div>
                                 <div class="rank-header-item" onclick="showPositionModal(8, '九')">九</div>
                                 <div class="rank-header-item" onclick="showPositionModal(9, '十')">十</div>
                             </div>
@@ -289,7 +289,8 @@
         let globalFullData = [];
         let currentLotCode = '10035';
         let countdownTimer = null;
-        let remainingSeconds = -1;
+        let targetEndTimeMs = 0; // 下一期開獎目標時間戳 (毫秒)
+        let lastPeriodLoaded = ""; // 上一次載入的最新期號
 
         function switchLottery(code, name) {
             if (currentLotCode === code) return;
@@ -300,7 +301,8 @@
             document.getElementById(`btn${code}`).classList.add('active');
 
             if (countdownTimer) clearInterval(countdownTimer);
-            remainingSeconds = -1;
+            targetEndTimeMs = 0;
+            lastPeriodLoaded = "";
             document.getElementById('timerText').innerText = '🎲 距開獎: 00 : 00';
 
             fetchData();
@@ -348,29 +350,30 @@
             document.getElementById('modalOverlay').style.display = 'none';
         }
 
+        // 純時間戳比對倒數，絕對平滑絲滑不跳格
         function startCountdown() {
             if (countdownTimer) clearInterval(countdownTimer);
 
             countdownTimer = setInterval(() => {
+                const nowMs = Date.now();
+                const remSec = Math.floor((targetEndTimeMs - nowMs) / 1000);
                 const timerEl = document.getElementById('timerText');
 
-                if (remainingSeconds > 0) {
-                    const mm = String(Math.floor(remainingSeconds / 60)).padStart(2, '0');
-                    const ss = String(remainingSeconds % 60).padStart(2, '0');
+                if (remSec > 0) {
+                    const mm = String(Math.floor(remSec / 60)).padStart(2, '0');
+                    const ss = String(remSec % 60).padStart(2, '0');
                     
-                    // 剩餘時間少於 20 秒時文字變紅提示
-                    if (remainingSeconds <= 20) {
+                    if (remSec <= 20) {
                         timerEl.className = "timer-highlight red";
                     } else {
                         timerEl.className = "timer-highlight";
                     }
                     
                     timerEl.innerText = `🎲 距開獎: ${mm} : ${ss}`;
-                    remainingSeconds--;
                 } else {
                     timerEl.className = "timer-highlight red";
                     timerEl.innerText = `🎰 開獎中...`;
-                    fetchData();
+                    fetchData(); // 歸零時主動拉取新期數
                 }
             }, 1000);
         }
@@ -385,17 +388,21 @@
 
                 if (data && data.result && data.result.data && data.result.data.length > 0) {
                     globalFullData = data.result.data;
+                    const currentTopPeriod = globalFullData[0].period;
 
                     // 1. 推算下一期期號
-                    const latestPeriod = BigInt(globalFullData[0].period);
+                    const latestPeriod = BigInt(currentTopPeriod);
                     const nextPeriodStr = (latestPeriod + 1n).toString();
                     const shortNextPeriod = nextPeriodStr.length > 7 ? nextPeriodStr.slice(-6) : nextPeriodStr;
                     document.getElementById('nextPeriodText').innerText = `下期: ${shortNextPeriod}`;
 
-                    // 2. 更新精準倒數秒數
-                    if (data.remSeconds !== null && data.remSeconds !== undefined) {
-                        remainingSeconds = parseInt(data.remSeconds, 10);
-                        startCountdown();
+                    // 2. 只有當「開出全新一期」或「剛初始化」時，才校正目標開獎時間，避免被背景輪詢干擾打斷倒數
+                    if (currentTopPeriod !== lastPeriodLoaded || targetEndTimeMs === 0) {
+                        lastPeriodLoaded = currentTopPeriod;
+                        if (data.remSeconds !== null && data.remSeconds !== undefined) {
+                            targetEndTimeMs = Date.now() + (parseInt(data.remSeconds, 10) * 1000);
+                            startCountdown();
+                        }
                     }
 
                     // 3. 渲染歷史 30 期號碼表
