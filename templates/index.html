@@ -26,12 +26,40 @@
             box-shadow: 0 4px 15px rgba(0,0,0,0.5);
         }
         
-        h2 { 
-            text-align: center; 
-            color: #4da6ff; 
-            margin: 4px 0 6px 0;
-            font-size: 18px;
+        /* 標題與彩種切換按鈕區域 */
+        .header-area {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 8px;
+            padding: 0 4px;
         }
+        h2 { 
+            color: #4da6ff; 
+            font-size: 17px;
+        }
+        .lottery-tabs {
+            display: flex;
+            gap: 5px;
+        }
+        .tab-btn {
+            background-color: #1a2838;
+            color: #a0aec0;
+            border: 1px solid #2b3e50;
+            padding: 4px 8px;
+            font-size: 12px;
+            font-weight: bold;
+            border-radius: 6px;
+            cursor: pointer;
+            transition: all 0.2s;
+        }
+        .tab-btn.active {
+            background-color: #3182ce;
+            color: #ffffff;
+            border-color: #63b3ed;
+            box-shadow: 0 0 8px rgba(49, 130, 206, 0.5);
+        }
+
         .info-bar {
             text-align: center;
             font-size: 11px;
@@ -53,7 +81,6 @@
             border-spacing: 0 6px;
         }
 
-        /* 表頭欄位 */
         .period-header {
             font-size: 11px;
             color: #718096;
@@ -133,7 +160,7 @@
             border: 1px solid #4299e1;
         }
 
-        /* 小巧精緻的彈窗 */
+        /* 彈窗樣式 */
         .modal-overlay {
             display: none;
             position: fixed;
@@ -185,7 +212,15 @@
 <body>
 
     <div class="container">
-        <h2>🎰 歷史頭尾動態看板</h2>
+        <!-- 頂部標題與彩種切換 Tab -->
+        <div class="header-area">
+            <h2>🎰 <span id="lotteryTitle">極速飛艇</span></h2>
+            <div class="lottery-tabs">
+                <button id="btn10059" class="tab-btn active" onclick="switchLottery('10059', '極速飛艇')">🚀 極速飛艇</button>
+                <button id="btn10057" class="tab-btn" onclick="switchLottery('10057', '幸運飛艇')">⛵ 幸運飛艇</button>
+            </div>
+        </div>
+
         <div class="info-bar">
             💡 點擊上方的 <b>冠~十</b> 可查看當前順反號碼<br>
             🟢 <b>頭五</b> | 🔴 <b>後五</b> | 最新 30 期
@@ -234,6 +269,21 @@
 
     <script>
         let globalFullData = [];
+        let currentLotCode = '10059'; // 預設極速飛艇 (10059)
+
+        // 切換彩種
+        function switchLottery(code, name) {
+            if (currentLotCode === code) return;
+            currentLotCode = code;
+
+            // 更新 UI 狀態
+            document.getElementById('lotteryTitle').innerText = name;
+            document.querySelectorAll('.tab-btn').forEach(btn => btn.classList.remove('active'));
+            document.getElementById(`btn${code}`).classList.add('active');
+
+            // 重新抓取資料
+            fetchData();
+        }
 
         function getHeadTailForPosition(pastRecords, posIndex) {
             let seenNumbers = [];
@@ -261,11 +311,9 @@
 
             document.getElementById('modalTitle').innerText = `【${titleName}】當前對比`;
 
-            // 將號碼從小到大排序
             const sortedHead = [...headList].sort((a, b) => a - b);
             const sortedTail = [...tailList].sort((a, b) => a - b);
 
-            // 不補零、中間以 " . " 間隔，尾端加上 "號"
             const headStr = sortedHead.join(' . ') + ' 號';
             const tailStr = sortedTail.join(' . ') + ' 號';
 
@@ -282,7 +330,9 @@
         async function fetchData() {
             const statusDiv = document.getElementById('status');
             const tableBody = document.getElementById('tableBody');
-            const apiUrl = "/api/get-lottery";
+            
+            // 帶入當前選擇的彩種代碼 (lotCode)
+            const apiUrl = `/api/get-lottery?lotCode=${currentLotCode}`;
 
             try {
                 const response = await fetch(apiUrl);
@@ -315,7 +365,6 @@
                                 }
                             }
 
-                            // 下方表格的方塊依然維持雙位數呈現（如 01, 02）
                             const displayNum = val < 10 ? `0${val}` : `${val}`;
                             return `<div class="num-box ${colorClass}">${displayNum}</div>`;
                         }).join('');
