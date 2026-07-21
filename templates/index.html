@@ -14,18 +14,21 @@
             font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Arial, sans-serif;
             background-color: #0b141e;
             color: #ffffff;
-            padding: 6px 4px;
+            padding: 4px;
             display: flex;
             justify-content: center;
+            align-items: flex-start;
+            min-height: 100vh;
         }
         .container {
             width: 100%;
             max-width: 480px;
-            margin: 0 auto;
             background: #121e2b;
             padding: 8px 6px;
             border-radius: 10px;
             box-shadow: 0 4px 15px rgba(0,0,0,0.5);
+            display: flex;
+            flex-direction: column;
         }
         
         .header-area {
@@ -132,9 +135,9 @@
             background-color: rgba(99, 179, 237, 0.3);
         }
 
-        /* 📜 歷史數據區：預設高度約可容納 10~11 期，確保無計算表時緊貼下方輸入欄 */
+        /* 📜 歷史數據區：使用 vh 單位自動適應手機螢幕高度（SE 與 Pro Max 皆完美適配） */
         .table-scroll-container {
-            max-height: 320px;
+            max-height: 38vh;
             overflow-y: auto;
             border-radius: 4px;
             padding-right: 2px;
@@ -199,7 +202,7 @@
         }
 
         /* ---------------------------------------------------- */
-        /* 🧮 下方：金額與關數輸入區域 (直接緊貼歷史紀錄) */
+        /* 🧮 下方：金額與關數輸入區域 */
         /* ---------------------------------------------------- */
         .calculator-area {
             margin-top: 6px;
@@ -422,7 +425,7 @@
         </div>
 
         <div class="info-bar">
-            🟢 <b>頭五</b> | 🔴 <b>後五</b> | 點擊<b>「冠~十」</b>查順反
+            🟢 <b>頭五</b> | 🔴 <b>後五</b> | 點擊<b><span>「冠~十」</span></b>查順反
             <div class="countdown-box">
                 <span id="nextPeriodText">下期: --</span>
                 <span id="timerText" class="timer-highlight">同步中...</span>
@@ -544,15 +547,15 @@
             7: 747
         };
 
-        // 依據關數計算結果，調整歷史紀錄的最大高度 (精準對齊螢幕底部)
+        // 依據不同關數動態調整 vh 比例，適應各尺寸手機螢幕
         const heightConfigByRounds = {
-            1: '280px',
-            2: '260px', 
-            3: '235px', 
-            4: '210px', 
-            5: '185px', 
-            6: '160px', 
-            7: '135px'  
+            1: '32vh',
+            2: '29vh', 
+            3: '26vh', 
+            4: '23vh', 
+            5: '20vh', 
+            6: '17vh', 
+            7: '14vh'  
         };
 
         function openRoundModal() {
@@ -585,7 +588,7 @@
             const selectedRounds = parseInt(roundInput, 10);
             const divisor = divisorsMap[selectedRounds];
 
-            // 🎯【重點修正】依據關數調整歷史區高度，消除所有黑框留白
+            // 🎯【響應式動態高度】依據關數調整歷史區視高
             const scrollContainer = document.getElementById('scrollContainer');
             if (heightConfigByRounds[selectedRounds]) {
                 scrollContainer.style.maxHeight = heightConfigByRounds[selectedRounds];
