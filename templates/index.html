@@ -1,321 +1,467 @@
 <!DOCTYPE html>
 <html lang="zh-TW">
 <head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>飛艇即時數據看板</title>
-    <style>
-        * {
-            box-sizing: border-box;
-            margin: 0;
-            padding: 0;
-            font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Arial, sans-serif;
-        }
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+    <title>歷史頭尾數據動態對比看板</title>
+    <style>
+        * {
+            box-sizing: border-box;
+            margin: 0;
+            padding: 0;
+        }
+        body {
+            font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Arial, sans-serif;
+            background-color: #0b141e;
+            color: #ffffff;
+            padding: 8px 4px;
+        }
+        .container {
+            width: 100%;
+            max-width: 500px;
+            margin: 0 auto;
+            background: #121e2b;
+            padding: 10px 6px;
+            border-radius: 10px;
+            box-shadow: 0 4px 15px rgba(0,0,0,0.5);
+        }
+        
+        .header-area {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 8px;
+            padding: 0 4px;
+        }
+        h2 { 
+            color: #4da6ff; 
+            font-size: 17px;
+        }
+        .lottery-tabs {
+            display: flex;
+            gap: 5px;
+        }
+        .tab-btn {
+            background-color: #1a2838;
+            color: #a0aec0;
+            border: 1px solid #2b3e50;
+            padding: 4px 8px;
+            font-size: 12px;
+            font-weight: bold;
+            border-radius: 6px;
+            cursor: pointer;
+            transition: all 0.2s;
+        }
+        .tab-btn.active {
+            background-color: #3182ce;
+            color: #ffffff;
+            border-color: #63b3ed;
+            box-shadow: 0 0 8px rgba(49, 130, 206, 0.5);
+        }
 
-        body {
-            background-color: #0b131e;
-            color: #ffffff;
-            display: flex;
-            justify-content: center;
-            padding: 15px 8px;
-        }
+        .info-bar {
+            text-align: center;
+            font-size: 12px;
+            color: #a0aec0;
+            margin-bottom: 8px;
+            background: #1a2838;
+            padding: 8px 6px;
+            border-radius: 6px;
+            line-height: 1.5;
+        }
+        .countdown-box {
+            display: flex;
+            justify-content: space-around;
+            align-items: center;
+            background: #0d1926;
+            padding: 5px 8px;
+            border-radius: 5px;
+            margin-top: 5px;
+            font-size: 13px;
+            font-weight: bold;
+            color: #e2e8f0;
+            border: 1px solid #2b3e50;
+        }
+        .timer-highlight {
+            color: #f6ad55;
+            font-size: 14px;
+            font-family: monospace;
+        }
+        .timer-highlight.red {
+            color: #fc8181;
+        }
 
-        .board-container {
-            width: 100%;
-            max-width: 500px;
-            background-color: #121e2b;
-            border-radius: 10px;
-            padding: 14px;
-            box-shadow: 0 4px 20px rgba(0, 0, 0, 0.5);
-            border: 1px solid #1e2d3d;
-        }
+        .table-wrapper {
+            width: 100%;
+        }
 
-        /* 頂部 Header */
-        .header-bar {
-            display: flex;
-            justify-content: space-between;
-            align-items: center;
-            margin-bottom: 12px;
-        }
+        .lottery-table {
+            width: 100%;
+            border-collapse: separate;
+            border-spacing: 0 6px;
+        }
 
-        .title {
-            font-size: 18px;
-            font-weight: bold;
-            color: #4da6ff;
-            display: flex;
-            align-items: center;
-            gap: 6px;
-        }
+        .period-header {
+            font-size: 11px;
+            color: #718096;
+            font-weight: bold;
+            text-align: center;
+            width: 60px;
+            padding-bottom: 4px;
+        }
+        .rank-header-container {
+            display: flex;
+            gap: 3px;
+            padding-right: 4px;
+        }
+        .rank-header-item {
+            flex: 1;
+            text-align: center;
+            font-size: 13px;
+            font-weight: bold;
+            color: #63b3ed;
+            padding: 2px 0;
+            cursor: pointer;
+            border-radius: 4px;
+            transition: background-color 0.2s;
+            background-color: rgba(99, 179, 237, 0.1);
+        }
+        .rank-header-item:active {
+            background-color: rgba(99, 179, 237, 0.3);
+        }
 
-        .tab-group {
-            display: flex;
-            gap: 6px;
-        }
+        .lottery-row {
+            background-color: #1a2838;
+            border-radius: 6px;
+        }
+        
+        .period-cell {
+            padding: 8px 2px;
+            font-size: 11px;
+            font-weight: bold;
+            color: #cbd5e0;
+            text-align: center;
+            width: 60px;
+            white-space: nowrap;
+        }
+        
+        .numbers-cell {
+            padding: 6px 4px 6px 0;
+            display: flex;
+            gap: 3px;
+            justify-content: space-between;
+        }
 
-        .tab-btn {
-            background-color: #1a2836;
-            color: #8a9ba8;
-            border: 1px solid #2a3b4c;
-            padding: 5px 12px;
-            border-radius: 16px;
-            cursor: pointer;
-            font-size: 13px;
-            font-weight: bold;
-        }
+        .num-box {
+            flex: 1;
+            height: 44px;
+            color: #ffffff;
+            font-size: 16px;
+            font-weight: 800;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            border-radius: 5px;
+            box-shadow: inset 0 1px 1px rgba(255,255,255,0.3), 0 2px 4px rgba(0,0,0,0.3);
+        }
 
-        .tab-btn.active {
-            background-color: #2196f3;
-            color: #ffffff;
-            border-color: #64b5f6;
-        }
+        .num-box.green {
+            background: linear-gradient(180deg, #38a169 0%, #2f855a 100%);
+            border: 1px solid #68d391;
+        }
 
-        /* 說明列 (頭五 / 後五) */
-        .sub-header {
-            display: flex;
-            justify-content: center;
-            align-items: center;
-            gap: 12px;
-            font-size: 13px;
-            color: #8a9ba8;
-            margin-bottom: 10px;
-        }
+        .num-box.red {
+            background: linear-gradient(180deg, #e53e3e 0%, #c53030 100%);
+            border: 1px solid #fc8181;
+        }
 
-        .dot {
-            display: inline-block;
-            width: 10px;
-            height: 10px;
-            border-radius: 50%;
-            margin-right: 4px;
-        }
-        .dot-green { background-color: #2e7d32; }
-        .dot-red { background-color: #c62828; }
+        .num-box.blue {
+            background: linear-gradient(180deg, #3182ce 0%, #2b6cb0 100%);
+            border: 1px solid #4299e1;
+        }
 
-        /* 資訊列 */
-        .info-card {
-            background-color: #0d1722;
-            border: 1px solid #1e2d3d;
-            border-radius: 6px;
-            padding: 8px 12px;
-            display: flex;
-            justify-content: space-between;
-            align-items: center;
-            margin-bottom: 12px;
-            font-size: 13px;
-        }
-
-        .next-issue { font-weight: bold; color: #cbd5e1; }
-        .countdown { color: #ffb74d; font-weight: bold; }
-        .timer {
-            background-color: #1e293b;
-            color: #ffb74d;
-            padding: 2px 6px;
-            border-radius: 4px;
-        }
-
-        /* 表頭 (冠~十) */
-        .table-header {
-            display: grid;
-            grid-template-columns: 55px repeat(10, 1fr);
-            gap: 3px;
-            text-align: center;
-            color: #64748b;
-            font-size: 11px;
-            font-weight: bold;
-            padding-bottom: 6px;
-            margin-bottom: 6px;
-        }
-
-        .rank-tag {
-            background-color: #1a2836;
-            color: #8a9ba8;
-            border-radius: 3px;
-            padding: 2px 0;
-        }
-
-        /* 歷史列表 */
-        .data-list {
-            display: flex;
-            flex-direction: column;
-            gap: 6px;
-        }
-
-        .data-row {
-            display: grid;
-            grid-template-columns: 55px repeat(10, 1fr);
-            gap: 3px;
-            align-items: center;
-            background-color: #0d1722;
-            padding: 6px 3px;
-            border-radius: 6px;
-            border: 1px solid #1a2836;
-        }
-
-        .period-no {
-            font-size: 11px;
-            font-weight: bold;
-            color: #8a9ba8;
-            text-align: center;
-        }
-
-        /* 號碼球 (紅/綠/藍) */
-        .num-box {
-            color: #ffffff;
-            font-weight: bold;
-            font-size: 12px;
-            aspect-ratio: 1 / 1;
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            border-radius: 4px;
-        }
-
-        /* 紅底與綠底樣式 (舊版特有) */
-        .bg-green { background-color: #2e7d32; }
-        .bg-red { background-color: #c62828; }
-        .bg-blue { background-color: #1e88e5; }
-
-        .status-msg {
-            text-align: center;
-            padding: 20px;
-            color: #ffb74d;
-            font-size: 13px;
-        }
-    </style>
+        .modal-overlay {
+            display: none;
+            position: fixed;
+            top: 0; left: 0;
+            width: 100%; height: 100%;
+            background-color: rgba(0, 0, 0, 0.65);
+            z-index: 1000;
+            align-items: center;
+            justify-content: center;
+        }
+        .modal-card {
+            background-color: #121e2b;
+            border: 1px solid #2b3e50;
+            border-radius: 10px;
+            padding: 15px;
+            width: 85%;
+            max-width: 320px;
+            box-shadow: 0 8px 20px rgba(0,0,0,0.8);
+            position: relative;
+        }
+        .modal-close {
+            position: absolute;
+            top: 6px; right: 10px;
+            font-size: 20px;
+            color: #a0aec0;
+            cursor: pointer;
+        }
+        .modal-title {
+            color: #4da6ff;
+            font-size: 15px;
+            font-weight: bold;
+            text-align: center;
+            margin-bottom: 10px;
+            border-bottom: 1px solid #2b3e50;
+            padding-bottom: 6px;
+        }
+        .modal-content-box {
+            background: #1a2838;
+            padding: 10px 12px;
+            border-radius: 6px;
+            font-size: 14px;
+            line-height: 1.8;
+            font-weight: bold;
+        }
+        .text-green { color: #68d391; }
+        .text-red { color: #fc8181; }
+    </style>
 </head>
 <body>
 
-    <div class="board-container">
-        <!-- 頂部切換 -->
-        <div class="header-bar">
-            <div class="title">
-                <span>🎰</span> <span id="titleText">極速飛艇</span>
-            </div>
-            <div class="tab-group">
-                <button class="tab-btn active" onclick="switchLottery('67', '極速飛艇', this)">🚀 極速飛艇</button>
-                <button class="tab-btn" onclick="switchLottery('10035', '幸運飛艇', this)">⛵ 幸運飛艇</button>
-            </div>
-        </div>
+    <div class="container">
+        <div class="header-area">
+            <h2>🎰 <span id="lotteryTitle">極速飛艇</span></h2>
+            <div class="lottery-tabs">
+                <button id="btn10035" class="tab-btn active" onclick="switchLottery('10035', '極速飛艇')">🚀 極速飛艇</button>
+                <button id="btn10057" class="tab-btn" onclick="switchLottery('10057', '幸運飛艇')">⛵ 幸運飛艇</button>
+            </div>
+        </div>
 
-        <!-- 頭五 / 後五 標示 -->
-        <div class="sub-header">
-            <span><span class="dot dot-green"></span>頭五</span>
-            <span>|</span>
-            <span><span class="dot dot-red"></span>後五</span>
-            <span>| 點擊「冠~十」查順反</span>
-        </div>
+        <div class="info-bar">
+            🟢 <b>頭五</b> | 🔴 <b>後五</b> | 點擊<b>「冠~十」</b>查順反
+            <div class="countdown-box">
+                <span id="nextPeriodText">下期: --</span>
+                <span id="timerText" class="timer-highlight">同步中...</span>
+            </div>
+        </div>
 
-        <!-- 下期與倒數 -->
-        <div class="info-card">
-            <div class="next-issue">下期：<span id="nextPeriod">------</span></div>
-            <div class="countdown">
-                <span>⌛ 距封盤：</span>
-                <span class="timer" id="countdownTimer">00 : 00</span>
-            </div>
-        </div>
+        <div class="table-wrapper">
+            <table class="lottery-table">
+                <thead>
+                    <tr>
+                        <th class="period-header">期號</th>
+                        <th>
+                            <div class="rank-header-container">
+                                <div class="rank-header-item" onclick="showPositionModal(0, '冠')">冠</div>
+                                <div class="rank-header-item" onclick="showPositionModal(1, '亞')">亞</div>
+                                <div class="rank-header-item" onclick="showPositionModal(2, '三')">三</div>
+                                <div class="rank-header-item" onclick="showPositionModal(3, '四')">四</div>
+                                <div class="rank-header-item" onclick="showPositionModal(4, '五')">五</div>
+                                <div class="rank-header-item" onclick="showPositionModal(5, '六')">六</div>
+                                <div class="rank-header-item" onclick="showPositionModal(6, '七')">七</div>
+                                <div class="rank-header-item" onclick="showPositionModal(7, '八')">八</div>
+                                <div class="rank-header-item" onclick="showPositionModal(8, '九')">九</div>
+                                <div class="rank-header-item" onclick="showPositionModal(9, '十')">十</div>
+                            </div>
+                        </th>
+                    </tr>
+                </thead>
+                <tbody id="tableBody"></tbody>
+            </table>
+        </div>
+    </div>
 
-        <!-- 表頭 -->
-        <div class="table-header">
-            <div>期號</div>
-            <div class="rank-tag">冠</div>
-            <div class="rank-tag">亞</div>
-            <div class="rank-tag">三</div>
-            <div class="rank-tag">四</div>
-            <div class="rank-tag">五</div>
-            <div class="rank-tag">六</div>
-            <div class="rank-tag">七</div>
-            <div class="rank-tag">八</div>
-            <div class="rank-tag">九</div>
-            <div class="rank-tag">十</div>
-        </div>
+    <div id="modalOverlay" class="modal-overlay" onclick="closeModalDirect()">
+        <div class="modal-card" onclick="event.stopPropagation()">
+            <span class="modal-close" onclick="closeModalDirect()">&times;</span>
+            <div id="modalTitle" class="modal-title">名次對比</div>
+            
+            <div class="modal-content-box">
+                <div class="text-green">順 : <span id="headText"></span></div>
+                <div class="text-red">反 : <span id="tailText"></span></div>
+            </div>
+        </div>
+    </div>
 
-        <!-- 開獎數據容器 -->
-        <div id="dataContainer" class="data-list">
-            <div class="status-msg">⏳ 正在同步數據...</div>
-        </div>
-    </div>
+    <script>
+        let globalFullData = [];
+        let currentLotCode = '10035';
+        let countdownTimer = null;
+        let targetEndTimeMs = 0;
+        let lastPeriodLoaded = "";
 
-    <script>
-        let currentLotCode = '67';
+        function switchLottery(code, name) {
+            if (currentLotCode === code) return;
+            currentLotCode = code;
 
-        function switchLottery(lotCode, name, btn) {
-            currentLotCode = lotCode;
-            document.getElementById('titleText').innerText = name;
-            
-            document.querySelectorAll('.tab-btn').forEach(b => b.classList.remove('active'));
-            btn.classList.add('active');
+            document.getElementById('lotteryTitle').innerText = name;
+            document.querySelectorAll('.tab-btn').forEach(btn => btn.classList.remove('active'));
+            document.getElementById(`btn${code}`).classList.add('active');
 
-            fetchData();
-        }
+            if (countdownTimer) clearInterval(countdownTimer);
+            targetEndTimeMs = 0;
+            lastPeriodLoaded = "";
+            document.getElementById('timerText').innerText = '同步中...';
 
-        async function fetchData() {
-            const container = document.getElementById('dataContainer');
+            fetchData();
+        }
 
-            try {
-                const res = await fetch(`/api/get-lottery?lotCode=${currentLotCode}`);
-                const data = await res.json();
+        function getHeadTailForPosition(pastRecords, posIndex) {
+            let seenNumbers = [];
+            for (let item of pastRecords) {
+                const nums = item.number.replace(/\s+/g, '').split(',');
+                if (nums[posIndex] !== undefined) {
+                    const val = parseInt(nums[posIndex], 10);
+                    if (!seenNumbers.includes(val)) {
+                        seenNumbers.push(val);
+                    }
+                }
+                if (seenNumbers.length === 10) break;
+            }
 
-                console.log("後端回傳資料：", data); // 按 F12 可在 Console 查看細節
+            const headList = seenNumbers.slice(0, 5);
+            const tailList = seenNumbers.slice(5, 10);
 
-                if (data && data.result && data.result.data && data.result.data.length > 0) {
-                    const list = data.result.data;
-                    
-                    // 自動計算下期期號
-                    const latestPeriod = list[0].period;
-                    if (latestPeriod) {
-                        document.getElementById('nextPeriod').innerText = (parseInt(latestPeriod) + 1).toString();
-                    }
+            return { headList, tailList };
+        }
 
-                    container.innerHTML = "";
-                    list.forEach(item => {
-                        // 支援逗號、空白、多重分隔字元
-                        const nums = item.number.split(/[, ]+/);
+        function showPositionModal(posIndex, titleName) {
+            if (!globalFullData || globalFullData.length === 0) return;
 
-                        let numsHtml = "";
-                        nums.forEach((n, idx) => {
-                            if (n.trim()) {
-                                const numVal = parseInt(n.trim(), 10);
-                                const formattedNum = String(numVal).padStart(2, '0');
-                                
-                                // 舊版邏輯：1~5號綠底，6~10號紅底 (或依位置/數值)
-                                const bgClass = (numVal <= 5) ? 'bg-green' : 'bg-red';
+            const { headList, tailList } = getHeadTailForPosition(globalFullData, posIndex);
 
-                                numsHtml += `<div class="num-box ${bgClass}">${formattedNum}</div>`;
-                            }
-                        });
+            document.getElementById('modalTitle').innerText = `【${titleName}】當前對比`;
 
-                        container.innerHTML += `
-                            <div class="data-row">
-                                <div class="period-no">${item.period.slice(-6)}</div>
-                                ${numsHtml}
-                            </div>
-                        `;
-                    });
-                } else {
-                    container.innerHTML = `<div class="status-msg">⚠️ 暫無開獎資料 (請確認 Token 是否有效)</div>`;
-                }
-            } catch (err) {
-                console.error("Fetch 錯誤：", err);
-                container.innerHTML = `<div class="status-msg">❌ 無法連線至 Python 後端</div>`;
-            }
-        }
+            const sortedHead = [...headList].sort((a, b) => a - b);
+            const sortedTail = [...tailList].sort((a, b) => a - b);
 
-        // 倒數模擬
-        let secondsLeft = 45;
-        function updateTimer() {
-            if (secondsLeft <= 0) {
-                secondsLeft = 75;
-                fetchData();
-            }
-            const mins = String(Math.floor(secondsLeft / 60)).padStart(2, '0');
-            const secs = String(secondsLeft % 60).padStart(2, '0');
-            document.getElementById('countdownTimer').innerText = `${mins} : ${secs}`;
-            secondsLeft--;
-        }
+            const headStr = sortedHead.join(' . ') + ' 號';
+            const tailStr = sortedTail.join(' . ') + ' 號';
 
-        fetchData();
-        setInterval(updateTimer, 1000);
-        setInterval(fetchData, 10000);
-    </script>
+            document.getElementById('headText').innerText = headStr;
+            document.getElementById('tailText').innerText = tailStr;
+
+            document.getElementById('modalOverlay').style.display = 'flex';
+        }
+
+        function closeModalDirect() {
+            document.getElementById('modalOverlay').style.display = 'none';
+        }
+
+        // 啟動倒數（自動切換【距封盤】與【距開獎】）
+        function startCountdown() {
+            if (countdownTimer) clearInterval(countdownTimer);
+
+            countdownTimer = setInterval(() => {
+                const nowMs = Date.now();
+                const totalRemSec = Math.floor((targetEndTimeMs - nowMs) / 1000);
+                const timerEl = document.getElementById('timerText');
+
+                // 封盤門檻：極速飛艇 15 秒，幸運飛艇 80 秒 (1分20秒)
+                const closeThreshold = (currentLotCode === '10035') ? 15 : 80;
+
+                if (totalRemSec > closeThreshold) {
+                    // 第一階段：距封盤倒數
+                    const closeSec = totalRemSec - closeThreshold;
+                    const mm = String(Math.floor(closeSec / 60)).padStart(2, '0');
+                    const ss = String(closeSec % 60).padStart(2, '0');
+                    timerEl.className = "timer-highlight";
+                    timerEl.innerText = `⏳ 距封盤: ${mm} : ${ss}`;
+                } else if (totalRemSec > 0) {
+                    // 第二階段：進入封盤，距開獎倒數 (文字變紅)
+                    const mm = String(Math.floor(totalRemSec / 60)).padStart(2, '0');
+                    const ss = String(totalRemSec % 60).padStart(2, '0');
+                    timerEl.className = "timer-highlight red";
+                    timerEl.innerText = `🎲 距開獎: ${mm} : ${ss}`;
+                } else {
+                    // 第三階段：開獎中，觸發刷新
+                    timerEl.className = "timer-highlight red";
+                    timerEl.innerText = `🎰 開獎中...`;
+                    fetchData();
+                }
+            }, 1000);
+        }
+
+        async function fetchData() {
+            const tableBody = document.getElementById('tableBody');
+            const apiUrl = `/api/get-lottery?lotCode=${currentLotCode}`;
+
+            try {
+                const response = await fetch(apiUrl);
+                const data = await response.json();
+
+                if (data && data.result && data.result.data && data.result.data.length > 0) {
+                    globalFullData = data.result.data;
+                    const currentTopPeriod = globalFullData[0].period;
+
+                    // 1. 推算下一期期號
+                    const latestPeriod = BigInt(currentTopPeriod);
+                    const nextPeriodStr = (latestPeriod + 1n).toString();
+                    const shortNextPeriod = nextPeriodStr.length > 7 ? nextPeriodStr.slice(-6) : nextPeriodStr;
+                    document.getElementById('nextPeriodText').innerText = `下期: ${shortNextPeriod}`;
+
+                    // 2. 當開出新一期或初始化時更新目標時間
+                    if (currentTopPeriod !== lastPeriodLoaded || targetEndTimeMs === 0) {
+                        lastPeriodLoaded = currentTopPeriod;
+                        if (data.remSeconds !== null && data.remSeconds !== undefined) {
+                            targetEndTimeMs = Date.now() + (parseInt(data.remSeconds, 10) * 1000);
+                            startCountdown();
+                        }
+                    }
+
+                    // 3. 渲染歷史 30 期號碼表
+                    const displayData = globalFullData.slice(0, 30);
+                    tableBody.innerHTML = "";
+
+                    displayData.forEach((item, index) => {
+                        const pastRecords = globalFullData.slice(index + 1);
+                        const nums = item.number.replace(/\s+/g, '').split(',');
+
+                        const numBoxesHtml = nums.map((n, posIndex) => {
+                            const val = parseInt(n, 10);
+                            let colorClass = 'blue';
+
+                            if (pastRecords.length > 0) {
+                                const { headList, tailList } = getHeadTailForPosition(pastRecords, posIndex);
+                                const headSet = new Set(headList);
+                                const tailSet = new Set(tailList);
+
+                                if (headSet.has(val)) {
+                                    colorClass = 'green';
+                                } else if (tailSet.has(val)) {
+                                    colorClass = 'red';
+                                }
+                            }
+
+                            const displayNum = val < 10 ? `0${val}` : `${val}`;
+                            return `<div class="num-box ${colorClass}">${displayNum}</div>`;
+                        }).join('');
+
+                        const shortPeriod = item.period.length > 7 ? item.period.slice(-6) : item.period;
+
+                        const row = `
+                            <tr class="lottery-row">
+                                <td class="period-cell" title="${item.period}">${shortPeriod}</td>
+                                <td>
+                                    <div class="numbers-cell">
+                                        ${numBoxesHtml}
+                                    </div>
+                                </td>
+                            </tr>
+                        `;
+                        tableBody.innerHTML += row;
+                    });
+                }
+            } catch (error) {
+                console.error(error);
+            }
+        }
+
+        fetchData();
+        setInterval(fetchData, 3000);
+    </script>
 
 </body>
 </html>
