@@ -14,15 +14,15 @@
             font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Arial, sans-serif;
             background-color: #0b141e;
             color: #ffffff;
-            padding: 4px 2px;
+            padding: 6px 4px;
         }
         .container {
             width: 100%;
             max-width: 480px;
             margin: 0 auto;
             background: #121e2b;
-            padding: 6px 4px;
-            border-radius: 8px;
+            padding: 8px 6px;
+            border-radius: 10px;
             box-shadow: 0 4px 15px rgba(0,0,0,0.5);
         }
         
@@ -30,25 +30,25 @@
             display: flex;
             justify-content: space-between;
             align-items: center;
-            margin-bottom: 4px;
+            margin-bottom: 6px;
             padding: 0 2px;
         }
         h2 { 
             color: #4da6ff; 
-            font-size: 15px;
+            font-size: 16px;
         }
         .lottery-tabs {
             display: flex;
-            gap: 4px;
+            gap: 5px;
         }
         .tab-btn {
             background-color: #1a2838;
             color: #a0aec0;
             border: 1px solid #2b3e50;
-            padding: 3px 6px;
+            padding: 4px 8px;
             font-size: 11px;
             font-weight: bold;
-            border-radius: 4px;
+            border-radius: 5px;
             cursor: pointer;
             transition: all 0.2s;
         }
@@ -63,28 +63,28 @@
             text-align: center;
             font-size: 11px;
             color: #a0aec0;
-            margin-bottom: 4px;
+            margin-bottom: 6px;
             background: #1a2838;
-            padding: 4px;
-            border-radius: 5px;
-            line-height: 1.3;
+            padding: 5px;
+            border-radius: 6px;
+            line-height: 1.4;
         }
         .countdown-box {
             display: flex;
             justify-content: space-around;
             align-items: center;
             background: #0d1926;
-            padding: 2px 6px;
+            padding: 3px 6px;
             border-radius: 4px;
-            margin-top: 3px;
-            font-size: 11px;
+            margin-top: 4px;
+            font-size: 12px;
             font-weight: bold;
             color: #e2e8f0;
             border: 1px solid #2b3e50;
         }
         .timer-highlight {
             color: #f6ad55;
-            font-size: 12px;
+            font-size: 13px;
             font-family: monospace;
         }
         .timer-highlight.red {
@@ -98,15 +98,15 @@
         .lottery-table {
             width: 100%;
             border-collapse: separate;
-            border-spacing: 0 2px;
+            border-spacing: 0 3px;
         }
 
         .period-header {
-            font-size: 10px;
+            font-size: 11px;
             color: #718096;
             font-weight: bold;
             text-align: center;
-            width: 48px;
+            width: 50px;
             padding-bottom: 2px;
         }
         .rank-header-container {
@@ -117,10 +117,10 @@
         .rank-header-item {
             flex: 1;
             text-align: center;
-            font-size: 11px;
+            font-size: 12px;
             font-weight: bold;
             color: #63b3ed;
-            padding: 1px 0;
+            padding: 2px 0;
             cursor: pointer;
             border-radius: 3px;
             transition: background-color 0.2s;
@@ -130,9 +130,9 @@
             background-color: rgba(99, 179, 237, 0.3);
         }
 
-        /* 📜 歷史區：壓低總高度 (205px 可以完整顯示 7 期號碼) */
+        /* 📜 歷史數據區：維持顯示約 7 期 */
         .table-scroll-container {
-            max-height: 205px;
+            max-height: 228px;
             overflow-y: auto;
             border-radius: 4px;
             padding-right: 2px;
@@ -156,28 +156,28 @@
             font-weight: bold;
             color: #cbd5e0;
             text-align: center;
-            width: 48px;
+            width: 50px;
             white-space: nowrap;
         }
         
         .numbers-cell {
-            padding: 2px 2px 2px 0;
+            padding: 3px 2px 3px 0;
             display: flex;
             gap: 2px;
             justify-content: space-between;
         }
 
-        /* 🟢🔴🔵 扁平號碼方塊 (高度改為 25px，字體 12px) */
+        /* 🟢🔴🔵 扁平美觀號碼塊 (28px 高度) */
         .num-box {
             flex: 1;
-            height: 25px;
+            height: 28px;
             color: #ffffff;
-            font-size: 12px;
+            font-size: 13px;
             font-weight: 800;
             display: flex;
             align-items: center;
             justify-content: center;
-            border-radius: 3px;
+            border-radius: 4px;
             box-shadow: inset 0 1px 1px rgba(255,255,255,0.3), 0 1px 2px rgba(0,0,0,0.3);
         }
 
@@ -197,48 +197,48 @@
         }
 
         /* ---------------------------------------------------- */
-        /* 🧮 下方：金額與關數區域 (高度壓縮) */
+        /* 🧮 下方：金額與關數區域 (精準平衡填滿比例) */
         /* ---------------------------------------------------- */
         .calculator-area {
-            margin-top: 6px;
+            margin-top: 8px;
             background-color: #0d1926;
-            border-radius: 6px;
-            padding: 6px 4px;
+            border-radius: 8px;
+            padding: 8px 6px;
             display: flex;
             flex-direction: column;
-            gap: 6px;
+            gap: 8px;
         }
 
         .calc-input-row {
             display: flex;
             align-items: center;
             justify-content: space-between;
-            gap: 4px;
+            gap: 5px;
         }
 
         .input-group {
             display: flex;
             align-items: center;
-            gap: 3px;
+            gap: 4px;
             flex: 1;
         }
 
         .input-label {
             color: #63b3ed;
-            font-size: 13px;
+            font-size: 14px;
             font-weight: bold;
             white-space: nowrap;
         }
 
         .white-input {
             width: 100%;
-            height: 32px;
+            height: 35px;
             background-color: #ffffff;
             color: #000000;
             border: none;
-            border-radius: 4px;
-            padding: 0 4px;
-            font-size: 15px;
+            border-radius: 5px;
+            padding: 0 6px;
+            font-size: 16px;
             font-weight: bold;
             text-align: center;
             outline: none;
@@ -258,14 +258,14 @@
         }
 
         .confirm-btn {
-            height: 32px;
-            padding: 0 8px;
+            height: 35px;
+            padding: 0 10px;
             background: linear-gradient(180deg, #48bb78 0%, #38a169 100%);
             border: 1px solid #68d391;
             color: #ffffff;
-            font-size: 12px;
+            font-size: 13px;
             font-weight: bold;
-            border-radius: 4px;
+            border-radius: 5px;
             cursor: pointer;
             box-shadow: 0 2px 4px rgba(56, 161, 105, 0.4);
             flex-shrink: 0;
@@ -277,11 +277,11 @@
             transform: scale(0.95);
         }
 
-        /* 📊 計算結果表格 (緊湊高度) */
+        /* 📊 計算結果表格 (加大 Padding 讓 5 關時剛好飽滿) */
         .result-table-container {
             display: none;
-            margin-top: 2px;
-            border-radius: 4px;
+            margin-top: 4px;
+            border-radius: 6px;
             overflow: hidden;
             border: 1px solid #2b3e50;
             background-color: #1a2838;
@@ -291,14 +291,14 @@
             width: 100%;
             border-collapse: collapse;
             text-align: center;
-            font-size: 12px;
+            font-size: 13px;
         }
 
         .calc-table th {
             background-color: #121e2b;
             color: #63b3ed;
             font-weight: bold;
-            padding: 4px 2px;
+            padding: 6px 3px;
             border-bottom: 1px solid #2b3e50;
             border-right: 1px solid #2b3e50;
         }
@@ -307,7 +307,7 @@
         }
 
         .calc-table td {
-            padding: 3px 2px;
+            padding: 6px 3px; /* 6px 上下內距：讓 5 關剛好滿版，6/7 關順暢下滑 */
             border-bottom: 1px solid #2b3e50;
             border-right: 1px solid #2b3e50;
             color: #ffffff;
@@ -326,12 +326,12 @@
             font-weight: bold;
             background-color: #14202e;
             width: 28%;
-            font-size: 11px;
+            font-size: 12px;
         }
 
         .profit-val {
             color: #68d391;
-            font-size: 15px;
+            font-size: 17px;
             background-color: #121e2b;
         }
 
@@ -451,7 +451,7 @@
                 </thead>
             </table>
 
-            <!-- 表身：保留 7 期高度 (可下滑查看歷史) -->
+            <!-- 表身 -->
             <div class="table-scroll-container">
                 <table class="lottery-table">
                     <tbody id="tableBody"></tbody>
