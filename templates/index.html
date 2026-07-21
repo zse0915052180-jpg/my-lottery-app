@@ -114,23 +114,25 @@
             gap: 2px;
             padding-right: 2px;
         }
+
+        /* 🔍 2. 放大「冠~十」表頭按鈕與觸控範圍 */
         .rank-header-item {
             flex: 1;
             text-align: center;
-            font-size: 12px;
+            font-size: 14px; /* 字體加大 */
             font-weight: bold;
             color: #63b3ed;
-            padding: 2px 0;
+            padding: 5px 0; /* 上下高度加大，避免誤觸 */
             cursor: pointer;
-            border-radius: 3px;
+            border-radius: 4px;
             transition: background-color 0.2s;
-            background-color: rgba(99, 179, 237, 0.1);
+            background-color: rgba(99, 179, 237, 0.15);
         }
         .rank-header-item:active {
-            background-color: rgba(99, 179, 237, 0.3);
+            background-color: rgba(99, 179, 237, 0.4);
         }
 
-        /* 📜 歷史數據區：維持顯示約 7 期 */
+        /* 📜 歷史數據區 */
         .table-scroll-container {
             max-height: 228px;
             overflow-y: auto;
@@ -167,7 +169,6 @@
             justify-content: space-between;
         }
 
-        /* 🟢🔴🔵 扁平美觀號碼塊 (28px 高度) */
         .num-box {
             flex: 1;
             height: 28px;
@@ -197,7 +198,7 @@
         }
 
         /* ---------------------------------------------------- */
-        /* 🧮 下方：金額與關數區域 (精準平衡填滿比例) */
+        /* 🧮 下方：金額與關數區域 */
         /* ---------------------------------------------------- */
         .calculator-area {
             margin-top: 8px;
@@ -277,7 +278,7 @@
             transform: scale(0.95);
         }
 
-        /* 📊 計算結果表格 (加大 Padding 讓 5 關時剛好飽滿) */
+        /* 📊 計算結果表格 */
         .result-table-container {
             display: none;
             margin-top: 4px;
@@ -307,7 +308,7 @@
         }
 
         .calc-table td {
-            padding: 6px 3px; /* 6px 上下內距：讓 5 關剛好滿版，6/7 關順暢下滑 */
+            padding: 6px 3px;
             border-bottom: 1px solid #2b3e50;
             border-right: 1px solid #2b3e50;
             color: #ffffff;
@@ -319,6 +320,17 @@
         }
         .calc-table tr:last-child td {
             border-bottom: none;
+        }
+
+        /* 📋 1. 可點擊複製的金額欄位樣式 */
+        .copyable-amount {
+            cursor: pointer;
+            transition: background-color 0.15s, color 0.15s;
+            user-select: none;
+        }
+        .copyable-amount:active {
+            background-color: #3182ce !important;
+            color: #ffffff !important;
         }
 
         .round-label {
@@ -406,6 +418,23 @@
             background-color: #3182ce;
             color: #ffffff;
         }
+
+        /* 📋 複製成功小提示提示框 */
+        .toast-msg {
+            display: none;
+            position: fixed;
+            bottom: 30px;
+            left: 50%;
+            transform: translateX(-50%);
+            background-color: rgba(49, 130, 206, 0.95);
+            color: #ffffff;
+            padding: 6px 16px;
+            border-radius: 20px;
+            font-size: 13px;
+            font-weight: bold;
+            box-shadow: 0 4px 10px rgba(0,0,0,0.5);
+            z-index: 2000;
+        }
     </style>
 </head>
 <body>
@@ -481,7 +510,7 @@
                     <thead>
                         <tr>
                             <th style="width: 28%;">關數</th>
-                            <th style="width: 36%;">金額</th>
+                            <th style="width: 36%;">金額 (點擊複製)</th>
                             <th style="width: 36%;">獲利</th>
                         </tr>
                     </thead>
@@ -491,6 +520,9 @@
             </div>
         </div>
     </div>
+
+    <!-- 📋 複製提示浮窗 -->
+    <div id="toastMsg" class="toast-msg"></div>
 
     <!-- 1. 冠~十 名次對比彈窗 -->
     <div id="modalOverlay" class="modal-overlay" onclick="closeModalDirect()">
@@ -555,6 +587,32 @@
             closeRoundModal();
         }
 
+        // 📋 1. 自動複製金額功能
+        function copyAmount(textVal, rawNum) {
+            // 複製不帶逗號的純數字，便於直接粘貼輸入
+            navigator.clipboard.writeText(rawNum.toString()).then(() => {
+                showToast(`已複製金額：${textVal}`);
+            }).catch(err => {
+                // 備用複製方案（舊版瀏覽器）
+                const tempInput = document.createElement('input');
+                tempInput.value = rawNum;
+                document.body.appendChild(tempInput);
+                tempInput.select();
+                document.execCommand('copy');
+                document.body.removeChild(tempInput);
+                showToast(`已複製金額：${textVal}`);
+            });
+        }
+
+        function showToast(msg) {
+            const toast = document.getElementById('toastMsg');
+            toast.innerText = msg;
+            toast.style.display = 'block';
+            setTimeout(() => {
+                toast.style.display = 'none';
+            }, 1500);
+        }
+
         function onConfirmClick() {
             const amountInput = document.getElementById('inputAmount').value;
             const roundInput = document.getElementById('inputRoundDisplay').innerText;
@@ -591,14 +649,15 @@
                     currentRoundAmount = currentRoundAmount * 2.065;
                 }
 
-                const formattedAmount = Math.round(currentRoundAmount).toLocaleString();
+                const rawVal = Math.round(currentRoundAmount);
+                const formattedAmount = rawVal.toLocaleString();
 
                 let rowHtml = "";
                 if (i === 0) {
                     rowHtml = `
                         <tr>
                             <td class="round-label">${roundText}</td>
-                            <td>${formattedAmount}</td>
+                            <td class="copyable-amount" onclick="copyAmount('${formattedAmount}', ${rawVal})" title="點擊複製">${formattedAmount}</td>
                             <td class="profit-val" rowspan="${selectedRounds}">${formattedProfit}</td>
                         </tr>
                     `;
@@ -606,7 +665,7 @@
                     rowHtml = `
                         <tr>
                             <td class="round-label">${roundText}</td>
-                            <td>${formattedAmount}</td>
+                            <td class="copyable-amount" onclick="copyAmount('${formattedAmount}', ${rawVal})" title="點擊複製">${formattedAmount}</td>
                         </tr>
                     `;
                 }
