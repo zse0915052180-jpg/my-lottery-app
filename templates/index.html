@@ -195,26 +195,24 @@
         }
 
         /* ---------------------------------------------------- */
-        /* 🧮 下方：公式計算機與輸入輸入控制列 */
+        /* 🧮 下方：公式計算機與輸入控制區 (A1, A2, 確認計算) */
         /* ---------------------------------------------------- */
         .calculator-area {
             margin-top: 10px;
             background-color: #0d1926;
             border: 1.5px dashed #2b3e50;
             border-radius: 8px;
-            padding: 12px 8px;
+            padding: 12px 6px;
             display: flex;
             flex-direction: column;
             gap: 12px;
         }
 
-        /* 輸入控制器排版（金額、關數、綠色按鈕） */
         .calc-input-row {
             display: flex;
             align-items: center;
             justify-content: space-between;
             gap: 6px;
-            padding: 0 4px;
         }
 
         .input-group {
@@ -226,45 +224,63 @@
 
         .input-label {
             color: #63b3ed;
-            font-size: 15px;
+            font-size: 14px;
             font-weight: bold;
             white-space: nowrap;
         }
 
+        /* A1: 輸入框 */
         .white-input {
             width: 100%;
-            height: 36px;
+            height: 38px;
             background-color: #ffffff;
             color: #000000;
             border: none;
-            border-radius: 4px;
-            padding: 0 6px;
-            font-size: 15px;
+            border-radius: 6px;
+            padding: 0 8px;
+            font-size: 16px;
             font-weight: bold;
+            text-align: center;
             outline: none;
             box-shadow: inset 0 1px 3px rgba(0,0,0,0.2);
         }
 
-        /* 綠色圓形確認按鈕 */
-        .confirm-btn-circle {
-            width: 38px;
+        /* A2: 可點擊選擇格 */
+        .clickable-box {
+            cursor: pointer;
+            user-select: none;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+        }
+        .clickable-box:active {
+            background-color: #e2e8f0;
+        }
+
+        /* 綠色「確認計算」按鈕 */
+        .confirm-btn {
             height: 38px;
+            padding: 0 10px;
             background: linear-gradient(180deg, #48bb78 0%, #38a169 100%);
             border: 1px solid #68d391;
-            border-radius: 50%;
+            color: #ffffff;
+            font-size: 13px;
+            font-weight: bold;
+            border-radius: 6px;
             cursor: pointer;
             box-shadow: 0 2px 6px rgba(56, 161, 105, 0.4);
             flex-shrink: 0;
+            white-space: nowrap;
             transition: transform 0.1s;
         }
 
-        .confirm-btn-circle:active {
-            transform: scale(0.92);
+        .confirm-btn:active {
+            transform: scale(0.95);
         }
 
         .calc-info-box {
             text-align: center;
-            padding: 8px 0;
+            padding: 6px 0;
         }
 
         .calc-title {
@@ -283,7 +299,7 @@
             color: #718096;
         }
 
-        /* 彈窗樣式 */
+        /* 彈窗共通樣式 */
         .modal-overlay {
             display: none;
             position: fixed;
@@ -316,7 +332,7 @@
             font-size: 15px;
             font-weight: bold;
             text-align: center;
-            margin-bottom: 10px;
+            margin-bottom: 12px;
             border-bottom: 1px solid #2b3e50;
             padding-bottom: 6px;
         }
@@ -330,6 +346,31 @@
         }
         .text-green { color: #68d391; }
         .text-red { color: #fc8181; }
+
+        /* A2 選擇彈窗專用選單網格 */
+        .round-options-grid {
+            display: grid;
+            grid-template-columns: repeat(4, 1fr);
+            gap: 8px;
+        }
+        .round-option-item {
+            background-color: #1a2838;
+            border: 1px solid #2b3e50;
+            color: #63b3ed;
+            font-size: 16px;
+            font-weight: bold;
+            height: 42px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            border-radius: 6px;
+            cursor: pointer;
+            transition: all 0.2s;
+        }
+        .round-option-item:active {
+            background-color: #3182ce;
+            color: #ffffff;
+        }
     </style>
 </head>
 <body>
@@ -365,7 +406,7 @@
                                 <div class="rank-header-item" onclick="showPositionModal(3, '四')">四</div>
                                 <div class="rank-header-item" onclick="showPositionModal(4, '五')">五</div>
                                 <div class="rank-header-item" onclick="showPositionModal(5, '六')">六</div>
-                                <div class="rank-header-item" onclick="showPositionModal(7, '八')">七</div>
+                                <div class="rank-header-item" onclick="showPositionModal(6, '七')">七</div>
                                 <div class="rank-header-item" onclick="showPositionModal(7, '八')">八</div>
                                 <div class="rank-header-item" onclick="showPositionModal(8, '九')">九</div>
                                 <div class="rank-header-item" onclick="showPositionModal(9, '十')">十</div>
@@ -383,20 +424,23 @@
             </div>
         </div>
 
-        <!-- 🧮 下方預留區：公式計算機 + 輸入控制區 -->
+        <!-- 🧮 下方：公式計算機 + A1/A2輸入區域 -->
         <div class="calculator-area" id="calculatorArea">
             <div class="calc-input-row">
+                <!-- A1: 金額輸入框 -->
                 <div class="input-group">
                     <span class="input-label">金額</span>
-                    <input type="number" id="inputAmount" class="white-input" placeholder="">
+                    <input type="number" id="inputAmount" class="white-input" placeholder="A1">
                 </div>
                 
+                <!-- A2: 關數點擊選擇框 -->
                 <div class="input-group">
                     <span class="input-label">關數</span>
-                    <input type="number" id="inputRound" class="white-input" placeholder="">
+                    <div id="inputRoundDisplay" class="white-input clickable-box" onclick="openRoundModal()">A2</div>
                 </div>
 
-                <button class="confirm-btn-circle" onclick="onConfirmClick()"></button>
+                <!-- 確認計算按鈕 -->
+                <button class="confirm-btn" onclick="onConfirmClick()">確認計算</button>
             </div>
 
             <div class="calc-info-box">
@@ -410,7 +454,7 @@
         </div>
     </div>
 
-    <!-- 彈窗 -->
+    <!-- 1. 冠~十 名次對比彈窗 -->
     <div id="modalOverlay" class="modal-overlay" onclick="closeModalDirect()">
         <div class="modal-card" onclick="event.stopPropagation()">
             <span class="modal-close" onclick="closeModalDirect()">&times;</span>
@@ -423,6 +467,24 @@
         </div>
     </div>
 
+    <!-- 2. A2 關數選擇小彈窗 (數字 1~7) -->
+    <div id="roundModalOverlay" class="modal-overlay" onclick="closeRoundModal()">
+        <div class="modal-card" onclick="event.stopPropagation()">
+            <span class="modal-close" onclick="closeRoundModal()">&times;</span>
+            <div class="modal-title">選擇關數 (1~7)</div>
+            
+            <div class="round-options-grid">
+                <div class="round-option-item" onclick="selectRoundValue(1)">1</div>
+                <div class="round-option-item" onclick="selectRoundValue(2)">2</div>
+                <div class="round-option-item" onclick="selectRoundValue(3)">3</div>
+                <div class="round-option-item" onclick="selectRoundValue(4)">4</div>
+                <div class="round-option-item" onclick="selectRoundValue(5)">5</div>
+                <div class="round-option-item" onclick="selectRoundValue(6)">6</div>
+                <div class="round-option-item" onclick="selectRoundValue(7)">7</div>
+            </div>
+        </div>
+    </div>
+
     <script>
         let globalFullData = [];
         let currentLotCode = '10035';
@@ -430,11 +492,25 @@
         let targetEndTimeMs = 0;
         let lastPeriodLoaded = "";
 
-        // 確認按鈕觸發事件
+        // A2 關數彈窗操作
+        function openRoundModal() {
+            document.getElementById('roundModalOverlay').style.display = 'flex';
+        }
+
+        function closeRoundModal() {
+            document.getElementById('roundModalOverlay').style.display = 'none';
+        }
+
+        function selectRoundValue(val) {
+            document.getElementById('inputRoundDisplay').innerText = val;
+            closeRoundModal();
+        }
+
+        // 點擊「確認計算」按鈕
         function onConfirmClick() {
             const amount = document.getElementById('inputAmount').value;
-            const round = document.getElementById('inputRound').value;
-            console.log("已點擊確認按鈕！輸入金額：", amount, "關數：", round);
+            const round = document.getElementById('inputRoundDisplay').innerText;
+            console.log("確認計算點擊！金額(A1)：", amount, "關數(A2)：", round);
         }
 
         function switchLottery(code, name) {
