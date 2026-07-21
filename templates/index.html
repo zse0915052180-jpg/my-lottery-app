@@ -195,14 +195,13 @@
         }
 
         /* ---------------------------------------------------- */
-        /* 🧮 下方：公式計算機與輸入控制區 (A1, A2, 確認計算) */
+        /* 🧮 下方：金額與關數輸入區 */
         /* ---------------------------------------------------- */
         .calculator-area {
             margin-top: 10px;
             background-color: #0d1926;
-            border: 1.5px dashed #2b3e50;
             border-radius: 8px;
-            padding: 12px 6px;
+            padding: 10px 6px;
             display: flex;
             flex-direction: column;
             gap: 12px;
@@ -229,7 +228,7 @@
             white-space: nowrap;
         }
 
-        /* A1: 輸入框 */
+        /* 輸入框 (空白預設) */
         .white-input {
             width: 100%;
             height: 38px;
@@ -245,13 +244,13 @@
             box-shadow: inset 0 1px 3px rgba(0,0,0,0.2);
         }
 
-        /* A2: 可點擊選擇格 */
         .clickable-box {
             cursor: pointer;
             user-select: none;
             display: flex;
             align-items: center;
             justify-content: center;
+            color: #1a202c;
         }
         .clickable-box:active {
             background-color: #e2e8f0;
@@ -278,28 +277,57 @@
             transform: scale(0.95);
         }
 
-        .calc-info-box {
+        /* 📊 計算結果表格區 */
+        .result-table-container {
+            display: none; /* 預設隱藏，點擊確認計算後顯示 */
+            margin-top: 6px;
+            border-radius: 6px;
+            overflow: hidden;
+            border: 1px solid #2b3e50;
+            background-color: #1a2838;
+        }
+
+        .calc-table {
+            width: 100%;
+            border-collapse: collapse;
             text-align: center;
-            padding: 6px 0;
+            font-size: 13px;
         }
 
-        .calc-title {
-            font-size: 14px;
+        .calc-table th {
+            background-color: #121e2b;
+            color: #63b3ed;
             font-weight: bold;
-            color: #4da6ff;
-            margin-bottom: 4px;
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            gap: 6px;
+            padding: 8px 4px;
+            border-bottom: 1px solid #2b3e50;
+            border-right: 1px solid #2b3e50;
+        }
+        .calc-table th:last-child {
+            border-right: none;
         }
 
-        .calc-hint {
-            font-size: 11px;
-            color: #718096;
+        .calc-table td {
+            padding: 8px 4px;
+            border-bottom: 1px solid #2b3e50;
+            border-right: 1px solid #2b3e50;
+            color: #ffffff;
+            font-weight: bold;
+        }
+        .calc-table td:last-child {
+            border-right: none;
+        }
+        .calc-table tr:last-child td {
+            border-bottom: none;
         }
 
-        /* 彈窗共通樣式 */
+        .round-label {
+            color: #a0aec0;
+            font-weight: bold;
+            background-color: #14202e;
+            width: 30%;
+        }
+
+        /* 彈窗樣式 */
         .modal-overlay {
             display: none;
             position: fixed;
@@ -347,7 +375,6 @@
         .text-green { color: #68d391; }
         .text-red { color: #fc8181; }
 
-        /* A2 選擇彈窗專用選單網格 */
         .round-options-grid {
             display: grid;
             grid-template-columns: repeat(4, 1fr);
@@ -424,32 +451,39 @@
             </div>
         </div>
 
-        <!-- 🧮 下方：公式計算機 + A1/A2輸入區域 -->
-        <div class="calculator-area" id="calculatorArea">
+        <!-- 🧮 下方：金額與關數輸入區域 -->
+        <div class="calculator-area">
             <div class="calc-input-row">
-                <!-- A1: 金額輸入框 -->
+                <!-- 金額輸入框 (空白) -->
                 <div class="input-group">
                     <span class="input-label">金額</span>
-                    <input type="number" id="inputAmount" class="white-input" placeholder="A1">
+                    <input type="number" id="inputAmount" class="white-input" placeholder="">
                 </div>
                 
-                <!-- A2: 關數點擊選擇框 -->
+                <!-- 關數選擇框 (點擊選擇) -->
                 <div class="input-group">
                     <span class="input-label">關數</span>
-                    <div id="inputRoundDisplay" class="white-input clickable-box" onclick="openRoundModal()">A2</div>
+                    <div id="inputRoundDisplay" class="white-input clickable-box" onclick="openRoundModal()"></div>
                 </div>
 
                 <!-- 確認計算按鈕 -->
                 <button class="confirm-btn" onclick="onConfirmClick()">確認計算</button>
             </div>
 
-            <div class="calc-info-box">
-                <div class="calc-title">
-                    <span>🧮</span> 公式計算機
-                </div>
-                <div class="calc-hint">
-                    （預留空白區域，隨時準備逐步加入計算邏輯）
-                </div>
+            <!-- 📊 計算結果表格 (點擊確認計算後才會跳出來) -->
+            <div id="resultTableContainer" class="result-table-container">
+                <table class="calc-table">
+                    <thead>
+                        <tr>
+                            <th style="width: 30%;">關數</th>
+                            <th style="width: 35%;">金額</th>
+                            <th style="width: 35%;">獲利</th>
+                        </tr>
+                    </thead>
+                    <tbody id="resultTableBody">
+                        <!-- 動態生成結果 -->
+                    </tbody>
+                </table>
             </div>
         </div>
     </div>
@@ -467,7 +501,7 @@
         </div>
     </div>
 
-    <!-- 2. A2 關數選擇小彈窗 (數字 1~7) -->
+    <!-- 2. 關數選擇小彈窗 (數字 1~7) -->
     <div id="roundModalOverlay" class="modal-overlay" onclick="closeRoundModal()">
         <div class="modal-card" onclick="event.stopPropagation()">
             <span class="modal-close" onclick="closeRoundModal()">&times;</span>
@@ -492,7 +526,10 @@
         let targetEndTimeMs = 0;
         let lastPeriodLoaded = "";
 
-        // A2 關數彈窗操作
+        // 數字轉國字關數名稱
+        const chineseRounds = ["第一關", "第二關", "第三關", "第四關", "第五關", "第六關", "第七關"];
+
+        // 關數彈窗控制
         function openRoundModal() {
             document.getElementById('roundModalOverlay').style.display = 'flex';
         }
@@ -506,11 +543,40 @@
             closeRoundModal();
         }
 
-        // 點擊「確認計算」按鈕
+        // 點擊「確認計算」觸發生成表格
         function onConfirmClick() {
-            const amount = document.getElementById('inputAmount').value;
-            const round = document.getElementById('inputRoundDisplay').innerText;
-            console.log("確認計算點擊！金額(A1)：", amount, "關數(A2)：", round);
+            const amountVal = document.getElementById('inputAmount').value;
+            const roundVal = document.getElementById('inputRoundDisplay').innerText;
+
+            if (!roundVal) {
+                alert("請點擊選擇關數！");
+                return;
+            }
+
+            const rounds = parseInt(roundVal, 10);
+            const resultContainer = document.getElementById('resultTableContainer');
+            const resultBody = document.getElementById('resultTableBody');
+
+            // 清空舊結果
+            resultBody.innerHTML = "";
+
+            // 依據關數數量生成列 (1 到 N 關)
+            for (let i = 0; i < rounds; i++) {
+                const roundText = chineseRounds[i] || `第${i+1}關`;
+                
+                // 這裡預留欄位，未來只要把計算公式帶入即可
+                const rowHtml = `
+                    <tr>
+                        <td class="round-label">${roundText}</td>
+                        <td>--</td>
+                        <td>--</td>
+                    </tr>
+                `;
+                resultBody.innerHTML += rowHtml;
+            }
+
+            // 顯示表格
+            resultContainer.style.display = 'block';
         }
 
         function switchLottery(code, name) {
