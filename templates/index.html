@@ -10,10 +10,6 @@
             margin: 0;
             padding: 0;
         }
-        html, body {
-            height: 100%;
-            overflow-x: hidden;
-        }
         body {
             font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Arial, sans-serif;
             background-color: #0b141e;
@@ -30,9 +26,6 @@
             padding: 8px 6px;
             border-radius: 10px;
             box-shadow: 0 4px 15px rgba(0,0,0,0.5);
-            display: flex;
-            flex-direction: column;
-            min-height: 98vh; /* 容器儘量占滿螢幕高度 */
         }
         
         .header-area {
@@ -102,9 +95,6 @@
 
         .table-wrapper {
             width: 100%;
-            flex: 1; /* 自動吸收剩餘空間 */
-            display: flex;
-            flex-direction: column;
         }
 
         .lottery-table {
@@ -142,13 +132,13 @@
             background-color: rgba(99, 179, 237, 0.3);
         }
 
-        /* 📜 歷史數據區：高度由 JS 動態控制，預設（全滿）為 420px */
+        /* 📜 歷史數據區：預設高度約可容納 10~11 期，確保無計算表時緊貼下方輸入欄 */
         .table-scroll-container {
-            max-height: 420px;
+            max-height: 320px;
             overflow-y: auto;
             border-radius: 4px;
             padding-right: 2px;
-            transition: max-height 0.3s ease; /* 平滑縮放過渡 */
+            transition: max-height 0.2s ease;
         }
         .table-scroll-container::-webkit-scrollbar {
             width: 3px;
@@ -209,16 +199,16 @@
         }
 
         /* ---------------------------------------------------- */
-        /* 🧮 下方：金額與關數區域 */
+        /* 🧮 下方：金額與關數輸入區域 (直接緊貼歷史紀錄) */
         /* ---------------------------------------------------- */
         .calculator-area {
-            margin-top: auto; /* 自動排至底部 */
+            margin-top: 6px;
             background-color: #0d1926;
             border-radius: 8px;
             padding: 8px 6px;
             display: flex;
             flex-direction: column;
-            gap: 8px;
+            gap: 6px;
         }
 
         .calc-input-row {
@@ -289,7 +279,7 @@
             transform: scale(0.95);
         }
 
-        /* 📊 計算結果表格 */
+        /* 📊 計算結果表格區 */
         .result-table-container {
             display: none;
             margin-top: 4px;
@@ -463,7 +453,7 @@
                 </thead>
             </table>
 
-            <!-- 表身：動態控制最高顯示高度 -->
+            <!-- 表身 -->
             <div id="scrollContainer" class="table-scroll-container">
                 <table class="lottery-table">
                     <tbody id="tableBody"></tbody>
@@ -554,15 +544,15 @@
             7: 747
         };
 
-        // 依據選擇關數，動態分配上方歷史紀錄區的高度 (以高度控制顯示期數)
+        // 依據關數計算結果，調整歷史紀錄的最大高度 (精準對齊螢幕底部)
         const heightConfigByRounds = {
-            1: '380px', // 1~2 關時，上方約顯示 12~13 期號
-            2: '350px', 
-            3: '315px', // 3 關時，上方約顯示 10 期號
-            4: '280px', // 4 關時，上方約顯示 8~9 期號
-            5: '250px', // 5 關時，上方約顯示 7~8 期號
-            6: '228px', // 6 關時，上方約顯示 7 期號
-            7: '228px'  // 7 關時，上方約顯示 7 期號
+            1: '280px',
+            2: '260px', 
+            3: '235px', 
+            4: '210px', 
+            5: '185px', 
+            6: '160px', 
+            7: '135px'  
         };
 
         function openRoundModal() {
@@ -595,7 +585,7 @@
             const selectedRounds = parseInt(roundInput, 10);
             const divisor = divisorsMap[selectedRounds];
 
-            // 🎯【重點】依據關數動態調整上方歷史紀錄高度
+            // 🎯【重點修正】依據關數調整歷史區高度，消除所有黑框留白
             const scrollContainer = document.getElementById('scrollContainer');
             if (heightConfigByRounds[selectedRounds]) {
                 scrollContainer.style.maxHeight = heightConfigByRounds[selectedRounds];
