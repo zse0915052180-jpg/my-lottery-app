@@ -115,14 +115,14 @@
             padding-right: 2px;
         }
 
-        /* 🔍 2. 放大「冠~十」表頭按鈕與觸控範圍 */
+        /* 🔍 放大「冠~十」表頭按鈕與觸控範圍 */
         .rank-header-item {
             flex: 1;
             text-align: center;
-            font-size: 14px; /* 字體加大 */
+            font-size: 14px;
             font-weight: bold;
             color: #63b3ed;
-            padding: 5px 0; /* 上下高度加大，避免誤觸 */
+            padding: 5px 0;
             cursor: pointer;
             border-radius: 4px;
             transition: background-color 0.2s;
@@ -132,9 +132,9 @@
             background-color: rgba(99, 179, 237, 0.4);
         }
 
-        /* 📜 歷史數據區 */
+        /* 📜 歷史數據區：修改高度為 304px，精準展示 8 期 */
         .table-scroll-container {
-            max-height: 228px;
+            max-height: 304px;
             overflow-y: auto;
             border-radius: 4px;
             padding-right: 2px;
@@ -322,7 +322,7 @@
             border-bottom: none;
         }
 
-        /* 📋 1. 可點擊複製的金額欄位樣式 */
+        /* 📋 可點擊複製的金額欄位樣式 */
         .copyable-amount {
             cursor: pointer;
             transition: background-color 0.15s, color 0.15s;
@@ -587,13 +587,10 @@
             closeRoundModal();
         }
 
-        // 📋 1. 自動複製金額功能
         function copyAmount(textVal, rawNum) {
-            // 複製不帶逗號的純數字，便於直接粘貼輸入
             navigator.clipboard.writeText(rawNum.toString()).then(() => {
                 showToast(`已複製金額：${textVal}`);
             }).catch(err => {
-                // 備用複製方案（舊版瀏覽器）
                 const tempInput = document.createElement('input');
                 tempInput.value = rawNum;
                 document.body.appendChild(tempInput);
