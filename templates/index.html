@@ -310,6 +310,7 @@
             border-right: 1px solid #2b3e50;
             color: #ffffff;
             font-weight: bold;
+            vertical-align: middle;
         }
         .calc-table td:last-child {
             border-right: none;
@@ -327,6 +328,8 @@
 
         .profit-val {
             color: #68d391;
+            font-size: 16px;
+            background-color: #121e2b;
         }
 
         /* 彈窗樣式 */
@@ -527,7 +530,6 @@
 
         const chineseRounds = ["第一關", "第二關", "第三關", "第四關", "第五關", "第六關", "第七關"];
 
-        // 各關數對應的除數表 (關數 1~7)
         const divisorsMap = {
             1: 5,
             2: 15,
@@ -551,7 +553,7 @@
             closeRoundModal();
         }
 
-        // 🧮 點擊「確認計算」發揮公式邏輯
+        // 🧮 點擊「確認計算」發揮公式邏輯（合并「獲利」欄位）
         function onConfirmClick() {
             const amountInput = document.getElementById('inputAmount').value;
             const roundInput = document.getElementById('inputRoundDisplay').innerText;
@@ -569,10 +571,10 @@
             const selectedRounds = parseInt(roundInput, 10);
             const divisor = divisorsMap[selectedRounds];
 
-            // 1. 計算第一關金額 (A1 / 除數)
+            // 第一關金額 (A1 / 除數)
             const firstRoundAmount = amount / divisor;
 
-            // 2. 計算統一獲利金額 (第一關金額 * 4.7)
+            // 統一獲利金額 (第一關金額 * 4.7)
             const fixedProfit = firstRoundAmount * 4.7;
 
             const resultContainer = document.getElementById('resultTableContainer');
@@ -582,25 +584,37 @@
 
             let currentRoundAmount = firstRoundAmount;
 
+            const formattedProfit = Math.round(fixedProfit).toLocaleString();
+
             for (let i = 0; i < selectedRounds; i++) {
                 const roundText = chineseRounds[i] || `第${i+1}關`;
 
-                // 當為第一關時直接採用 firstRoundAmount，第二關開始每次乘上 2.065
                 if (i > 0) {
                     currentRoundAmount = currentRoundAmount * 2.065;
                 }
 
-                // 格式化數字 (四捨五入保留至整數，若有小數可依喜好調整)
                 const formattedAmount = Math.round(currentRoundAmount).toLocaleString();
-                const formattedProfit = Math.round(fixedProfit).toLocaleString();
 
-                const rowHtml = `
-                    <tr>
-                        <td class="round-label">${roundText}</td>
-                        <td>${formattedAmount}</td>
-                        <td class="profit-val">${formattedProfit}</td>
-                    </tr>
-                `;
+                let rowHtml = "";
+                if (i === 0) {
+                    // 第一行帶入 rowspan 屬性，將獲利欄位垂直合併為一整格
+                    rowHtml = `
+                        <tr>
+                            <td class="round-label">${roundText}</td>
+                            <td>${formattedAmount}</td>
+                            <td class="profit-val" rowspan="${selectedRounds}">${formattedProfit}</td>
+                        </tr>
+                    `;
+                } else {
+                    // 後續行不需要獲利欄位的 <td>
+                    rowHtml = `
+                        <tr>
+                            <td class="round-label">${roundText}</td>
+                            <td>${formattedAmount}</td>
+                        </tr>
+                    `;
+                }
+
                 resultBody.innerHTML += rowHtml;
             }
 
@@ -642,7 +656,7 @@
             return { headList, tailList };
         }
 
-        function showPositionModal(posIndex, titleName) {
+        showPositionModal = function(posIndex, titleName) {
             if (!globalFullData || globalFullData.length === 0) return;
 
             const { headList, tailList } = getHeadTailForPosition(globalFullData, posIndex);
@@ -659,7 +673,7 @@
             document.getElementById('tailText').innerText = tailStr;
 
             document.getElementById('modalOverlay').style.display = 'flex';
-        }
+        };
 
         function closeModalDirect() {
             document.getElementById('modalOverlay').style.display = 'none';
