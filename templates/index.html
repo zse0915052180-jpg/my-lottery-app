@@ -14,21 +14,16 @@
             font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Arial, sans-serif;
             background-color: #0b141e;
             color: #ffffff;
-            padding: 4px;
-            display: flex;
-            justify-content: center;
-            align-items: flex-start;
-            min-height: 100vh;
+            padding: 6px 4px;
         }
         .container {
             width: 100%;
             max-width: 480px;
+            margin: 0 auto;
             background: #121e2b;
             padding: 8px 6px;
             border-radius: 10px;
             box-shadow: 0 4px 15px rgba(0,0,0,0.5);
-            display: flex;
-            flex-direction: column;
         }
         
         .header-area {
@@ -135,13 +130,12 @@
             background-color: rgba(99, 179, 237, 0.3);
         }
 
-        /* 📜 歷史數據區：使用 vh 單位自動適應手機螢幕高度（SE 與 Pro Max 皆完美適配） */
+        /* 📜 歷史數據區：維持顯示約 7 期 */
         .table-scroll-container {
-            max-height: 38vh;
+            max-height: 228px;
             overflow-y: auto;
             border-radius: 4px;
             padding-right: 2px;
-            transition: max-height 0.2s ease;
         }
         .table-scroll-container::-webkit-scrollbar {
             width: 3px;
@@ -173,6 +167,7 @@
             justify-content: space-between;
         }
 
+        /* 🟢🔴🔵 扁平美觀號碼塊 (28px 高度) */
         .num-box {
             flex: 1;
             height: 28px;
@@ -202,16 +197,16 @@
         }
 
         /* ---------------------------------------------------- */
-        /* 🧮 下方：金額與關數輸入區域 */
+        /* 🧮 下方：金額與關數區域 (精準平衡填滿比例) */
         /* ---------------------------------------------------- */
         .calculator-area {
-            margin-top: 6px;
+            margin-top: 8px;
             background-color: #0d1926;
             border-radius: 8px;
             padding: 8px 6px;
             display: flex;
             flex-direction: column;
-            gap: 6px;
+            gap: 8px;
         }
 
         .calc-input-row {
@@ -282,7 +277,7 @@
             transform: scale(0.95);
         }
 
-        /* 📊 計算結果表格區 */
+        /* 📊 計算結果表格 (加大 Padding 讓 5 關時剛好飽滿) */
         .result-table-container {
             display: none;
             margin-top: 4px;
@@ -312,7 +307,7 @@
         }
 
         .calc-table td {
-            padding: 6px 3px;
+            padding: 6px 3px; /* 6px 上下內距：讓 5 關剛好滿版，6/7 關順暢下滑 */
             border-bottom: 1px solid #2b3e50;
             border-right: 1px solid #2b3e50;
             color: #ffffff;
@@ -425,7 +420,7 @@
         </div>
 
         <div class="info-bar">
-            🟢 <b>頭五</b> | 🔴 <b>後五</b> | 點擊<b><span>「冠~十」</span></b>查順反
+            🟢 <b>頭五</b> | 🔴 <b>後五</b> | 點擊<b>「冠~十」</b>查順反
             <div class="countdown-box">
                 <span id="nextPeriodText">下期: --</span>
                 <span id="timerText" class="timer-highlight">同步中...</span>
@@ -457,7 +452,7 @@
             </table>
 
             <!-- 表身 -->
-            <div id="scrollContainer" class="table-scroll-container">
+            <div class="table-scroll-container">
                 <table class="lottery-table">
                     <tbody id="tableBody"></tbody>
                 </table>
@@ -547,17 +542,6 @@
             7: 747
         };
 
-        // 依據不同關數動態調整 vh 比例，適應各尺寸手機螢幕
-        const heightConfigByRounds = {
-            1: '32vh',
-            2: '29vh', 
-            3: '26vh', 
-            4: '23vh', 
-            5: '20vh', 
-            6: '17vh', 
-            7: '14vh'  
-        };
-
         function openRoundModal() {
             document.getElementById('roundModalOverlay').style.display = 'flex';
         }
@@ -587,12 +571,6 @@
             const amount = parseFloat(amountInput);
             const selectedRounds = parseInt(roundInput, 10);
             const divisor = divisorsMap[selectedRounds];
-
-            // 🎯【響應式動態高度】依據關數調整歷史區視高
-            const scrollContainer = document.getElementById('scrollContainer');
-            if (heightConfigByRounds[selectedRounds]) {
-                scrollContainer.style.maxHeight = heightConfigByRounds[selectedRounds];
-            }
 
             const firstRoundAmount = amount / divisor;
             const fixedProfit = firstRoundAmount * 4.7;
