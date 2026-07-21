@@ -16,7 +16,6 @@
             color: #ffffff;
             padding: 8px 4px;
         }
-        /* 針對 iPhone 4.7~4.9 吋手機視窗大小優化 */
         .container {
             width: 100%;
             max-width: 480px;
@@ -131,14 +130,12 @@
             background-color: rgba(99, 179, 237, 0.3);
         }
 
-        /* 📜 可滑動歷年數據區塊：設定 7-8 期高度，過多可上下滾動 */
         .table-scroll-container {
-            max-height: 330px; /* 約 7~8 期的高度 */
+            max-height: 330px;
             overflow-y: auto;
             border-radius: 6px;
             padding-right: 2px;
         }
-        /* 美化滾動條 */
         .table-scroll-container::-webkit-scrollbar {
             width: 4px;
         }
@@ -197,35 +194,93 @@
             border: 1px solid #4299e1;
         }
 
-        /* 🧮 下方預留區：公式計算機 */
+        /* ---------------------------------------------------- */
+        /* 🧮 下方：公式計算機與輸入輸入控制列 */
+        /* ---------------------------------------------------- */
         .calculator-area {
             margin-top: 10px;
             background-color: #0d1926;
             border: 1.5px dashed #2b3e50;
             border-radius: 8px;
-            padding: 16px 10px;
-            min-height: 180px;
+            padding: 12px 8px;
             display: flex;
             flex-direction: column;
+            gap: 12px;
+        }
+
+        /* 輸入控制器排版（金額、關數、綠色按鈕） */
+        .calc-input-row {
+            display: flex;
             align-items: center;
-            justify-content: center;
-            color: #a0aec0;
+            justify-content: space-between;
+            gap: 6px;
+            padding: 0 4px;
+        }
+
+        .input-group {
+            display: flex;
+            align-items: center;
+            gap: 4px;
+            flex: 1;
+        }
+
+        .input-label {
+            color: #63b3ed;
+            font-size: 15px;
+            font-weight: bold;
+            white-space: nowrap;
+        }
+
+        .white-input {
+            width: 100%;
+            height: 36px;
+            background-color: #ffffff;
+            color: #000000;
+            border: none;
+            border-radius: 4px;
+            padding: 0 6px;
+            font-size: 15px;
+            font-weight: bold;
+            outline: none;
+            box-shadow: inset 0 1px 3px rgba(0,0,0,0.2);
+        }
+
+        /* 綠色圓形確認按鈕 */
+        .confirm-btn-circle {
+            width: 38px;
+            height: 38px;
+            background: linear-gradient(180deg, #48bb78 0%, #38a169 100%);
+            border: 1px solid #68d391;
+            border-radius: 50%;
+            cursor: pointer;
+            box-shadow: 0 2px 6px rgba(56, 161, 105, 0.4);
+            flex-shrink: 0;
+            transition: transform 0.1s;
+        }
+
+        .confirm-btn-circle:active {
+            transform: scale(0.92);
+        }
+
+        .calc-info-box {
+            text-align: center;
+            padding: 8px 0;
         }
 
         .calc-title {
             font-size: 14px;
             font-weight: bold;
             color: #4da6ff;
-            margin-bottom: 6px;
+            margin-bottom: 4px;
             display: flex;
             align-items: center;
+            justify-content: center;
             gap: 6px;
         }
 
         .calc-hint {
             font-size: 11px;
             color: #718096;
-            text-align: center;
         }
 
         /* 彈窗樣式 */
@@ -297,7 +352,7 @@
         </div>
 
         <div class="table-wrapper">
-            <!-- 表頭 固定不動 -->
+            <!-- 表頭 -->
             <table class="lottery-table">
                 <thead>
                     <tr>
@@ -310,7 +365,7 @@
                                 <div class="rank-header-item" onclick="showPositionModal(3, '四')">四</div>
                                 <div class="rank-header-item" onclick="showPositionModal(4, '五')">五</div>
                                 <div class="rank-header-item" onclick="showPositionModal(5, '六')">六</div>
-                                <div class="rank-header-item" onclick="showPositionModal(6, '七')">七</div>
+                                <div class="rank-header-item" onclick="showPositionModal(7, '八')">七</div>
                                 <div class="rank-header-item" onclick="showPositionModal(7, '八')">八</div>
                                 <div class="rank-header-item" onclick="showPositionModal(8, '九')">九</div>
                                 <div class="rank-header-item" onclick="showPositionModal(9, '十')">十</div>
@@ -320,7 +375,7 @@
                 </thead>
             </table>
 
-            <!-- 表身 可滾動顯示 (約7-8期) -->
+            <!-- 表身 -->
             <div class="table-scroll-container">
                 <table class="lottery-table">
                     <tbody id="tableBody"></tbody>
@@ -328,13 +383,29 @@
             </div>
         </div>
 
-        <!-- 🧮 下方預留區：公式計算機 -->
+        <!-- 🧮 下方預留區：公式計算機 + 輸入控制區 -->
         <div class="calculator-area" id="calculatorArea">
-            <div class="calc-title">
-                <span>🧮</span> 公式計算機
+            <div class="calc-input-row">
+                <div class="input-group">
+                    <span class="input-label">金額</span>
+                    <input type="number" id="inputAmount" class="white-input" placeholder="">
+                </div>
+                
+                <div class="input-group">
+                    <span class="input-label">關數</span>
+                    <input type="number" id="inputRound" class="white-input" placeholder="">
+                </div>
+
+                <button class="confirm-btn-circle" onclick="onConfirmClick()"></button>
             </div>
-            <div class="calc-hint">
-                （預留空白區域，隨時準備逐步加入計算邏輯）
+
+            <div class="calc-info-box">
+                <div class="calc-title">
+                    <span>🧮</span> 公式計算機
+                </div>
+                <div class="calc-hint">
+                    （預留空白區域，隨時準備逐步加入計算邏輯）
+                </div>
             </div>
         </div>
     </div>
@@ -358,6 +429,13 @@
         let countdownTimer = null;
         let targetEndTimeMs = 0;
         let lastPeriodLoaded = "";
+
+        // 確認按鈕觸發事件
+        function onConfirmClick() {
+            const amount = document.getElementById('inputAmount').value;
+            const round = document.getElementById('inputRound').value;
+            console.log("已點擊確認按鈕！輸入金額：", amount, "關數：", round);
+        }
 
         function switchLottery(code, name) {
             if (currentLotCode === code) return;
@@ -458,13 +536,11 @@
                     globalFullData = data.result.data;
                     const currentTopPeriod = globalFullData[0].period;
 
-                    // 1. 推算下一期期號
                     const latestPeriod = BigInt(currentTopPeriod);
                     const nextPeriodStr = (latestPeriod + 1n).toString();
                     const shortNextPeriod = nextPeriodStr.length > 7 ? nextPeriodStr.slice(-6) : nextPeriodStr;
                     document.getElementById('nextPeriodText').innerText = `下期: ${shortNextPeriod}`;
 
-                    // 2. 當開出新一期或初始化時更新目標時間
                     if (currentTopPeriod !== lastPeriodLoaded || targetEndTimeMs === 0) {
                         lastPeriodLoaded = currentTopPeriod;
                         if (data.remSeconds !== null && data.remSeconds !== undefined) {
@@ -473,7 +549,6 @@
                         }
                     }
 
-                    // 3. 渲染歷史 30 期號碼表
                     const displayData = globalFullData.slice(0, 30);
                     tableBody.innerHTML = "";
 
