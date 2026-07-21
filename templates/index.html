@@ -10,11 +10,17 @@
             margin: 0;
             padding: 0;
         }
+        html, body {
+            height: 100%;
+            overflow-x: hidden;
+        }
         body {
             font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Arial, sans-serif;
             background-color: #0b141e;
             color: #ffffff;
             padding: 6px 4px;
+            display: flex;
+            justify-content: center;
         }
         .container {
             width: 100%;
@@ -24,6 +30,9 @@
             padding: 8px 6px;
             border-radius: 10px;
             box-shadow: 0 4px 15px rgba(0,0,0,0.5);
+            display: flex;
+            flex-direction: column;
+            min-height: 98vh; /* 容器儘量占滿螢幕高度 */
         }
         
         .header-area {
@@ -93,6 +102,9 @@
 
         .table-wrapper {
             width: 100%;
+            flex: 1; /* 自動吸收剩餘空間 */
+            display: flex;
+            flex-direction: column;
         }
 
         .lottery-table {
@@ -130,12 +142,13 @@
             background-color: rgba(99, 179, 237, 0.3);
         }
 
-        /* 📜 歷史數據區：維持顯示約 7 期 */
+        /* 📜 歷史數據區：高度由 JS 動態控制，預設（全滿）為 420px */
         .table-scroll-container {
-            max-height: 228px;
+            max-height: 420px;
             overflow-y: auto;
             border-radius: 4px;
             padding-right: 2px;
+            transition: max-height 0.3s ease; /* 平滑縮放過渡 */
         }
         .table-scroll-container::-webkit-scrollbar {
             width: 3px;
@@ -167,7 +180,6 @@
             justify-content: space-between;
         }
 
-        /* 🟢🔴🔵 扁平美觀號碼塊 (28px 高度) */
         .num-box {
             flex: 1;
             height: 28px;
@@ -197,10 +209,10 @@
         }
 
         /* ---------------------------------------------------- */
-        /* 🧮 下方：金額與關數區域 (精準平衡填滿比例) */
+        /* 🧮 下方：金額與關數區域 */
         /* ---------------------------------------------------- */
         .calculator-area {
-            margin-top: 8px;
+            margin-top: auto; /* 自動排至底部 */
             background-color: #0d1926;
             border-radius: 8px;
             padding: 8px 6px;
@@ -277,7 +289,7 @@
             transform: scale(0.95);
         }
 
-        /* 📊 計算結果表格 (加大 Padding 讓 5 關時剛好飽滿) */
+        /* 📊 計算結果表格 */
         .result-table-container {
             display: none;
             margin-top: 4px;
@@ -307,7 +319,7 @@
         }
 
         .calc-table td {
-            padding: 6px 3px; /* 6px 上下內距：讓 5 關剛好滿版，6/7 關順暢下滑 */
+            padding: 6px 3px;
             border-bottom: 1px solid #2b3e50;
             border-right: 1px solid #2b3e50;
             color: #ffffff;
@@ -451,8 +463,8 @@
                 </thead>
             </table>
 
-            <!-- 表身 -->
-            <div class="table-scroll-container">
+            <!-- 表身：動態控制最高顯示高度 -->
+            <div id="scrollContainer" class="table-scroll-container">
                 <table class="lottery-table">
                     <tbody id="tableBody"></tbody>
                 </table>
@@ -542,6 +554,17 @@
             7: 747
         };
 
+        // 依據選擇關數，動態分配上方歷史紀錄區的高度 (以高度控制顯示期數)
+        const heightConfigByRounds = {
+            1: '380px', // 1~2 關時，上方約顯示 12~13 期號
+            2: '350px', 
+            3: '315px', // 3 關時，上方約顯示 10 期號
+            4: '280px', // 4 關時，上方約顯示 8~9 期號
+            5: '250px', // 5 關時，上方約顯示 7~8 期號
+            6: '228px', // 6 關時，上方約顯示 7 期號
+            7: '228px'  // 7 關時，上方約顯示 7 期號
+        };
+
         function openRoundModal() {
             document.getElementById('roundModalOverlay').style.display = 'flex';
         }
@@ -571,6 +594,12 @@
             const amount = parseFloat(amountInput);
             const selectedRounds = parseInt(roundInput, 10);
             const divisor = divisorsMap[selectedRounds];
+
+            // 🎯【重點】依據關數動態調整上方歷史紀錄高度
+            const scrollContainer = document.getElementById('scrollContainer');
+            if (heightConfigByRounds[selectedRounds]) {
+                scrollContainer.style.maxHeight = heightConfigByRounds[selectedRounds];
+            }
 
             const firstRoundAmount = amount / divisor;
             const fixedProfit = firstRoundAmount * 4.7;
