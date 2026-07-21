@@ -195,7 +195,7 @@
         }
 
         /* ---------------------------------------------------- */
-        /* 🧮 下方：金額與關數輸入區 */
+        /* 🧮 下方：金額與關數輸入區域 */
         /* ---------------------------------------------------- */
         .calculator-area {
             margin-top: 10px;
@@ -228,7 +228,6 @@
             white-space: nowrap;
         }
 
-        /* 輸入框 (空白預設) */
         .white-input {
             width: 100%;
             height: 38px;
@@ -256,7 +255,6 @@
             background-color: #e2e8f0;
         }
 
-        /* 綠色「確認計算」按鈕 */
         .confirm-btn {
             height: 38px;
             padding: 0 10px;
@@ -277,9 +275,9 @@
             transform: scale(0.95);
         }
 
-        /* 📊 計算結果表格區 */
+        /* 📊 計算結果表格 */
         .result-table-container {
-            display: none; /* 預設隱藏，點擊確認計算後顯示 */
+            display: none;
             margin-top: 6px;
             border-radius: 6px;
             overflow: hidden;
@@ -325,6 +323,10 @@
             font-weight: bold;
             background-color: #14202e;
             width: 30%;
+        }
+
+        .profit-val {
+            color: #68d391;
         }
 
         /* 彈窗樣式 */
@@ -454,23 +456,20 @@
         <!-- 🧮 下方：金額與關數輸入區域 -->
         <div class="calculator-area">
             <div class="calc-input-row">
-                <!-- 金額輸入框 (空白) -->
                 <div class="input-group">
                     <span class="input-label">金額</span>
                     <input type="number" id="inputAmount" class="white-input" placeholder="">
                 </div>
                 
-                <!-- 關數選擇框 (點擊選擇) -->
                 <div class="input-group">
                     <span class="input-label">關數</span>
                     <div id="inputRoundDisplay" class="white-input clickable-box" onclick="openRoundModal()"></div>
                 </div>
 
-                <!-- 確認計算按鈕 -->
                 <button class="confirm-btn" onclick="onConfirmClick()">確認計算</button>
             </div>
 
-            <!-- 📊 計算結果表格 (點擊確認計算後才會跳出來) -->
+            <!-- 📊 計算結果表格區 -->
             <div id="resultTableContainer" class="result-table-container">
                 <table class="calc-table">
                     <thead>
@@ -481,7 +480,7 @@
                         </tr>
                     </thead>
                     <tbody id="resultTableBody">
-                        <!-- 動態生成結果 -->
+                        <!-- 計算結果帶入此處 -->
                     </tbody>
                 </table>
             </div>
@@ -501,7 +500,7 @@
         </div>
     </div>
 
-    <!-- 2. 關數選擇小彈窗 (數字 1~7) -->
+    <!-- 2. 關數選擇彈窗 -->
     <div id="roundModalOverlay" class="modal-overlay" onclick="closeRoundModal()">
         <div class="modal-card" onclick="event.stopPropagation()">
             <span class="modal-close" onclick="closeRoundModal()">&times;</span>
@@ -526,10 +525,19 @@
         let targetEndTimeMs = 0;
         let lastPeriodLoaded = "";
 
-        // 數字轉國字關數名稱
         const chineseRounds = ["第一關", "第二關", "第三關", "第四關", "第五關", "第六關", "第七關"];
 
-        // 關數彈窗控制
+        // 各關數對應的除數表 (關數 1~7)
+        const divisorsMap = {
+            1: 5,
+            2: 15,
+            3: 37,
+            4: 81,
+            5: 175,
+            6: 359,
+            7: 747
+        };
+
         function openRoundModal() {
             document.getElementById('roundModalOverlay').style.display = 'flex';
         }
@@ -543,39 +551,59 @@
             closeRoundModal();
         }
 
-        // 點擊「確認計算」觸發生成表格
+        // 🧮 點擊「確認計算」發揮公式邏輯
         function onConfirmClick() {
-            const amountVal = document.getElementById('inputAmount').value;
-            const roundVal = document.getElementById('inputRoundDisplay').innerText;
+            const amountInput = document.getElementById('inputAmount').value;
+            const roundInput = document.getElementById('inputRoundDisplay').innerText;
 
-            if (!roundVal) {
+            if (!amountInput || parseFloat(amountInput) <= 0) {
+                alert("請填寫有效的金額！");
+                return;
+            }
+            if (!roundInput) {
                 alert("請點擊選擇關數！");
                 return;
             }
 
-            const rounds = parseInt(roundVal, 10);
+            const amount = parseFloat(amountInput);
+            const selectedRounds = parseInt(roundInput, 10);
+            const divisor = divisorsMap[selectedRounds];
+
+            // 1. 計算第一關金額 (A1 / 除數)
+            const firstRoundAmount = amount / divisor;
+
+            // 2. 計算統一獲利金額 (第一關金額 * 4.7)
+            const fixedProfit = firstRoundAmount * 4.7;
+
             const resultContainer = document.getElementById('resultTableContainer');
             const resultBody = document.getElementById('resultTableBody');
 
-            // 清空舊結果
             resultBody.innerHTML = "";
 
-            // 依據關數數量生成列 (1 到 N 關)
-            for (let i = 0; i < rounds; i++) {
+            let currentRoundAmount = firstRoundAmount;
+
+            for (let i = 0; i < selectedRounds; i++) {
                 const roundText = chineseRounds[i] || `第${i+1}關`;
-                
-                // 這裡預留欄位，未來只要把計算公式帶入即可
+
+                // 當為第一關時直接採用 firstRoundAmount，第二關開始每次乘上 2.065
+                if (i > 0) {
+                    currentRoundAmount = currentRoundAmount * 2.065;
+                }
+
+                // 格式化數字 (四捨五入保留至整數，若有小數可依喜好調整)
+                const formattedAmount = Math.round(currentRoundAmount).toLocaleString();
+                const formattedProfit = Math.round(fixedProfit).toLocaleString();
+
                 const rowHtml = `
                     <tr>
                         <td class="round-label">${roundText}</td>
-                        <td>--</td>
-                        <td>--</td>
+                        <td>${formattedAmount}</td>
+                        <td class="profit-val">${formattedProfit}</td>
                     </tr>
                 `;
                 resultBody.innerHTML += rowHtml;
             }
 
-            // 顯示表格
             resultContainer.style.display = 'block';
         }
 
