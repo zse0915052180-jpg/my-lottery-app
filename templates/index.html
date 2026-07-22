@@ -69,6 +69,43 @@
             border-radius: 6px;
             line-height: 1.4;
         }
+
+        /* 🔮 問連 / 問跳 按鈕列 */
+        .predict-btn-row {
+            margin-top: 5px;
+            margin-bottom: 2px;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            gap: 6px;
+        }
+        .predict-btn {
+            border: none;
+            padding: 3px 10px;
+            font-size: 11px;
+            font-weight: bold;
+            border-radius: 4px;
+            cursor: pointer;
+            color: #ffffff;
+            transition: transform 0.1s, opacity 0.2s;
+        }
+        .predict-btn:active {
+            transform: scale(0.95);
+        }
+        .btn-predict-even {
+            background: linear-gradient(180deg, #38a169 0%, #2f855a 100%);
+            border: 1px solid #68d391;
+        }
+        .btn-predict-jump {
+            background: linear-gradient(180deg, #e53e3e 0%, #c53030 100%);
+            border: 1px solid #fc8181;
+        }
+        .btn-predict-clear {
+            background-color: #4a5568;
+            border: 1px solid #718096;
+            display: none;
+        }
+
         .countdown-box {
             display: flex;
             justify-content: space-around;
@@ -115,7 +152,6 @@
             padding-right: 2px;
         }
 
-        /* 🔍 放大「冠~十」表頭按鈕與觸控範圍 */
         .rank-header-item {
             flex: 1;
             text-align: center;
@@ -132,7 +168,7 @@
             background-color: rgba(99, 179, 237, 0.4);
         }
 
-        /* 📜 歷史數據區：修改高度為 304px，精準展示 8 期 */
+        /* 📜 歷史數據區 */
         .table-scroll-container {
             max-height: 304px;
             overflow-y: auto;
@@ -150,6 +186,17 @@
         .lottery-row {
             background-color: #1a2838;
             border-radius: 4px;
+        }
+
+        /* 🔮 預演列專屬虛線外框與樣式 */
+        .lottery-row.predict-row {
+            background-color: #112538;
+            border: 1px dashed #f6ad55;
+        }
+        .predict-tag {
+            color: #f6ad55;
+            font-size: 10px;
+            font-weight: 800;
         }
         
         .period-cell {
@@ -322,7 +369,6 @@
             border-bottom: none;
         }
 
-        /* 📋 可點擊複製的金額欄位樣式 */
         .copyable-amount {
             cursor: pointer;
             transition: background-color 0.15s, color 0.15s;
@@ -419,7 +465,6 @@
             color: #ffffff;
         }
 
-        /* 📋 複製成功小提示提示框 */
         .toast-msg {
             display: none;
             position: fixed;
@@ -450,6 +495,14 @@
 
         <div class="info-bar">
             🟢 <b>頭五</b> | 🔴 <b>後五</b> | 點擊<b>「冠~十」</b>查順反
+            
+            <!-- 🔮 問連 / 問跳 按鈕區域 -->
+            <div class="predict-btn-row">
+                <button class="predict-btn btn-predict-even" onclick="setPredictMode('連')">🔮 問「連」</button>
+                <button class="predict-btn btn-predict-jump" onclick="setPredictMode('跳')">🔮 問「跳」</button>
+                <button id="btnClearPredict" class="predict-btn btn-predict-clear" onclick="setPredictMode(null)">✕ 清除</button>
+            </div>
+
             <div class="countdown-box">
                 <span id="nextPeriodText">下期: --</span>
                 <span id="timerText" class="timer-highlight">同步中...</span>
@@ -561,6 +614,7 @@
         let countdownTimer = null;
         let targetEndTimeMs = 0;
         let lastPeriodLoaded = "";
+        let currentPredictType = null; // 記錄當前預測狀態：'連' | '跳' | null
 
         const chineseRounds = ["第一關", "第二關", "第三關", "第四關", "第五關", "第六關", "第七關"];
 
@@ -760,8 +814,102 @@
             }, 1000);
         }
 
-        async function fetchData() {
+        // 🔮 設定/切換預測模式
+        function setPredictMode(mode) {
+            currentPredictType = mode;
+            const clearBtn = document.getElementById('btnClearPredict');
+            if (currentPredictType) {
+                clearBtn.style.display = 'inline-block';
+            } else {
+                clearBtn.style.display = 'none';
+            }
+            renderTableUI();
+        }
+
+        // 🎯 專門渲染列表 UI 的函數
+        function renderTableUI() {
             const tableBody = document.getElementById('tableBody');
+            if (!globalFullData || globalFullData.length === 0) return;
+
+            tableBody.innerHTML = "";
+
+            // 1. 如果有開啟「問連 / 問跳」，先插入一列虛擬「預演列」
+            if (currentPredictType) {
+                const latestRecord = globalFullData[0];
+                const latestNums = latestRecord.number.replace(/\s+/g, '').split(',');
+
+                const predictBoxesHtml = latestNums.map((n, posIndex) => {
+                    const val = parseInt(n, 10);
+                    const { headList } = getHeadTailForPosition(globalFullData, posIndex);
+                    const isHead = new Set(headList).has(val);
+
+                    let colorClass = 'green';
+                    if (currentPredictType === '連') {
+                        colorClass = isHead ? 'green' : 'red';
+                    } else if (currentPredictType === '跳') {
+                        colorClass = isHead ? 'red' : 'green';
+                    }
+
+                    return `<div class="num-box ${colorClass}" style="opacity: 0.85; border: 1px dashed #ffffff;">?</div>`;
+                }).join('');
+
+                const predictRowHtml = `
+                    <tr class="lottery-row predict-row">
+                        <td class="period-cell"><span class="predict-tag">預演</span></td>
+                        <td>
+                            <div class="numbers-cell">
+                                ${predictBoxesHtml}
+                            </div>
+                        </td>
+                    </tr>
+                `;
+                tableBody.innerHTML += predictRowHtml;
+            }
+
+            // 2. 渲染正常的歷史紀錄（顯示前 30 期）
+            const displayData = globalFullData.slice(0, 30);
+
+            displayData.forEach((item, index) => {
+                const pastRecords = globalFullData.slice(index + 1);
+                const nums = item.number.replace(/\s+/g, '').split(',');
+
+                const numBoxesHtml = nums.map((n, posIndex) => {
+                    const val = parseInt(n, 10);
+                    let colorClass = 'blue';
+
+                    if (pastRecords.length > 0) {
+                        const { headList, tailList } = getHeadTailForPosition(pastRecords, posIndex);
+                        const headSet = new Set(headList);
+                        const tailSet = new Set(tailList);
+
+                        if (headSet.has(val)) {
+                            colorClass = 'green';
+                        } else if (tailSet.has(val)) {
+                            colorClass = 'red';
+                        }
+                    }
+
+                    const displayNum = val < 10 ? `0${val}` : `${val}`;
+                    return `<div class="num-box ${colorClass}">${displayNum}</div>`;
+                }).join('');
+
+                const shortPeriod = item.period.length > 7 ? item.period.slice(-6) : item.period;
+
+                const row = `
+                    <tr class="lottery-row">
+                        <td class="period-cell" title="${item.period}">${shortPeriod}</td>
+                        <td>
+                            <div class="numbers-cell">
+                                ${numBoxesHtml}
+                            </div>
+                        </td>
+                    </tr>
+                `;
+                tableBody.innerHTML += row;
+            });
+        }
+
+        async function fetchData() {
             const apiUrl = `/api/get-lottery?lotCode=${currentLotCode}`;
 
             try {
@@ -785,47 +933,8 @@
                         }
                     }
 
-                    const displayData = globalFullData.slice(0, 30);
-                    tableBody.innerHTML = "";
-
-                    displayData.forEach((item, index) => {
-                        const pastRecords = globalFullData.slice(index + 1);
-                        const nums = item.number.replace(/\s+/g, '').split(',');
-
-                        const numBoxesHtml = nums.map((n, posIndex) => {
-                            const val = parseInt(n, 10);
-                            let colorClass = 'blue';
-
-                            if (pastRecords.length > 0) {
-                                const { headList, tailList } = getHeadTailForPosition(pastRecords, posIndex);
-                                const headSet = new Set(headList);
-                                const tailSet = new Set(tailList);
-
-                                if (headSet.has(val)) {
-                                    colorClass = 'green';
-                                } else if (tailSet.has(val)) {
-                                    colorClass = 'red';
-                                }
-                            }
-
-                            const displayNum = val < 10 ? `0${val}` : `${val}`;
-                            return `<div class="num-box ${colorClass}">${displayNum}</div>`;
-                        }).join('');
-
-                        const shortPeriod = item.period.length > 7 ? item.period.slice(-6) : item.period;
-
-                        const row = `
-                            <tr class="lottery-row">
-                                <td class="period-cell" title="${item.period}">${shortPeriod}</td>
-                                <td>
-                                    <div class="numbers-cell">
-                                        ${numBoxesHtml}
-                                    </div>
-                                </td>
-                            </tr>
-                        `;
-                        tableBody.innerHTML += row;
-                    });
+                    // 執行畫面渲染
+                    renderTableUI();
                 }
             } catch (error) {
                 console.error(error);
