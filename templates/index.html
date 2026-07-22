@@ -70,40 +70,30 @@
             line-height: 1.4;
         }
 
-        /* 🔮 問連 / 問跳 按鈕列 */
+        /* 🔵 統一改為藍色的「連」與「跳」按鈕 */
         .predict-btn-row {
             margin-top: 5px;
             margin-bottom: 2px;
             display: flex;
             justify-content: center;
             align-items: center;
-            gap: 6px;
+            gap: 12px;
         }
         .predict-btn {
-            border: none;
-            padding: 3px 10px;
-            font-size: 11px;
+            background: linear-gradient(180deg, #3182ce 0%, #2b6cb0 100%);
+            border: 1px solid #63b3ed;
+            padding: 4px 18px;
+            font-size: 12px;
             font-weight: bold;
-            border-radius: 4px;
+            border-radius: 5px;
             cursor: pointer;
             color: #ffffff;
-            transition: transform 0.1s, opacity 0.2s;
+            box-shadow: 0 2px 4px rgba(49, 130, 206, 0.3);
+            transition: transform 0.1s, background-color 0.2s;
         }
         .predict-btn:active {
             transform: scale(0.95);
-        }
-        .btn-predict-even {
-            background: linear-gradient(180deg, #38a169 0%, #2f855a 100%);
-            border: 1px solid #68d391;
-        }
-        .btn-predict-jump {
-            background: linear-gradient(180deg, #e53e3e 0%, #c53030 100%);
-            border: 1px solid #fc8181;
-        }
-        .btn-predict-clear {
-            background-color: #4a5568;
-            border: 1px solid #718096;
-            display: none;
+            background: #2c5282;
         }
 
         .countdown-box {
@@ -188,13 +178,24 @@
             border-radius: 4px;
         }
 
-        /* 🔮 預演列專屬虛線外框與樣式 */
+        /* 🔮 預演列：閃爍 5~6 下的動畫效果 */
         .lottery-row.predict-row {
             background-color: #112538;
-            border: 1px dashed #f6ad55;
+            border: 1px dashed #63b3ed;
+            animation: flashAnimation 0.4s ease-in-out infinite alternate;
         }
+        
+        @keyframes flashAnimation {
+            0% {
+                opacity: 0.3;
+            }
+            100% {
+                opacity: 1;
+            }
+        }
+
         .predict-tag {
-            color: #f6ad55;
+            color: #63b3ed;
             font-size: 10px;
             font-weight: 800;
         }
@@ -496,11 +497,10 @@
         <div class="info-bar">
             🟢 <b>頭五</b> | 🔴 <b>後五</b> | 點擊<b>「冠~十」</b>查順反
             
-            <!-- 🔮 問連 / 問跳 按鈕區域 -->
+            <!-- 🔵 藍色「連」與「跳」按鈕 -->
             <div class="predict-btn-row">
-                <button class="predict-btn btn-predict-even" onclick="setPredictMode('連')">🔮 問「連」</button>
-                <button class="predict-btn btn-predict-jump" onclick="setPredictMode('跳')">🔮 問「跳」</button>
-                <button id="btnClearPredict" class="predict-btn btn-predict-clear" onclick="setPredictMode(null)">✕ 清除</button>
+                <button class="predict-btn" onclick="startFlashPredict('連')">連</button>
+                <button class="predict-btn" onclick="startFlashPredict('跳')">跳</button>
             </div>
 
             <div class="countdown-box">
@@ -614,7 +614,9 @@
         let countdownTimer = null;
         let targetEndTimeMs = 0;
         let lastPeriodLoaded = "";
-        let currentPredictType = null; // 記錄當前預測狀態：'連' | '跳' | null
+        
+        let currentPredictType = null;
+        let predictTimer = null; // 控制預演自動消失的計時器
 
         const chineseRounds = ["第一關", "第二關", "第三關", "第四關", "第五關", "第六關", "第七關"];
 
@@ -814,43 +816,50 @@
             }, 1000);
         }
 
-        // 🔮 設定/切換預測模式
-        function setPredictMode(mode) {
+        // 🔮 觸發閃爍預演 (閃爍約 2.5 秒，5~6 次後自動消失)
+        function startFlashPredict(mode) {
             currentPredictType = mode;
-            const clearBtn = document.getElementById('btnClearPredict');
-            if (currentPredictType) {
-                clearBtn.style.display = 'inline-block';
-            } else {
-                clearBtn.style.display = 'none';
-            }
             renderTableUI();
+
+            if (predictTimer) clearTimeout(predictTimer);
+
+            predictTimer = setTimeout(() => {
+                currentPredictType = null; // 清除預測
+                renderTableUI();          // 恢復原狀
+            }, 2500); // 2.5秒後自動結束閃爍並清除
         }
 
-        // 🎯 專門渲染列表 UI 的函數
         function renderTableUI() {
             const tableBody = document.getElementById('tableBody');
             if (!globalFullData || globalFullData.length === 0) return;
 
             tableBody.innerHTML = "";
 
-            // 1. 如果有開啟「問連 / 問跳」，先插入一列虛擬「預演列」
+            // 1. 如果正在預演中，插入閃爍預演列
             if (currentPredictType) {
                 const latestRecord = globalFullData[0];
+                const pastForLatest = globalFullData.slice(1);
                 const latestNums = latestRecord.number.replace(/\s+/g, '').split(',');
 
                 const predictBoxesHtml = latestNums.map((n, posIndex) => {
                     const val = parseInt(n, 10);
-                    const { headList } = getHeadTailForPosition(globalFullData, posIndex);
-                    const isHead = new Set(headList).has(val);
+                    let lastColor = 'blue';
 
-                    let colorClass = 'green';
-                    if (currentPredictType === '連') {
-                        colorClass = isHead ? 'green' : 'red';
-                    } else if (currentPredictType === '跳') {
-                        colorClass = isHead ? 'red' : 'green';
+                    if (pastForLatest.length > 0) {
+                        const { headList } = getHeadTailForPosition(pastForLatest, posIndex);
+                        if (new Set(headList).has(val)) lastColor = 'green';
+                        else lastColor = 'red';
                     }
 
-                    return `<div class="num-box ${colorClass}" style="opacity: 0.85; border: 1px dashed #ffffff;">?</div>`;
+                    let predictColor = lastColor;
+                    if (currentPredictType === '連') {
+                        predictColor = lastColor;
+                    } else if (currentPredictType === '跳') {
+                        if (lastColor === 'green') predictColor = 'red';
+                        else if (lastColor === 'red') predictColor = 'green';
+                    }
+
+                    return `<div class="num-box ${predictColor}" style="border: 1px dashed #ffffff;">?</div>`;
                 }).join('');
 
                 const predictRowHtml = `
@@ -866,7 +875,7 @@
                 tableBody.innerHTML += predictRowHtml;
             }
 
-            // 2. 渲染正常的歷史紀錄（顯示前 30 期）
+            // 2. 渲染正常的歷史紀錄
             const displayData = globalFullData.slice(0, 30);
 
             displayData.forEach((item, index) => {
@@ -933,7 +942,6 @@
                         }
                     }
 
-                    // 執行畫面渲染
                     renderTableUI();
                 }
             } catch (error) {
