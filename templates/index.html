@@ -70,18 +70,19 @@
             line-height: 1.4;
         }
 
-        /* 🟢 新增：模式切換按鈕區塊 */
+        /* 🟢 模式切換按鈕區塊 (加入 flex-wrap 避免手機上太擠) */
         .mode-tabs {
             display: flex;
             gap: 5px;
             justify-content: center;
+            flex-wrap: wrap; 
             margin-bottom: 8px;
         }
         .mode-btn {
             background-color: #112538;
             color: #a0aec0;
             border: 1px solid #2b3e50;
-            padding: 4px 10px;
+            padding: 4px 8px;
             font-size: 11px;
             font-weight: bold;
             border-radius: 5px;
@@ -472,11 +473,13 @@
         </div>
 
         <div class="info-bar">
-            <!-- 🔄 新增：模式切換按鈕區塊 -->
+            <!-- 🔄 新增的 5 種模式切換按鈕區塊 -->
             <div class="mode-tabs">
-                <button id="modeBtn5" class="mode-btn active" onclick="switchMode(5)">頭五 / 後五</button>
-                <button id="modeBtn3" class="mode-btn" onclick="switchMode(3)">頭三 / 後七</button>
-                <button id="modeBtn6" class="mode-btn" onclick="switchMode(6)">頭六 / 後四</button>
+                <button id="modeBtn3" class="mode-btn" onclick="switchMode(3)">頭三/後七</button>
+                <button id="modeBtn4" class="mode-btn" onclick="switchMode(4)">頭四/後六</button>
+                <button id="modeBtn5" class="mode-btn active" onclick="switchMode(5)">頭五/後五</button>
+                <button id="modeBtn6" class="mode-btn" onclick="switchMode(6)">頭六/後四</button>
+                <button id="modeBtn7" class="mode-btn" onclick="switchMode(7)">頭七/後三</button>
             </div>
 
             🟢 <b id="headLabel">頭五</b> | 🔴 <b id="tailLabel">後五</b> | 點擊<b>「冠~十」</b>查順反
@@ -618,8 +621,8 @@
             document.getElementById(`modeBtn${splitValue}`).classList.add('active');
 
             // 更新文字標籤
-            const headMap = { 3: "三", 5: "五", 6: "六" };
-            const tailMap = { 3: "七", 5: "五", 6: "四" };
+            const headMap = { 3: "三", 4: "四", 5: "五", 6: "六", 7: "七" };
+            const tailMap = { 3: "七", 4: "六", 5: "五", 6: "四", 7: "三" };
             
             document.getElementById('headLabel').innerText = `頭${headMap[splitValue]}`;
             document.getElementById('tailLabel').innerText = `後${tailMap[splitValue]}`;
