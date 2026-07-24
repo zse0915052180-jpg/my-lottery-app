@@ -336,8 +336,8 @@
             if (currentCodeCount === 5) {
                 div = {1:5, 2:15, 3:37, 4:81, 5:175, 6:359, 7:747}[r]; mul = 2.065; profMul = 4.7;
             } else {
-                // 已更新為最新的 7 碼除數比例
-                div = {1:7, 2:28, 3:98, 4:343, 5:1218}[r]; mul = 3.5926; profMul = 2.7;
+                // 已更新為最新的 7 碼除數比例與 3.6 倍
+                div = {1:7, 2:33, 3:100, 4:346, 5:1222}[r]; mul = 3.6; profMul = 2.7;
             }
             const first = amt / div, profit = Math.round(first * profMul).toLocaleString();
             const resBody = document.getElementById('resultTableBody'); resBody.innerHTML = "";
