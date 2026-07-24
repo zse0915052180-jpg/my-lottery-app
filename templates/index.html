@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
-    <title>歷史頭尾數據動態對比看板 - 清爽極簡風</title>
+    <title>歷史頭尾數據動態對比看板 - 策略計算風</title>
     <style>
         * { box-sizing: border-box; margin: 0; padding: 0; }
         body {
@@ -139,7 +139,7 @@
         .num-box.red { background-color: #ef4444; }
         .num-box.blue { background-color: #3b82f6; }
 
-        /* 🟢 新增：策略選單橫向區域樣式 */
+        /* 策略選單橫向區域 */
         .strategy-area {
             margin-top: 10px;
             background-color: #f8fafc;
@@ -289,22 +289,42 @@
             </div>
         </div>
 
-        <!-- 🟢 新增：橫向策略區域與【倍投】格子 -->
+        <!-- 橫向策略區域：倍投與複利計算切換 -->
         <div class="strategy-area">
-            <button class="strategy-btn active" onclick="selectStrategy(this)">倍投</button>
+            <button id="stratBtnBet" class="strategy-btn active" onclick="switchStrategy('bet')">倍投</button>
+            <button id="stratBtnCompound" class="strategy-btn" onclick="switchStrategy('compound')">複利計算</button>
         </div>
 
         <div class="calculator-area">
-            <div class="calc-input-row">
+            <!-- 倍投輸入介面 -->
+            <div id="betCalcInputs" class="calc-input-row">
                 <div class="input-group"><span class="input-label">金額</span><input type="number" id="inputAmount" class="white-input"></div>
                 <div class="input-group"><span class="input-label">碼數</span><div id="inputCodeCountDisplay" class="white-input clickable-box" onclick="openCodeCountModal()">5</div></div>
                 <div class="input-group"><span class="input-label">關數</span><div id="inputRoundDisplay" class="white-input clickable-box" onclick="openRoundModal()"></div></div>
                 <button class="confirm-btn" onclick="onConfirmClick()">計算</button>
             </div>
+
+            <!-- 複利計算輸入介面 -->
+            <div id="compoundCalcInputs" class="calc-input-row" style="display: none;">
+                <div class="input-group"><span class="input-label">本金</span><input type="number" id="compoundPrincipal" class="white-input" value="10000"></div>
+                <div class="input-group"><span class="input-label">操作次數</span><input type="number" id="compoundTimes" class="white-input" value="20"></div>
+                <div class="input-group"><span class="input-label">獲利%</span><input type="number" id="compoundRate" class="white-input" value="5"></div>
+                <button class="confirm-btn" onclick="onCompoundConfirmClick()">計算</button>
+            </div>
+
+            <!-- 倍投結果表格 -->
             <div id="resultTableContainer" class="result-table-container">
                 <table class="calc-table">
                     <thead><tr><th style="width:28%;">關數</th><th style="width:36%;">金額</th><th style="width:36%;">獲利</th></tr></thead>
                     <tbody id="resultTableBody"></tbody>
+                </table>
+            </div>
+
+            <!-- 複利結果表格 -->
+            <div id="compoundTableContainer" class="result-table-container">
+                <table class="calc-table">
+                    <thead><tr><th style="width:12%;">#</th><th style="width:32%;">收益(元)</th><th style="width:32%;">總額(元)</th><th style="width:24%;">收益率</th></tr></thead>
+                    <tbody id="compoundTableBody"></tbody>
                 </table>
             </div>
         </div>
@@ -337,11 +357,58 @@
     </div>
     <script>
         let globalFullData = [], currentLotCode = '10035', countdownTimer = null, targetEndTimeMs = 0, lastPeriodLoaded = "", currentSplit = 5, currentCodeCount = 5;
+        let currentStrategy = 'bet';
         const chineseRounds = ["第一關", "第二關", "第三關", "第四關", "第五關", "第六關", "第七關", "第八關", "第九關"];
         
-        function selectStrategy(btn) {
+        function switchStrategy(type) {
+            currentStrategy = type;
             document.querySelectorAll('.strategy-btn').forEach(b => b.classList.remove('active'));
-            btn.classList.add('active');
+            if (type === 'bet') {
+                document.getElementById('stratBtnBet').classList.add('active');
+                document.getElementById('betCalcInputs').style.display = 'flex';
+                document.getElementById('compoundCalcInputs').style.display = 'none';
+                document.getElementById('compoundTableContainer').style.display = 'none';
+                if (document.getElementById('resultTableBody').children.length > 0) {
+                    document.getElementById('resultTableContainer').style.display = 'block';
+                }
+            } else {
+                document.getElementById('stratBtnCompound').classList.add('active');
+                document.getElementById('betCalcInputs').style.display = 'none';
+                document.getElementById('compoundCalcInputs').style.display = 'flex';
+                document.getElementById('resultTableContainer').style.display = 'none';
+                if (document.getElementById('compoundTableBody').children.length > 0) {
+                    document.getElementById('compoundTableContainer').style.display = 'block';
+                }
+            }
+        }
+
+        function onCompoundConfirmClick() {
+            const principalInput = parseFloat(document.getElementById('compoundPrincipal').value);
+            const timesInput = parseInt(document.getElementById('compoundTimes').value, 10);
+            const rateInput = parseFloat(document.getElementById('compoundRate').value);
+
+            if (isNaN(principalInput) || principalInput <= 0) { alert("請填寫有效的初期本金！"); return; }
+            if (isNaN(timesInput) || timesInput <= 0) { alert("請填寫有效的操作次數！"); return; }
+            if (isNaN(rateInput)) { alert("請填寫有效的獲利比例！"); return; }
+
+            let currentTotal = principalInput;
+            const r = rateInput / 100;
+            const resBody = document.getElementById('compoundTableBody');
+            resBody.innerHTML = "";
+
+            for (let i = 1; i <= timesInput; i++) {
+                let profit = currentTotal * r;
+                currentTotal += profit;
+                let totalYield = ((currentTotal - principalInput) / principalInput) * 100;
+
+                resBody.innerHTML += `<tr>
+                    <td class="round-label">${i}</td>
+                    <td class="text-green">+${profit.toLocaleString(undefined, {minimumFractionDigits: 2, maximumFractionDigits: 2})}</td>
+                    <td>${currentTotal.toLocaleString(undefined, {minimumFractionDigits: 2, maximumFractionDigits: 2})}</td>
+                    <td>${totalYield.toFixed(2)}%</td>
+                </tr>`;
+            }
+            document.getElementById('compoundTableContainer').style.display = 'block';
         }
 
         function switchMode(val) {
