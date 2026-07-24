@@ -307,8 +307,8 @@
             <!-- 複利計算輸入介面 -->
             <div id="compoundCalcInputs" class="calc-input-row" style="display: none;">
                 <div class="input-group"><span class="input-label">本金</span><input type="number" id="compoundPrincipal" class="white-input" value="10000"></div>
-                <div class="input-group"><span class="input-label">操作次數</span><input type="number" id="compoundTimes" class="white-input" value="20"></div>
-                <div class="input-group"><span class="input-label">獲利%</span><input type="number" id="compoundRate" class="white-input" value="5"></div>
+                <div class="input-group"><span class="input-label">操作次數</span><input type="number" id="compoundTimes" class="white-input" value="10"></div>
+                <div class="input-group"><span class="input-label">獲利%</span><input type="number" id="compoundRate" class="white-input" value="3.2"></div>
                 <button class="confirm-btn" onclick="onCompoundConfirmClick()">計算</button>
             </div>
 
@@ -320,10 +320,10 @@
                 </table>
             </div>
 
-            <!-- 複利結果表格 -->
+            <!-- 複利結果表格 (欄位已更新) -->
             <div id="compoundTableContainer" class="result-table-container">
                 <table class="calc-table">
-                    <thead><tr><th style="width:12%;">#</th><th style="width:32%;">收益(元)</th><th style="width:32%;">總額(元)</th><th style="width:24%;">收益率</th></tr></thead>
+                    <thead><tr><th style="width:12%;">#</th><th style="width:32%;">單次獲利(元)</th><th style="width:32%;">總額(元)</th><th style="width:24%;">總獲利率</th></tr></thead>
                     <tbody id="compoundTableBody"></tbody>
                 </table>
             </div>
