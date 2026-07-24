@@ -31,13 +31,13 @@
             padding-bottom: 8px;
         }
         h2 { color: #0f172a; font-size: 15px; font-weight: 700; }
-        .lottery-tabs { display: flex; gap: 6px; }
+        .lottery-tabs { display: flex; gap: 4px; flex-wrap: wrap; justify-content: flex-end; }
         .tab-btn {
             background-color: #f8fafc;
             color: #64748b;
             border: 1px solid #cbd5e1;
-            padding: 5px 10px;
-            font-size: 11px;
+            padding: 4px 8px;
+            font-size: 10.5px;
             font-weight: 600;
             border-radius: 6px;
             cursor: pointer;
@@ -121,7 +121,7 @@
         .table-scroll-container::-webkit-scrollbar { width: 3px; }
         .table-scroll-container::-webkit-scrollbar-thumb { background: #cbd5e1; border-radius: 3px; }
         .lottery-row { background-color: #ffffff; }
-        .period-cell { padding: 2px; font-size: 10px; font-weight: 600; color: #475569; text-align: center; width: 48px; }
+        .period-cell { padding: 2px; font-size: 10px; font-weight: 600; color: #475569; text-align: center; width: 48px; word-break: break-all; }
         .numbers-cell { padding: 2px 2px 2px 0; display: flex; gap: 2px; justify-content: space-between; }
         .num-box {
             flex: 1;
@@ -245,6 +245,7 @@
             <div class="lottery-tabs">
                 <button id="btn10035" class="tab-btn active" onclick="switchLottery('10035', '極速飛艇')">極速飛艇</button>
                 <button id="btn10057" class="tab-btn" onclick="switchLottery('10057', '幸運飛艇')">幸運飛艇</button>
+                <button id="btnpk10" class="tab-btn" onclick="switchLottery('pk10', '競速PK10')">競速PK10</button>
             </div>
         </div>
         <div class="info-bar">
@@ -298,7 +299,7 @@
         <div class="calculator-area">
             <!-- 倍投輸入介面 -->
             <div id="betCalcInputs" class="calc-input-row">
-                <div class="input-group"><span class="input-label">金額</span><input type="number" id="inputAmount" class="white-input"></div>
+                <div class="input-group"><span class="input-label">本金</span><input type="number" id="inputAmount" class="white-input"></div>
                 <div class="input-group"><span class="input-label">碼數</span><div id="inputCodeCountDisplay" class="white-input clickable-box" onclick="openCodeCountModal()">5</div></div>
                 <div class="input-group"><span class="input-label">關數</span><div id="inputRoundDisplay" class="white-input clickable-box" onclick="openRoundModal()"></div></div>
                 <button class="confirm-btn" onclick="onConfirmClick()">計算</button>
@@ -320,7 +321,7 @@
                 </table>
             </div>
 
-            <!-- 複利結果表格 (欄位已更新) -->
+            <!-- 複利結果表格 -->
             <div id="compoundTableContainer" class="result-table-container">
                 <table class="calc-table">
                     <thead><tr><th style="width:12%;">#</th><th style="width:32%;">單次獲利(元)</th><th style="width:32%;">總額(元)</th><th style="width:24%;">總獲利率</th></tr></thead>
@@ -387,7 +388,7 @@
             const timesInput = parseInt(document.getElementById('compoundTimes').value, 10);
             const rateInput = parseFloat(document.getElementById('compoundRate').value);
 
-            if (isNaN(principalInput) || principalInput <= 0) { alert("請填寫有效的初期本金！"); return; }
+            if (isNaN(principalInput) || principalInput <= 0) { alert("請填寫有效的本金！"); return; }
             if (isNaN(timesInput) || timesInput <= 0) { alert("請填寫有效的操作次數！"); return; }
             if (isNaN(rateInput)) { alert("請填寫有效的獲利比例！"); return; }
 
@@ -457,6 +458,7 @@
             for (let i = minR; i <= maxR; i++) {
                 grid.innerHTML += `<div class="round-option-item" onclick="selectRoundValue(${i})">${i}</div>`;
             }
+            document.getElementById('modalOverlay').style.display = 'flex'; // safeguard
             document.getElementById('roundModalOverlay').style.display = 'flex';
         }
         function closeRoundModal() { document.getElementById('roundModalOverlay').style.display = 'none'; }
@@ -470,7 +472,7 @@
         }
         function onConfirmClick() {
             const amt = parseFloat(document.getElementById('inputAmount').value), rnd = document.getElementById('inputRoundDisplay').innerText;
-            if (!amt || amt <= 0) { alert("請填寫有效金額！"); return; }
+            if (!amt || amt <= 0) { alert("請填寫有效本金！"); return; }
             if (!rnd) { alert("請選擇關數！"); return; }
             const r = parseInt(rnd, 10);
             let div = 1, mul = 1, profMul = 1;
@@ -512,7 +514,14 @@
             document.querySelectorAll('.tab-btn').forEach(b => b.classList.remove('active'));
             document.getElementById(`btn${code}`).classList.add('active');
             if (countdownTimer) clearInterval(countdownTimer);
-            targetEndTimeMs = 0; lastPeriodLoaded = ""; document.getElementById('timerText').innerText = '同步中...';
+            targetEndTimeMs = 0; lastPeriodLoaded = ""; 
+            
+            if (code === 'pk10') {
+                document.getElementById('timerText').className = "timer-highlight";
+                document.getElementById('timerText').innerText = `⚡ 手動開獎模式`;
+            } else {
+                document.getElementById('timerText').innerText = '同步中...';
+            }
             fetchData();
         }
         function getHeadTailForPosition(past, pos) {
@@ -537,6 +546,7 @@
         }
         function closeModalDirect() { document.getElementById('modalOverlay').style.display = 'none'; }
         function startCountdown() {
+            if (currentLotCode === 'pk10') return; // PK10 不需要定時倒數
             if (countdownTimer) clearInterval(countdownTimer);
             countdownTimer = setInterval(() => {
                 const rem = Math.floor((targetEndTimeMs - Date.now()) / 1000), el = document.getElementById('timerText');
@@ -567,21 +577,35 @@
                     }
                     return `<div class="num-box ${cls}">${val < 10 ? '0'+val : val}</div>`;
                 }).join('');
-                tb.innerHTML += `<tr class="lottery-row"><td class="period-cell">${item.period.length > 7 ? item.period.slice(-6) : item.period}</td><td><div class="numbers-cell">${boxes}</div></td></tr>`;
+                tb.innerHTML += `<tr class="lottery-row"><td class="period-cell">${item.period}</td><td><div class="numbers-cell">${boxes}</div></td></tr>`;
             });
         }
         async function fetchData() {
             try {
-                const res = await fetch(`/api/get-lottery?lotCode=${currentLotCode}`), data = await res.json();
-                if (data && data.result && data.result.data && data.result.data.length > 0) {
-                    globalFullData = data.result.data;
-                    const top = globalFullData[0].period, next = (BigInt(top) + 1n).toString();
-                    document.getElementById('nextPeriodText').innerText = `下期: ${next.length > 7 ? next.slice(-6) : next}`;
-                    if (top !== lastPeriodLoaded || targetEndTimeMs === 0) {
-                        lastPeriodLoaded = top;
-                        if (data.remSeconds != null) { targetEndTimeMs = Date.now() + (parseInt(data.remSeconds, 10) * 1000); startCountdown(); }
+                if (currentLotCode === 'pk10') {
+                    // 🟢 抓取新 API 數據並轉為系統內部統一格式
+                    const res = await fetch('https://你的新網站API網址/ticketSourceResultList.json'); // ⚠️ 等等會幫你處理後端路由
+                    const json = await res.json();
+                    if (json && json.data && json.data.length > 0) {
+                        globalFullData = json.data.map(item => ({
+                            period: item.issue,
+                            number: item.code
+                        }));
+                        document.getElementById('nextPeriodText').innerText = `最新期: ${globalFullData[0].period}`;
+                        renderTableUI();
                     }
-                    renderTableUI();
+                } else {
+                    const res = await fetch(`/api/get-lottery?lotCode=${currentLotCode}`), data = await res.json();
+                    if (data && data.result && data.result.data && data.result.data.length > 0) {
+                        globalFullData = data.result.data;
+                        const top = globalFullData[0].period, next = (BigInt(top) + 1n).toString();
+                        document.getElementById('nextPeriodText').innerText = `下期: ${next.length > 7 ? next.slice(-6) : next}`;
+                        if (top !== lastPeriodLoaded || targetEndTimeMs === 0) {
+                            lastPeriodLoaded = top;
+                            if (data.remSeconds != null) { targetEndTimeMs = Date.now() + (parseInt(data.remSeconds, 10) * 1000); startCountdown(); }
+                        }
+                        renderTableUI();
+                    }
                 }
             } catch (e) { console.error(e); }
         }
