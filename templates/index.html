@@ -278,7 +278,8 @@
         <div class="modal-card" onclick="event.stopPropagation()">
             <span class="modal-close" onclick="closeCodeCountModal()">&times;</span>
             <div class="modal-title">選擇碼數</div>
-            <div class="round-options-grid" style="grid-template-columns: repeat(2, 1fr);">
+            <div class="round-options-grid" style="grid-template-columns: repeat(3, 1fr);">
+                <div class="round-option-item" onclick="selectCodeCountValue(3)">3 碼</div>
                 <div class="round-option-item" onclick="selectCodeCountValue(5)">5 碼</div>
                 <div class="round-option-item" onclick="selectCodeCountValue(7)">7 碼</div>
             </div>
@@ -293,7 +294,8 @@
     </div>
     <script>
         let globalFullData = [], currentLotCode = '10035', countdownTimer = null, targetEndTimeMs = 0, lastPeriodLoaded = "", currentSplit = 5, currentCodeCount = 5;
-        const chineseRounds = ["第一關", "第二關", "第三關", "第四關", "第五關", "第六關", "第七關"];
+        const chineseRounds = ["第一關", "第二關", "第三關", "第四關", "第五關", "第六關", "第七關", "第八關", "第九關"];
+        
         function switchMode(val) {
             if (currentSplit === val) return;
             currentSplit = val;
@@ -309,13 +311,35 @@
         function selectCodeCountValue(val) {
             currentCodeCount = val;
             document.getElementById('inputCodeCountDisplay').innerText = val;
-            if (val === 7 && parseInt(document.getElementById('inputRoundDisplay').innerText, 10) > 5) document.getElementById('inputRoundDisplay').innerText = '';
+            
+            // 切換碼數時檢查當前關數是否超出限制，超出則清空
+            const currentRound = parseInt(document.getElementById('inputRoundDisplay').innerText, 10);
+            if (val === 3 && (isNaN(currentRound) || currentRound < 4 || currentRound > 9)) {
+                document.getElementById('inputRoundDisplay').innerText = '';
+            } else if (val === 5 && currentRound > 7) {
+                document.getElementById('inputRoundDisplay').innerText = '';
+            } else if (val === 7 && currentRound > 5) {
+                document.getElementById('inputRoundDisplay').innerText = '';
+            }
             closeCodeCountModal();
         }
         function openRoundModal() {
             const grid = document.getElementById('roundOptionsGrid'); grid.innerHTML = '';
-            const maxR = currentCodeCount === 7 ? 5 : 7;
-            for (let i = 1; i <= maxR; i++) grid.innerHTML += `<div class="round-option-item" onclick="selectRoundValue(${i})">${i}</div>`;
+            let minR = 1, maxR = 7;
+            if (currentCodeCount === 3) {
+                minR = 4; maxR = 9;
+                grid.style.gridTemplateColumns = 'repeat(3, 1fr)';
+            } else if (currentCodeCount === 7) {
+                minR = 1; maxR = 5;
+                grid.style.gridTemplateColumns = 'repeat(4, 1fr)';
+            } else {
+                minR = 1; maxR = 7;
+                grid.style.gridTemplateColumns = 'repeat(4, 1fr)';
+            }
+            
+            for (let i = minR; i <= maxR; i++) {
+                grid.innerHTML += `<div class="round-option-item" onclick="selectRoundValue(${i})">${i}</div>`;
+            }
             document.getElementById('roundModalOverlay').style.display = 'flex';
         }
         function closeRoundModal() { document.getElementById('roundModalOverlay').style.display = 'none'; }
@@ -333,12 +357,21 @@
             if (!rnd) { alert("請選擇關數！"); return; }
             const r = parseInt(rnd, 10);
             let div = 1, mul = 1, profMul = 1;
-            if (currentCodeCount === 5) {
-                div = {1:5, 2:15, 3:37, 4:81, 5:175, 6:359, 7:747}[r]; mul = 2.065; profMul = 4.7;
+            
+            if (currentCodeCount === 3) {
+                div = {4:23, 5:36, 6:55, 7:83, 8:123, 9:181}[r];
+                mul = 1.45;
+                profMul = 6.7;
+            } else if (currentCodeCount === 5) {
+                div = {1:5, 2:15, 3:37, 4:81, 5:175, 6:359, 7:747}[r];
+                mul = 2.065;
+                profMul = 4.7;
             } else {
-                // 已更新為最新的 7 碼除數比例與 3.6 倍
-                div = {1:7, 2:33, 3:100, 4:346, 5:1222}[r]; mul = 3.6; profMul = 2.7;
+                div = {1:7, 2:33, 3:100, 4:346, 5:1222}[r];
+                mul = 3.6;
+                profMul = 2.7;
             }
+            
             const first = amt / div, profit = Math.round(first * profMul).toLocaleString();
             const resBody = document.getElementById('resultTableBody'); resBody.innerHTML = "";
             let cur = first;
