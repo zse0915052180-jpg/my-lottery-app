@@ -167,7 +167,7 @@
         .clickable-box { cursor: pointer; user-select: none; display: flex; align-items: center; justify-content: center; }
         .confirm-btn {
             height: 32px;
-            padding: 0 8px;
+            padding: 0 10px;
             background-color: #10b981;
             border: 1px solid #059669;
             color: #ffffff;
@@ -176,6 +176,13 @@
             border-radius: 5px;
             cursor: pointer;
             white-space: nowrap;
+            box-shadow: 0 2px 4px rgba(16, 185, 129, 0.3);
+            transition: transform 0.1s ease, background-color 0.1s ease, box-shadow 0.1s ease;
+        }
+        .confirm-btn:active {
+            transform: scale(0.93);
+            background-color: #059669;
+            box-shadow: inset 0 2px 4px rgba(0, 0, 0, 0.2);
         }
         .result-table-container { display: none; margin-top: 4px; border-radius: 6px; overflow: hidden; border: 1px solid #cbd5e1; }
         .calc-table { width: 100%; border-collapse: collapse; text-align: center; font-size: 12px; }
@@ -302,7 +309,6 @@
             document.querySelectorAll('.mode-btn').forEach(b => b.classList.remove('active'));
             document.getElementById(`modeBtn${val}`).classList.add('active');
             
-            // 對應顯示名稱：順X 與 反(10-X)
             const numMap = {3:"三", 4:"四", 5:"五", 6:"六", 7:"七", 8:"八"};
             const tailNumMap = {3:"七", 4:"六", 5:"五", 6:"四", 7:"三", 8:"二"};
             
@@ -363,7 +369,7 @@
             
             if (currentCodeCount === 3) {
                 div = {4:23, 5:36, 6:55, 7:83, 8:123, 9:181}[r];
-                mul = 1.45;
+                mul = 1.445;
                 profMul = 6.7;
             } else if (currentCodeCount === 5) {
                 div = {1:5, 2:15, 3:37, 4:81, 5:175, 6:359, 7:747}[r];
@@ -375,12 +381,20 @@
                 profMul = 2.7;
             }
             
-            const first = amt / div, profit = Math.round(first * profMul).toLocaleString();
+            // 🟢 無條件捨去小數點，只取整數
+            const first = Math.floor(amt / div);
+            const profit = Math.floor(first * profMul).toLocaleString();
+            
             const resBody = document.getElementById('resultTableBody'); resBody.innerHTML = "";
             let cur = first;
             for (let i = 0; i < r; i++) {
-                if (i > 0) cur *= mul;
-                const raw = Math.round(cur), fmt = raw.toLocaleString();
+                if (i > 0) {
+                    // 🟢 每一關都用前一關已經無條件捨去的整數來乘以倍率，並再次無條件捨去
+                    cur = Math.floor(cur * mul);
+                }
+                const raw = cur;
+                const fmt = raw.toLocaleString();
+                
                 resBody.innerHTML += i === 0 ? `<tr><td class="round-label">${chineseRounds[i]}</td><td class="copyable-amount" onclick="copyAmount('${fmt}',${raw})">${fmt}</td><td class="profit-val" rowspan="${r}">${profit}</td></tr>` : `<tr><td class="round-label">${chineseRounds[i]}</td><td class="copyable-amount" onclick="copyAmount('${fmt}',${raw})">${fmt}</td></tr>`;
             }
             document.getElementById('resultTableContainer').style.display = 'block';
