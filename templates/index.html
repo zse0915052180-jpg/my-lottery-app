@@ -70,7 +70,7 @@
             background-color: #ffffff;
             color: #475569;
             border: 1px solid #cbd5e1;
-            padding: 3px 7px;
+            padding: 3px 8px;
             font-size: 10.5px;
             font-weight: 600;
             border-radius: 4px;
@@ -212,14 +212,14 @@
         </div>
         <div class="info-bar">
             <div class="mode-tabs">
-                <button id="modeBtn3" class="mode-btn" onclick="switchMode(3)">頭三/後七</button>
-                <button id="modeBtn4" class="mode-btn" onclick="switchMode(4)">頭四/後六</button>
-                <button id="modeBtn5" class="mode-btn active" onclick="switchMode(5)">頭五/後五</button>
-                <button id="modeBtn6" class="mode-btn" onclick="switchMode(6)">頭六/後四</button>
-                <button id="modeBtn7" class="mode-btn" onclick="switchMode(7)">頭七/後三</button>
-                <button id="modeBtn8" class="mode-btn" onclick="switchMode(8)">頭八/後二</button>
+                <button id="modeBtn3" class="mode-btn" onclick="switchMode(3)">順三</button>
+                <button id="modeBtn4" class="mode-btn" onclick="switchMode(4)">順四</button>
+                <button id="modeBtn5" class="mode-btn active" onclick="switchMode(5)">順五</button>
+                <button id="modeBtn6" class="mode-btn" onclick="switchMode(6)">順六</button>
+                <button id="modeBtn7" class="mode-btn" onclick="switchMode(7)">順七</button>
+                <button id="modeBtn8" class="mode-btn" onclick="switchMode(8)">順八</button>
             </div>
-            🟢 <b id="headLabel">頭五</b> | 🔴 <b id="tailLabel">後五</b> | 點擊<b>「冠~十」</b>查順反
+            🟢 <b id="headLabel">順五</b> | 🔴 <b id="tailLabel">反五</b> | 點擊<b>「冠~十」</b>查順反
             <div class="countdown-box">
                 <span id="nextPeriodText">下期: --</span>
                 <span id="timerText" class="timer-highlight">同步中...</span>
@@ -301,9 +301,13 @@
             currentSplit = val;
             document.querySelectorAll('.mode-btn').forEach(b => b.classList.remove('active'));
             document.getElementById(`modeBtn${val}`).classList.add('active');
-            const h = {3:"三",4:"四",5:"五",6:"六",7:"七",8:"八"}, t = {3:"七",4:"六",5:"五",6:"四",7:"三",8:"二"};
-            document.getElementById('headLabel').innerText = `頭${h[val]}`;
-            document.getElementById('tailLabel').innerText = `後${t[val]}`;
+            
+            // 對應顯示名稱：順X 與 反(10-X)
+            const numMap = {3:"三", 4:"四", 5:"五", 6:"六", 7:"七", 8:"八"};
+            const tailNumMap = {3:"七", 4:"六", 5:"五", 6:"四", 7:"三", 8:"二"};
+            
+            document.getElementById('headLabel').innerText = `順${numMap[val]}`;
+            document.getElementById('tailLabel').innerText = `反${tailNumMap[val]}`;
             renderTableUI();
         }
         function openCodeCountModal() { document.getElementById('codeCountModalOverlay').style.display = 'flex'; }
@@ -312,7 +316,6 @@
             currentCodeCount = val;
             document.getElementById('inputCodeCountDisplay').innerText = val;
             
-            // 切換碼數時檢查當前關數是否超出限制，超出則清空
             const currentRound = parseInt(document.getElementById('inputRoundDisplay').innerText, 10);
             if (val === 3 && (isNaN(currentRound) || currentRound < 4 || currentRound > 9)) {
                 document.getElementById('inputRoundDisplay').innerText = '';
