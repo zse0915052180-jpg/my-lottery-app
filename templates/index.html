@@ -3,471 +3,211 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
-    <title>歷史頭尾數據動態對比看板</title>
+    <title>歷史頭尾數據動態對比看板 - 科技數據風</title>
     <style>
-        * {
-            box-sizing: border-box;
-            margin: 0;
-            padding: 0;
-        }
+        * { box-sizing: border-box; margin: 0; padding: 0; }
         body {
-            font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Arial, sans-serif;
-            background-color: #0b141e;
-            color: #ffffff;
-            padding: 6px 4px;
+            font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, "Helvetica Neue", Arial, sans-serif;
+            background-color: #070d14;
+            color: #e2e8f0;
+            padding: 8px 4px;
         }
         .container {
             width: 100%;
             max-width: 480px;
             margin: 0 auto;
-            background: #121e2b;
-            padding: 8px 6px;
-            border-radius: 10px;
-            box-shadow: 0 4px 15px rgba(0,0,0,0.5);
+            background: #0f172a;
+            padding: 12px 10px;
+            border-radius: 12px;
+            border: 1px solid #1e293b;
+            box-shadow: 0 10px 25px -5px rgba(0, 0, 0, 0.6);
         }
-        
         .header-area {
             display: flex;
             justify-content: space-between;
             align-items: center;
-            margin-bottom: 6px;
-            padding: 0 2px;
+            margin-bottom: 10px;
+            border-bottom: 1px solid #1e293b;
+            padding-bottom: 8px;
         }
-        h2 { 
-            color: #4da6ff; 
-            font-size: 16px;
-        }
-        .lottery-tabs {
-            display: flex;
-            gap: 5px;
-        }
+        h2 { color: #38bdf8; font-size: 15px; font-weight: 700; letter-spacing: 0.5px; }
+        .lottery-tabs { display: flex; gap: 6px; }
         .tab-btn {
-            background-color: #1a2838;
-            color: #a0aec0;
-            border: 1px solid #2b3e50;
-            padding: 4px 8px;
+            background-color: #1e293b;
+            color: #94a3b8;
+            border: 1px solid #334155;
+            padding: 5px 10px;
             font-size: 11px;
-            font-weight: bold;
-            border-radius: 5px;
+            font-weight: 600;
+            border-radius: 6px;
             cursor: pointer;
             transition: all 0.2s;
         }
         .tab-btn.active {
-            background-color: #3182ce;
+            background-color: #0284c7;
             color: #ffffff;
-            border-color: #63b3ed;
-            box-shadow: 0 0 6px rgba(49, 130, 206, 0.5);
+            border-color: #38bdf8;
         }
-
         .info-bar {
             text-align: center;
             font-size: 11px;
-            color: #a0aec0;
-            margin-bottom: 6px;
-            background: #1a2838;
-            padding: 5px;
-            border-radius: 6px;
-            line-height: 1.4;
+            color: #94a3b8;
+            margin-bottom: 10px;
+            background: #111827;
+            padding: 8px;
+            border-radius: 8px;
+            border: 1px solid #1f2937;
         }
-
         .mode-tabs {
             display: flex;
-            gap: 5px;
+            gap: 4px;
             justify-content: center;
             flex-wrap: wrap; 
-            margin-bottom: 8px;
+            margin-bottom: 6px;
         }
         .mode-btn {
-            background-color: #112538;
-            color: #a0aec0;
-            border: 1px solid #2b3e50;
-            padding: 4px 8px;
-            font-size: 11px;
-            font-weight: bold;
-            border-radius: 5px;
+            background-color: #1f2937;
+            color: #9ca3af;
+            border: 1px solid #374151;
+            padding: 3px 7px;
+            font-size: 10.5px;
+            font-weight: 500;
+            border-radius: 4px;
             cursor: pointer;
-            transition: all 0.2s;
         }
         .mode-btn.active {
-            background-color: #d69e2e;
+            background-color: #d97706;
             color: #ffffff;
-            border-color: #f6e05e;
-            box-shadow: 0 0 6px rgba(214, 158, 46, 0.5);
+            border-color: #f59e0b;
         }
-
         .countdown-box {
             display: flex;
             justify-content: space-around;
             align-items: center;
-            background: #0d1926;
-            padding: 3px 6px;
-            border-radius: 4px;
+            background: #030712;
+            padding: 5px 8px;
+            border-radius: 6px;
             margin-top: 6px;
-            font-size: 12px;
-            font-weight: bold;
-            color: #e2e8f0;
-            border: 1px solid #2b3e50;
+            font-size: 11.5px;
+            font-weight: 600;
+            color: #f3f4f6;
+            border: 1px solid #1f2937;
         }
-        .timer-highlight {
-            color: #f6ad55;
-            font-size: 13px;
-            font-family: monospace;
-        }
-        .timer-highlight.red {
-            color: #fc8181;
-        }
-
-        .table-wrapper {
-            width: 100%;
-        }
-
-        .lottery-table {
-            width: 100%;
-            border-collapse: separate;
-            border-spacing: 0 3px;
-        }
-
-        .period-header {
-            font-size: 11px;
-            color: #718096;
-            font-weight: bold;
-            text-align: center;
-            width: 50px;
-            padding-bottom: 2px;
-        }
-        .rank-header-container {
-            display: flex;
-            gap: 2px;
-            padding-right: 2px;
-        }
-
+        .timer-highlight { color: #fbbf24; font-family: monospace; font-size: 12px; }
+        .timer-highlight.red { color: #f87171; }
+        .table-wrapper { width: 100%; }
+        .lottery-table { width: 100%; border-collapse: separate; border-spacing: 0 2px; }
+        .period-header { font-size: 10.5px; color: #64748b; font-weight: 600; text-align: center; width: 48px; }
+        .rank-header-container { display: flex; gap: 2px; }
         .rank-header-item {
             flex: 1;
             text-align: center;
-            font-size: 14px;
-            font-weight: bold;
-            color: #63b3ed;
-            padding: 5px 0;
+            font-size: 12px;
+            font-weight: 600;
+            color: #38bdf8;
+            padding: 4px 0;
             cursor: pointer;
             border-radius: 4px;
-            transition: background-color 0.2s;
-            background-color: rgba(99, 179, 237, 0.15);
+            background-color: rgba(56, 189, 248, 0.08);
+            border: 1px solid rgba(56, 189, 248, 0.15);
         }
-        .rank-header-item:active {
-            background-color: rgba(99, 179, 237, 0.4);
-        }
-
+        .rank-header-item:active { background-color: rgba(56, 189, 248, 0.25); }
         .table-scroll-container {
-            max-height: 304px;
+            max-height: 295px;
             overflow-y: auto;
             border-radius: 4px;
-            padding-right: 2px;
         }
-        .table-scroll-container::-webkit-scrollbar {
-            width: 3px;
-        }
-        .table-scroll-container::-webkit-scrollbar-thumb {
-            background: #2b3e50;
-            border-radius: 3px;
-        }
-
-        .lottery-row {
-            background-color: #1a2838;
-            border-radius: 4px;
-        }
-        
-        .period-cell {
-            padding: 2px;
-            font-size: 10px;
-            font-weight: bold;
-            color: #cbd5e0;
-            text-align: center;
-            width: 50px;
-            white-space: nowrap;
-        }
-        
-        .numbers-cell {
-            padding: 3px 2px 3px 0;
-            display: flex;
-            gap: 2px;
-            justify-content: space-between;
-        }
-
+        .table-scroll-container::-webkit-scrollbar { width: 3px; }
+        .table-scroll-container::-webkit-scrollbar-thumb { background: #334155; border-radius: 3px; }
+        .lottery-row { background-color: #111827; }
+        .period-cell { padding: 2px; font-size: 10px; font-weight: 600; color: #94a3b8; text-align: center; width: 48px; }
+        .numbers-cell { padding: 2px 2px 2px 0; display: flex; gap: 2px; justify-content: space-between; }
         .num-box {
             flex: 1;
-            height: 28px;
+            height: 26px;
             color: #ffffff;
-            font-size: 13px;
-            font-weight: 800;
+            font-size: 12px;
+            font-weight: 700;
             display: flex;
             align-items: center;
             justify-content: center;
             border-radius: 4px;
-            box-shadow: inset 0 1px 1px rgba(255,255,255,0.3), 0 1px 2px rgba(0,0,0,0.3);
         }
+        .num-box.green { background-color: #059669; border: 1px solid #10b981; }
+        .num-box.red { background-color: #dc2626; border: 1px solid #ef4444; }
+        .num-box.blue { background-color: #2563eb; border: 1px solid #3b82f6; }
 
-        .num-box.green {
-            background: linear-gradient(180deg, #38a169 0%, #2f855a 100%);
-            border: 1px solid #68d391;
-        }
-
-        .num-box.red {
-            background: linear-gradient(180deg, #e53e3e 0%, #c53030 100%);
-            border: 1px solid #fc8181;
-        }
-
-        .num-box.blue {
-            background: linear-gradient(180deg, #3182ce 0%, #2b6cb0 100%);
-            border: 1px solid #4299e1;
-        }
-
-        /* ---------------------------------------------------- */
-        /* 🧮 下方：金額、碼數與關數區域 */
-        /* ---------------------------------------------------- */
         .calculator-area {
-            margin-top: 8px;
-            background-color: #0d1926;
+            margin-top: 10px;
+            background-color: #0b132b;
             border-radius: 8px;
-            padding: 8px 6px;
+            padding: 8px;
+            border: 1px solid #1e293b;
             display: flex;
             flex-direction: column;
-            gap: 8px;
-        }
-
-        .calc-input-row {
-            display: flex;
-            align-items: center;
-            justify-content: space-between;
-            gap: 5px;
-        }
-
-        .input-group {
-            display: flex;
-            align-items: center;
-            gap: 4px;
-            flex: 1;
-        }
-
-        .input-label {
-            color: #63b3ed;
-            font-size: 13px;
-            font-weight: bold;
-            white-space: nowrap;
-        }
-
-        .white-input {
-            width: 100%;
-            height: 35px;
-            background-color: #ffffff;
-            color: #000000;
-            border: none;
-            border-radius: 5px;
-            padding: 0 4px;
-            font-size: 15px;
-            font-weight: bold;
-            text-align: center;
-            outline: none;
-            box-shadow: inset 0 1px 2px rgba(0,0,0,0.2);
-        }
-
-        .clickable-box {
-            cursor: pointer;
-            user-select: none;
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            color: #1a202c;
-        }
-        .clickable-box:active {
-            background-color: #e2e8f0;
-        }
-
-        .confirm-btn {
-            height: 35px;
-            padding: 0 8px;
-            background: linear-gradient(180deg, #48bb78 0%, #38a169 100%);
-            border: 1px solid #68d391;
-            color: #ffffff;
-            font-size: 12px;
-            font-weight: bold;
-            border-radius: 5px;
-            cursor: pointer;
-            box-shadow: 0 2px 4px rgba(56, 161, 105, 0.4);
-            flex-shrink: 0;
-            white-space: nowrap;
-            transition: transform 0.1s;
-        }
-
-        .confirm-btn:active {
-            transform: scale(0.95);
-        }
-
-        .result-table-container {
-            display: none;
-            margin-top: 4px;
-            border-radius: 6px;
-            overflow: hidden;
-            border: 1px solid #2b3e50;
-            background-color: #1a2838;
-        }
-
-        .calc-table {
-            width: 100%;
-            border-collapse: collapse;
-            text-align: center;
-            font-size: 13px;
-        }
-
-        .calc-table th {
-            background-color: #121e2b;
-            color: #63b3ed;
-            font-weight: bold;
-            padding: 6px 3px;
-            border-bottom: 1px solid #2b3e50;
-            border-right: 1px solid #2b3e50;
-        }
-        .calc-table th:last-child {
-            border-right: none;
-        }
-
-        .calc-table td {
-            padding: 6px 3px;
-            border-bottom: 1px solid #2b3e50;
-            border-right: 1px solid #2b3e50;
-            color: #ffffff;
-            font-weight: bold;
-            vertical-align: middle;
-        }
-        .calc-table td:last-child {
-            border-right: none;
-        }
-        .calc-table tr:last-child td {
-            border-bottom: none;
-        }
-
-        .copyable-amount {
-            cursor: pointer;
-            transition: background-color 0.15s, color 0.15s;
-            user-select: none;
-        }
-        .copyable-amount:active {
-            background-color: #3182ce !important;
-            color: #ffffff !important;
-        }
-
-        .round-label {
-            color: #a0aec0;
-            font-weight: bold;
-            background-color: #14202e;
-            width: 28%;
-            font-size: 12px;
-        }
-
-        .profit-val {
-            color: #68d391;
-            font-size: 17px;
-            background-color: #121e2b;
-        }
-
-        .modal-overlay {
-            display: none;
-            position: fixed;
-            top: 0; left: 0;
-            width: 100%; height: 100%;
-            background-color: rgba(0, 0, 0, 0.65);
-            z-index: 1000;
-            align-items: center;
-            justify-content: center;
-        }
-        .modal-card {
-            background-color: #121e2b;
-            border: 1px solid #2b3e50;
-            border-radius: 8px;
-            padding: 12px;
-            width: 85%;
-            max-width: 300px;
-            box-shadow: 0 8px 20px rgba(0,0,0,0.8);
-            position: relative;
-        }
-        .modal-close {
-            position: absolute;
-            top: 4px; right: 8px;
-            font-size: 18px;
-            color: #a0aec0;
-            cursor: pointer;
-        }
-        .modal-title {
-            color: #4da6ff;
-            font-size: 14px;
-            font-weight: bold;
-            text-align: center;
-            margin-bottom: 8px;
-            border-bottom: 1px solid #2b3e50;
-            padding-bottom: 4px;
-        }
-        .modal-content-box {
-            background: #1a2838;
-            padding: 8px 10px;
-            border-radius: 5px;
-            font-size: 13px;
-            line-height: 1.6;
-            font-weight: bold;
-        }
-        .text-green { color: #68d391; }
-        .text-red { color: #fc8181; }
-
-        .round-options-grid {
-            display: grid;
-            grid-template-columns: repeat(4, 1fr);
             gap: 6px;
         }
-        .round-option-item {
-            background-color: #1a2838;
-            border: 1px solid #2b3e50;
-            color: #63b3ed;
-            font-size: 15px;
-            font-weight: bold;
-            height: 38px;
-            display: flex;
-            align-items: center;
-            justify-content: center;
+        .calc-input-row { display: flex; align-items: center; justify-content: space-between; gap: 4px; }
+        .input-group { display: flex; align-items: center; gap: 3px; flex: 1; }
+        .input-label { color: #38bdf8; font-size: 12px; font-weight: 600; white-space: nowrap; }
+        .white-input {
+            width: 100%;
+            height: 32px;
+            background-color: #1e293b;
+            color: #ffffff;
+            border: 1px solid #334155;
+            border-radius: 5px;
+            font-size: 14px;
+            font-weight: 600;
+            text-align: center;
+            outline: none;
+        }
+        .clickable-box { cursor: pointer; user-select: none; display: flex; align-items: center; justify-content: center; }
+        .confirm-btn {
+            height: 32px;
+            padding: 0 8px;
+            background-color: #059669;
+            border: 1px solid #10b981;
+            color: #ffffff;
+            font-size: 11.5px;
+            font-weight: 600;
             border-radius: 5px;
             cursor: pointer;
-            transition: all 0.2s;
+            white-space: nowrap;
         }
-        .round-option-item:active {
-            background-color: #3182ce;
-            color: #ffffff;
-        }
+        .result-table-container { display: none; margin-top: 4px; border-radius: 6px; overflow: hidden; border: 1px solid #334155; }
+        .calc-table { width: 100%; border-collapse: collapse; text-align: center; font-size: 12px; }
+        .calc-table th { background-color: #0f172a; color: #38bdf8; font-weight: 600; padding: 5px; border-bottom: 1px solid #334155; border-right: 1px solid #334155; }
+        .calc-table th:last-child { border-right: none; }
+        .calc-table td { padding: 5px; border-bottom: 1px solid #334155; border-right: 1px solid #334155; color: #f8fafc; font-weight: 600; }
+        .calc-table td:last-child { border-right: none; }
+        .round-label { color: #94a3b8; background-color: #111827; }
+        .profit-val { color: #34d399; font-size: 15px; background-color: #0f172a; }
+        .copyable-amount { cursor: pointer; }
+        .copyable-amount:active { background-color: #0284c7 !important; }
 
-        .toast-msg {
-            display: none;
-            position: fixed;
-            bottom: 30px;
-            left: 50%;
-            transform: translateX(-50%);
-            background-color: rgba(49, 130, 206, 0.95);
-            color: #ffffff;
-            padding: 6px 16px;
-            border-radius: 20px;
-            font-size: 13px;
-            font-weight: bold;
-            box-shadow: 0 4px 10px rgba(0,0,0,0.5);
-            z-index: 2000;
-        }
+        .modal-overlay { display: none; position: fixed; top: 0; left: 0; width: 100%; height: 100%; background-color: rgba(0, 0, 0, 0.7); z-index: 1000; align-items: center; justify-content: center; }
+        .modal-card { background-color: #0f172a; border: 1px solid #334155; border-radius: 10px; padding: 12px; width: 85%; max-width: 280px; position: relative; }
+        .modal-close { position: absolute; top: 4px; right: 8px; font-size: 16px; color: #94a3b8; cursor: pointer; }
+        .modal-title { color: #38bdf8; font-size: 13px; font-weight: 600; text-align: center; margin-bottom: 8px; border-bottom: 1px solid #1e293b; padding-bottom: 4px; }
+        .modal-content-box { background: #111827; padding: 8px; border-radius: 6px; font-size: 12px; line-height: 1.5; font-weight: 600; border: 1px solid #1f2937; }
+        .text-green { color: #34d399; }
+        .text-red { color: #f87171; }
+        .round-options-grid { display: grid; grid-template-columns: repeat(4, 1fr); gap: 5px; }
+        .round-option-item { background-color: #1e293b; border: 1px solid #334155; color: #38bdf8; font-size: 14px; font-weight: 600; height: 34px; display: flex; align-items: center; justify-content: center; border-radius: 5px; cursor: pointer; }
+        .round-option-item:active { background-color: #0284c7; color: #fff; }
+        .toast-msg { display: none; position: fixed; bottom: 25px; left: 50%; transform: translateX(-50%); background-color: rgba(2, 132, 199, 0.95); color: #fff; padding: 5px 14px; border-radius: 20px; font-size: 12px; font-weight: 600; z-index: 2000; }
     </style>
 </head>
 <body>
-
     <div class="container">
         <div class="header-area">
-            <h2>🎰 <span id="lotteryTitle">極速飛艇</span></h2>
+            <h2>⚡ <span id="lotteryTitle">極速飛艇</span></h2>
             <div class="lottery-tabs">
-                <button id="btn10035" class="tab-btn active" onclick="switchLottery('10035', '極速飛艇')">🚀 極速飛艇</button>
-                <button id="btn10057" class="tab-btn" onclick="switchLottery('10057', '幸運飛艇')">⛵ 幸運飛艇</button>
+                <button id="btn10035" class="tab-btn active" onclick="switchLottery('10035', '極速飛艇')">極速飛艇</button>
+                <button id="btn10057" class="tab-btn" onclick="switchLottery('10057', '幸運飛艇')">幸運飛艇</button>
             </div>
         </div>
-
         <div class="info-bar">
             <div class="mode-tabs">
                 <button id="modeBtn3" class="mode-btn" onclick="switchMode(3)">頭三/後七</button>
@@ -477,15 +217,12 @@
                 <button id="modeBtn7" class="mode-btn" onclick="switchMode(7)">頭七/後三</button>
                 <button id="modeBtn8" class="mode-btn" onclick="switchMode(8)">頭八/後二</button>
             </div>
-
             🟢 <b id="headLabel">頭五</b> | 🔴 <b id="tailLabel">後五</b> | 點擊<b>「冠~十」</b>查順反
-
             <div class="countdown-box">
                 <span id="nextPeriodText">下期: --</span>
                 <span id="timerText" class="timer-highlight">同步中...</span>
             </div>
         </div>
-
         <div class="table-wrapper">
             <table class="lottery-table">
                 <thead>
@@ -508,434 +245,188 @@
                     </tr>
                 </thead>
             </table>
-
             <div class="table-scroll-container">
-                <table class="lottery-table">
-                    <tbody id="tableBody"></tbody>
-                </table>
+                <table class="lottery-table"><tbody id="tableBody"></tbody></table>
             </div>
         </div>
-
         <div class="calculator-area">
             <div class="calc-input-row">
-                <div class="input-group">
-                    <span class="input-label">金額</span>
-                    <input type="number" id="inputAmount" class="white-input" placeholder="">
-                </div>
-                
-                <!-- 新增：碼數選擇區塊 -->
-                <div class="input-group">
-                    <span class="input-label">碼數</span>
-                    <div id="inputCodeCountDisplay" class="white-input clickable-box" onclick="openCodeCountModal()">5</div>
-                </div>
-
-                <div class="input-group">
-                    <span class="input-label">關數</span>
-                    <div id="inputRoundDisplay" class="white-input clickable-box" onclick="openRoundModal()"></div>
-                </div>
-
-                <button class="confirm-btn" onclick="onConfirmClick()">確認計算</button>
+                <div class="input-group"><span class="input-label">金額</span><input type="number" id="inputAmount" class="white-input"></div>
+                <div class="input-group"><span class="input-label">碼數</span><div id="inputCodeCountDisplay" class="white-input clickable-box" onclick="openCodeCountModal()">5</div></div>
+                <div class="input-group"><span class="input-label">關數</span><div id="inputRoundDisplay" class="white-input clickable-box" onclick="openRoundModal()"></div></div>
+                <button class="confirm-btn" onclick="onConfirmClick()">計算</button>
             </div>
-
             <div id="resultTableContainer" class="result-table-container">
                 <table class="calc-table">
-                    <thead>
-                        <tr>
-                            <th style="width: 28%;">關數</th>
-                            <th style="width: 36%;">金額 (點擊複製)</th>
-                            <th style="width: 36%;">獲利</th>
-                        </tr>
-                    </thead>
-                    <tbody id="resultTableBody">
-                    </tbody>
+                    <thead><tr><th style="width:28%;">關數</th><th style="width:36%;">金額</th><th style="width:36%;">獲利</th></tr></thead>
+                    <tbody id="resultTableBody"></tbody>
                 </table>
             </div>
         </div>
     </div>
-
     <div id="toastMsg" class="toast-msg"></div>
-
     <div id="modalOverlay" class="modal-overlay" onclick="closeModalDirect()">
         <div class="modal-card" onclick="event.stopPropagation()">
             <span class="modal-close" onclick="closeModalDirect()">&times;</span>
             <div id="modalTitle" class="modal-title">名次對比</div>
-            
-            <div class="modal-content-box">
-                <div class="text-green">順 : <span id="headText"></span></div>
-                <div class="text-red">反 : <span id="tailText"></span></div>
-            </div>
+            <div class="modal-content-box"><div class="text-green">順 : <span id="headText"></span></div><div class="text-red">反 : <span id="tailText"></span></div></div>
         </div>
     </div>
-
-    <!-- 新增：碼數選擇彈窗 -->
     <div id="codeCountModalOverlay" class="modal-overlay" onclick="closeCodeCountModal()">
         <div class="modal-card" onclick="event.stopPropagation()">
             <span class="modal-close" onclick="closeCodeCountModal()">&times;</span>
             <div class="modal-title">選擇碼數</div>
-            
             <div class="round-options-grid" style="grid-template-columns: repeat(2, 1fr);">
                 <div class="round-option-item" onclick="selectCodeCountValue(5)">5 碼</div>
                 <div class="round-option-item" onclick="selectCodeCountValue(7)">7 碼</div>
             </div>
         </div>
     </div>
-
-    <!-- 關數選擇彈窗 -->
     <div id="roundModalOverlay" class="modal-overlay" onclick="closeRoundModal()">
         <div class="modal-card" onclick="event.stopPropagation()">
             <span class="modal-close" onclick="closeRoundModal()">&times;</span>
             <div class="modal-title">選擇關數</div>
-            <!-- 將內部選項改為動態生成以配合碼數限制 -->
             <div id="roundOptionsGrid" class="round-options-grid"></div>
         </div>
     </div>
-
     <script>
-        let globalFullData = [];
-        let currentLotCode = '10035';
-        let countdownTimer = null;
-        let targetEndTimeMs = 0;
-        let lastPeriodLoaded = "";
-        
-        let currentSplit = 5; 
-        
-        // 🟢 新增：當前選中的碼數，預設為 5
-        let currentCodeCount = 5;
-
+        let globalFullData = [], currentLotCode = '10035', countdownTimer = null, targetEndTimeMs = 0, lastPeriodLoaded = "", currentSplit = 5, currentCodeCount = 5;
         const chineseRounds = ["第一關", "第二關", "第三關", "第四關", "第五關", "第六關", "第七關"];
-
-        function switchMode(splitValue) {
-            if (currentSplit === splitValue) return;
-            currentSplit = splitValue;
-
-            document.querySelectorAll('.mode-btn').forEach(btn => btn.classList.remove('active'));
-            document.getElementById(`modeBtn${splitValue}`).classList.add('active');
-
-            const headMap = { 3: "三", 4: "四", 5: "五", 6: "六", 7: "七", 8: "八" };
-            const tailMap = { 3: "七", 4: "六", 5: "五", 6: "四", 7: "三", 8: "二" };
-            
-            document.getElementById('headLabel').innerText = `頭${headMap[splitValue]}`;
-            document.getElementById('tailLabel').innerText = `後${tailMap[splitValue]}`;
-
+        function switchMode(val) {
+            if (currentSplit === val) return;
+            currentSplit = val;
+            document.querySelectorAll('.mode-btn').forEach(b => b.classList.remove('active'));
+            document.getElementById(`modeBtn${val}`).classList.add('active');
+            const h = {3:"三",4:"四",5:"五",6:"六",7:"七",8:"八"}, t = {3:"七",4:"六",5:"五",6:"四",7:"三",8:"二"};
+            document.getElementById('headLabel').innerText = `頭${h[val]}`;
+            document.getElementById('tailLabel').innerText = `後${t[val]}`;
             renderTableUI();
         }
-
-        // --- 碼數彈窗邏輯 ---
-        function openCodeCountModal() {
-            document.getElementById('codeCountModalOverlay').style.display = 'flex';
-        }
-
-        function closeCodeCountModal() {
-            document.getElementById('codeCountModalOverlay').style.display = 'none';
-        }
-
+        function openCodeCountModal() { document.getElementById('codeCountModalOverlay').style.display = 'flex'; }
+        function closeCodeCountModal() { document.getElementById('codeCountModalOverlay').style.display = 'none'; }
         function selectCodeCountValue(val) {
             currentCodeCount = val;
             document.getElementById('inputCodeCountDisplay').innerText = val;
-            
-            // 如果從 5碼 切到 7碼，且原本選擇的關數大於 5，自動清空避免錯誤
-            let currentRoundText = document.getElementById('inputRoundDisplay').innerText;
-            if (val === 7 && currentRoundText && parseInt(currentRoundText, 10) > 5) {
-                document.getElementById('inputRoundDisplay').innerText = '';
-            }
-            
+            if (val === 7 && parseInt(document.getElementById('inputRoundDisplay').innerText, 10) > 5) document.getElementById('inputRoundDisplay').innerText = '';
             closeCodeCountModal();
         }
-
-        // --- 關數彈窗邏輯 ---
         function openRoundModal() {
-            const grid = document.getElementById('roundOptionsGrid');
-            grid.innerHTML = '';
-            
-            // 根據選中的碼數限制最多顯示的關數 (5碼=7關, 7碼=5關)
-            const maxRounds = currentCodeCount === 7 ? 5 : 7;
-            
-            for (let i = 1; i <= maxRounds; i++) {
-                grid.innerHTML += `<div class="round-option-item" onclick="selectRoundValue(${i})">${i}</div>`;
-            }
-            
+            const grid = document.getElementById('roundOptionsGrid'); grid.innerHTML = '';
+            const maxR = currentCodeCount === 7 ? 5 : 7;
+            for (let i = 1; i <= maxR; i++) grid.innerHTML += `<div class="round-option-item" onclick="selectRoundValue(${i})">${i}</div>`;
             document.getElementById('roundModalOverlay').style.display = 'flex';
         }
-
-        function closeRoundModal() {
-            document.getElementById('roundModalOverlay').style.display = 'none';
+        function closeRoundModal() { document.getElementById('roundModalOverlay').style.display = 'none'; }
+        function selectRoundValue(val) { document.getElementById('inputRoundDisplay').innerText = val; closeRoundModal(); }
+        function copyAmount(txt, raw) {
+            navigator.clipboard.writeText(raw.toString()).then(() => showToast(`已複製：${txt}`));
         }
-
-        function selectRoundValue(val) {
-            document.getElementById('inputRoundDisplay').innerText = val;
-            closeRoundModal();
-        }
-
-        function copyAmount(textVal, rawNum) {
-            navigator.clipboard.writeText(rawNum.toString()).then(() => {
-                showToast(`已複製金額：${textVal}`);
-            }).catch(err => {
-                const tempInput = document.createElement('input');
-                tempInput.value = rawNum;
-                document.body.appendChild(tempInput);
-                tempInput.select();
-                document.execCommand('copy');
-                document.body.removeChild(tempInput);
-                showToast(`已複製金額：${textVal}`);
-            });
-        }
-
         function showToast(msg) {
-            const toast = document.getElementById('toastMsg');
-            toast.innerText = msg;
-            toast.style.display = 'block';
-            setTimeout(() => {
-                toast.style.display = 'none';
-            }, 1500);
+            const t = document.getElementById('toastMsg'); t.innerText = msg; t.style.display = 'block';
+            setTimeout(() => t.style.display = 'none', 1500);
         }
-
         function onConfirmClick() {
-            const amountInput = document.getElementById('inputAmount').value;
-            const roundInput = document.getElementById('inputRoundDisplay').innerText;
-
-            if (!amountInput || parseFloat(amountInput) <= 0) {
-                alert("請填寫有效的金額！");
-                return;
-            }
-            if (!roundInput) {
-                alert("請點擊選擇關數！");
-                return;
-            }
-
-            const amount = parseFloat(amountInput);
-            const selectedRounds = parseInt(roundInput, 10);
-            
-            let divisor = 1;
-            let multiplier = 1;
-            let profitMultiplier = 1;
-
-            // 根據碼數決定相應的參數
+            const amt = parseFloat(document.getElementById('inputAmount').value), rnd = document.getElementById('inputRoundDisplay').innerText;
+            if (!amt || amt <= 0) { alert("請填寫有效金額！"); return; }
+            if (!rnd) { alert("請選擇關數！"); return; }
+            const r = parseInt(rnd, 10);
+            let div = 1, mul = 1, profMul = 1;
             if (currentCodeCount === 5) {
-                const divisorsMap5 = { 1: 5, 2: 15, 3: 37, 4: 81, 5: 175, 6: 359, 7: 747 };
-                divisor = divisorsMap5[selectedRounds];
-                multiplier = 2.065;
-                profitMultiplier = 4.7; // 5碼固定倍率
-            } else if (currentCodeCount === 7) {
-                const divisorsMap7 = { 1: 7, 2: 32, 3: 123, 4: 447, 5: 1613 };
-                divisor = divisorsMap7[selectedRounds];
-                multiplier = 3.5926;
-                profitMultiplier = 2.7; // 7碼的暫定獲利倍率
+                div = {1:5, 2:15, 3:37, 4:81, 5:175, 6:359, 7:747}[r]; mul = 2.065; profMul = 4.7;
+            } else {
+                div = {1:7, 2:32, 3:123, 4:447, 5:1613}[r]; mul = 3.5926; profMul = 2.7;
             }
-
-            const firstRoundAmount = amount / divisor;
-            const fixedProfit = firstRoundAmount * profitMultiplier;
-
-            const resultContainer = document.getElementById('resultTableContainer');
-            const resultBody = document.getElementById('resultTableBody');
-
-            resultBody.innerHTML = "";
-
-            let currentRoundAmount = firstRoundAmount;
-            const formattedProfit = Math.round(fixedProfit).toLocaleString();
-
-            for (let i = 0; i < selectedRounds; i++) {
-                const roundText = chineseRounds[i] || `第${i+1}關`;
-
-                if (i > 0) {
-                    currentRoundAmount = currentRoundAmount * multiplier;
-                }
-
-                const rawVal = Math.round(currentRoundAmount);
-                const formattedAmount = rawVal.toLocaleString();
-
-                let rowHtml = "";
-                if (i === 0) {
-                    rowHtml = `
-                        <tr>
-                            <td class="round-label">${roundText}</td>
-                            <td class="copyable-amount" onclick="copyAmount('${formattedAmount}', ${rawVal})" title="點擊複製">${formattedAmount}</td>
-                            <td class="profit-val" rowspan="${selectedRounds}">${formattedProfit}</td>
-                        </tr>
-                    `;
-                } else {
-                    rowHtml = `
-                        <tr>
-                            <td class="round-label">${roundText}</td>
-                            <td class="copyable-amount" onclick="copyAmount('${formattedAmount}', ${rawVal})" title="點擊複製">${formattedAmount}</td>
-                        </tr>
-                    `;
-                }
-
-                resultBody.innerHTML += rowHtml;
+            const first = amt / div, profit = Math.round(first * profMul).toLocaleString();
+            const resBody = document.getElementById('resultTableBody'); resBody.innerHTML = "";
+            let cur = first;
+            for (let i = 0; i < r; i++) {
+                if (i > 0) cur *= mul;
+                const raw = Math.round(cur), fmt = raw.toLocaleString();
+                resBody.innerHTML += i === 0 ? `<tr><td class="round-label">${chineseRounds[i]}</td><td class="copyable-amount" onclick="copyAmount('${fmt}',${raw})">${fmt}</td><td class="profit-val" rowspan="${r}">${profit}</td></tr>` : `<tr><td class="round-label">${chineseRounds[i]}</td><td class="copyable-amount" onclick="copyAmount('${fmt}',${raw})">${fmt}</td></tr>`;
             }
-
-            resultContainer.style.display = 'block';
+            document.getElementById('resultTableContainer').style.display = 'block';
         }
-
         function switchLottery(code, name) {
             if (currentLotCode === code) return;
             currentLotCode = code;
-
             document.getElementById('lotteryTitle').innerText = name;
-            document.querySelectorAll('.tab-btn').forEach(btn => btn.classList.remove('active'));
+            document.querySelectorAll('.tab-btn').forEach(b => b.classList.remove('active'));
             document.getElementById(`btn${code}`).classList.add('active');
-
             if (countdownTimer) clearInterval(countdownTimer);
-            targetEndTimeMs = 0;
-            lastPeriodLoaded = "";
-            document.getElementById('timerText').innerText = '同步中...';
-
+            targetEndTimeMs = 0; lastPeriodLoaded = ""; document.getElementById('timerText').innerText = '同步中...';
             fetchData();
         }
-
-        function getHeadTailForPosition(pastRecords, posIndex) {
-            let seenNumbers = [];
-            for (let item of pastRecords) {
+        function getHeadTailForPosition(past, pos) {
+            let seen = [];
+            for (let item of past) {
                 const nums = item.number.replace(/\s+/g, '').split(',');
-                if (nums[posIndex] !== undefined) {
-                    const val = parseInt(nums[posIndex], 10);
-                    if (!seenNumbers.includes(val)) {
-                        seenNumbers.push(val);
-                    }
+                if (nums[pos] !== undefined) {
+                    const v = parseInt(nums[pos], 10);
+                    if (!seen.includes(v)) seen.push(v);
                 }
-                if (seenNumbers.length === 10) break;
+                if (seen.length === 10) break;
             }
-
-            const headList = seenNumbers.slice(0, currentSplit);
-            const tailList = seenNumbers.slice(currentSplit, 10);
-
-            return { headList, tailList };
+            return { headList: seen.slice(0, currentSplit), tailList: seen.slice(currentSplit, 10) };
         }
-
-        function showPositionModal(posIndex, titleName) {
-            if (!globalFullData || globalFullData.length === 0) return;
-
-            const { headList, tailList } = getHeadTailForPosition(globalFullData, posIndex);
-
-            document.getElementById('modalTitle').innerText = `【${titleName}】當前對比`;
-
-            const sortedHead = [...headList].sort((a, b) => a - b);
-            const sortedTail = [...tailList].sort((a, b) => a - b);
-
-            const headStr = sortedHead.join(' . ') + ' 號';
-            const tailStr = sortedTail.join(' . ') + ' 號';
-
-            document.getElementById('headText').innerText = headStr;
-            document.getElementById('tailText').innerText = tailStr;
-
+        function showPositionModal(pos, title) {
+            if (!globalFullData.length) return;
+            const { headList, tailList } = getHeadTailForPosition(globalFullData, pos);
+            document.getElementById('modalTitle').innerText = `【${title}】當前對比`;
+            document.getElementById('headText').innerText = [...headList].sort((a,b)=>a-b).join(' . ') + ' 號';
+            document.getElementById('tailText').innerText = [...tailList].sort((a,b)=>a-b).join(' . ') + ' 號';
             document.getElementById('modalOverlay').style.display = 'flex';
         }
-
-        function closeModalDirect() {
-            document.getElementById('modalOverlay').style.display = 'none';
-        }
-
+        function closeModalDirect() { document.getElementById('modalOverlay').style.display = 'none'; }
         function startCountdown() {
             if (countdownTimer) clearInterval(countdownTimer);
-
             countdownTimer = setInterval(() => {
-                const nowMs = Date.now();
-                const totalRemSec = Math.floor((targetEndTimeMs - nowMs) / 1000);
-                const timerEl = document.getElementById('timerText');
-
-                const closeThreshold = (currentLotCode === '10035') ? 15 : 80;
-
-                if (totalRemSec > closeThreshold) {
-                    const closeSec = totalRemSec - closeThreshold;
-                    const mm = String(Math.floor(closeSec / 60)).padStart(2, '0');
-                    const ss = String(closeSec % 60).padStart(2, '0');
-                    timerEl.className = "timer-highlight";
-                    timerEl.innerText = `⏳ 距封盤: ${mm} : ${ss}`;
-                } else if (totalRemSec > 0) {
-                    const mm = String(Math.floor(totalRemSec / 60)).padStart(2, '0');
-                    const ss = String(totalRemSec % 60).padStart(2, '0');
-                    timerEl.className = "timer-highlight red";
-                    timerEl.innerText = `🎲 距開獎: ${mm} : ${ss}`;
+                const rem = Math.floor((targetEndTimeMs - Date.now()) / 1000), el = document.getElementById('timerText');
+                const threshold = (currentLotCode === '10035') ? 15 : 80;
+                if (rem > threshold) {
+                    const c = rem - threshold;
+                    el.className = "timer-highlight";
+                    el.innerText = `⏳ 距封盤: ${String(Math.floor(c/60)).padStart(2,'0')} : ${String(c%60).padStart(2,'0')}`;
+                } else if (rem > 0) {
+                    el.className = "timer-highlight red";
+                    el.innerText = `🎲 距開獎: ${String(Math.floor(rem/60)).padStart(2,'0')} : ${String(rem%60).padStart(2,'0')}`;
                 } else {
-                    timerEl.className = "timer-highlight red";
-                    timerEl.innerText = `🎰 開獎中...`;
-                    fetchData();
+                    el.className = "timer-highlight red"; el.innerText = `🎰 開獎中...`; fetchData();
                 }
             }, 1000);
         }
-
         function renderTableUI() {
-            const tableBody = document.getElementById('tableBody');
-            if (!globalFullData || globalFullData.length === 0) return;
-
-            tableBody.innerHTML = "";
-
-            const displayData = globalFullData.slice(0, 30);
-
-            displayData.forEach((item, index) => {
-                const pastRecords = globalFullData.slice(index + 1);
-                const nums = item.number.replace(/\s+/g, '').split(',');
-
-                const numBoxesHtml = nums.map((n, posIndex) => {
-                    const val = parseInt(n, 10);
-                    let colorClass = 'blue';
-
-                    if (pastRecords.length > 0) {
-                        const { headList, tailList } = getHeadTailForPosition(pastRecords, posIndex);
-                        const headSet = new Set(headList);
-                        const tailSet = new Set(tailList);
-
-                        if (headSet.has(val)) {
-                            colorClass = 'green';
-                        } else if (tailSet.has(val)) {
-                            colorClass = 'red';
-                        }
+            const tb = document.getElementById('tableBody'); if (!globalFullData.length) return;
+            tb.innerHTML = "";
+            globalFullData.slice(0, 30).forEach((item, idx) => {
+                const past = globalFullData.slice(idx + 1), nums = item.number.replace(/\s+/g, '').split(',');
+                const boxes = nums.map((n, p) => {
+                    const val = parseInt(n, 10); let cls = 'blue';
+                    if (past.length > 0) {
+                        const { headList, tailList } = getHeadTailForPosition(past, p);
+                        if (new Set(headList).has(val)) cls = 'green';
+                        else if (new Set(tailList).has(val)) cls = 'red';
                     }
-
-                    const displayNum = val < 10 ? `0${val}` : `${val}`;
-                    return `<div class="num-box ${colorClass}">${displayNum}</div>`;
+                    return `<div class="num-box ${cls}">${val < 10 ? '0'+val : val}</div>`;
                 }).join('');
-
-                const shortPeriod = item.period.length > 7 ? item.period.slice(-6) : item.period;
-
-                const row = `
-                    <tr class="lottery-row">
-                        <td class="period-cell" title="${item.period}">${shortPeriod}</td>
-                        <td>
-                            <div class="numbers-cell">
-                                ${numBoxesHtml}
-                            </div>
-                        </td>
-                    </tr>
-                `;
-                tableBody.innerHTML += row;
+                tb.innerHTML += `<tr class="lottery-row"><td class="period-cell">${item.period.length > 7 ? item.period.slice(-6) : item.period}</td><td><div class="numbers-cell">${boxes}</div></td></tr>`;
             });
         }
-
         async function fetchData() {
-            const apiUrl = `/api/get-lottery?lotCode=${currentLotCode}`;
-
             try {
-                const response = await fetch(apiUrl);
-                const data = await response.json();
-
+                const res = await fetch(`/api/get-lottery?lotCode=${currentLotCode}`), data = await res.json();
                 if (data && data.result && data.result.data && data.result.data.length > 0) {
                     globalFullData = data.result.data;
-                    const currentTopPeriod = globalFullData[0].period;
-
-                    const latestPeriod = BigInt(currentTopPeriod);
-                    const nextPeriodStr = (latestPeriod + 1n).toString();
-                    const shortNextPeriod = nextPeriodStr.length > 7 ? nextPeriodStr.slice(-6) : nextPeriodStr;
-                    document.getElementById('nextPeriodText').innerText = `下期: ${shortNextPeriod}`;
-
-                    if (currentTopPeriod !== lastPeriodLoaded || targetEndTimeMs === 0) {
-                        lastPeriodLoaded = currentTopPeriod;
-                        if (data.remSeconds !== null && data.remSeconds !== undefined) {
-                            targetEndTimeMs = Date.now() + (parseInt(data.remSeconds, 10) * 1000);
-                            startCountdown();
-                        }
+                    const top = globalFullData[0].period, next = (BigInt(top) + 1n).toString();
+                    document.getElementById('nextPeriodText').innerText = `下期: ${next.length > 7 ? next.slice(-6) : next}`;
+                    if (top !== lastPeriodLoaded || targetEndTimeMs === 0) {
+                        lastPeriodLoaded = top;
+                        if (data.remSeconds != null) { targetEndTimeMs = Date.now() + (parseInt(data.remSeconds, 10) * 1000); startCountdown(); }
                     }
-
                     renderTableUI();
                 }
-            } catch (error) {
-                console.error(error);
-            }
+            } catch (e) { console.error(e); }
         }
-
-        fetchData();
-        setInterval(fetchData, 3000);
+        fetchData(); setInterval(fetchData, 10000);
     </script>
-
 </body>
 </html>
