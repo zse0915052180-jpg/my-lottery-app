@@ -70,7 +70,6 @@
             line-height: 1.4;
         }
 
-        /* 🟢 模式切換按鈕區塊 (加入 flex-wrap 避免手機上太擠) */
         .mode-tabs {
             display: flex;
             gap: 5px;
@@ -158,7 +157,6 @@
             background-color: rgba(99, 179, 237, 0.4);
         }
 
-        /* 📜 歷史數據區 */
         .table-scroll-container {
             max-height: 304px;
             overflow-y: auto;
@@ -224,7 +222,7 @@
         }
 
         /* ---------------------------------------------------- */
-        /* 🧮 下方：金額與關數區域 */
+        /* 🧮 下方：金額、碼數與關數區域 */
         /* ---------------------------------------------------- */
         .calculator-area {
             margin-top: 8px;
@@ -252,7 +250,7 @@
 
         .input-label {
             color: #63b3ed;
-            font-size: 14px;
+            font-size: 13px;
             font-weight: bold;
             white-space: nowrap;
         }
@@ -264,8 +262,8 @@
             color: #000000;
             border: none;
             border-radius: 5px;
-            padding: 0 6px;
-            font-size: 16px;
+            padding: 0 4px;
+            font-size: 15px;
             font-weight: bold;
             text-align: center;
             outline: none;
@@ -286,11 +284,11 @@
 
         .confirm-btn {
             height: 35px;
-            padding: 0 10px;
+            padding: 0 8px;
             background: linear-gradient(180deg, #48bb78 0%, #38a169 100%);
             border: 1px solid #68d391;
             color: #ffffff;
-            font-size: 13px;
+            font-size: 12px;
             font-weight: bold;
             border-radius: 5px;
             cursor: pointer;
@@ -304,7 +302,6 @@
             transform: scale(0.95);
         }
 
-        /* 📊 計算結果表格 */
         .result-table-container {
             display: none;
             margin-top: 4px;
@@ -372,7 +369,6 @@
             background-color: #121e2b;
         }
 
-        /* 彈窗樣式 */
         .modal-overlay {
             display: none;
             position: fixed;
@@ -473,7 +469,6 @@
         </div>
 
         <div class="info-bar">
-            <!-- 🔄 新增的 6 種模式切換按鈕區塊 -->
             <div class="mode-tabs">
                 <button id="modeBtn3" class="mode-btn" onclick="switchMode(3)">頭三/後七</button>
                 <button id="modeBtn4" class="mode-btn" onclick="switchMode(4)">頭四/後六</button>
@@ -492,7 +487,6 @@
         </div>
 
         <div class="table-wrapper">
-            <!-- 表頭 -->
             <table class="lottery-table">
                 <thead>
                     <tr>
@@ -515,7 +509,6 @@
                 </thead>
             </table>
 
-            <!-- 表身 -->
             <div class="table-scroll-container">
                 <table class="lottery-table">
                     <tbody id="tableBody"></tbody>
@@ -523,7 +516,6 @@
             </div>
         </div>
 
-        <!-- 🧮 下方：金額與關數輸入區域 -->
         <div class="calculator-area">
             <div class="calc-input-row">
                 <div class="input-group">
@@ -531,6 +523,12 @@
                     <input type="number" id="inputAmount" class="white-input" placeholder="">
                 </div>
                 
+                <!-- 新增：碼數選擇區塊 -->
+                <div class="input-group">
+                    <span class="input-label">碼數</span>
+                    <div id="inputCodeCountDisplay" class="white-input clickable-box" onclick="openCodeCountModal()">5</div>
+                </div>
+
                 <div class="input-group">
                     <span class="input-label">關數</span>
                     <div id="inputRoundDisplay" class="white-input clickable-box" onclick="openRoundModal()"></div>
@@ -539,7 +537,6 @@
                 <button class="confirm-btn" onclick="onConfirmClick()">確認計算</button>
             </div>
 
-            <!-- 📊 計算結果表格區 -->
             <div id="resultTableContainer" class="result-table-container">
                 <table class="calc-table">
                     <thead>
@@ -556,10 +553,8 @@
         </div>
     </div>
 
-    <!-- 📋 複製提示浮窗 -->
     <div id="toastMsg" class="toast-msg"></div>
 
-    <!-- 1. 冠~十 名次對比彈窗 -->
     <div id="modalOverlay" class="modal-overlay" onclick="closeModalDirect()">
         <div class="modal-card" onclick="event.stopPropagation()">
             <span class="modal-close" onclick="closeModalDirect()">&times;</span>
@@ -572,21 +567,26 @@
         </div>
     </div>
 
-    <!-- 2. 關數選擇彈窗 -->
+    <!-- 新增：碼數選擇彈窗 -->
+    <div id="codeCountModalOverlay" class="modal-overlay" onclick="closeCodeCountModal()">
+        <div class="modal-card" onclick="event.stopPropagation()">
+            <span class="modal-close" onclick="closeCodeCountModal()">&times;</span>
+            <div class="modal-title">選擇碼數</div>
+            
+            <div class="round-options-grid" style="grid-template-columns: repeat(2, 1fr);">
+                <div class="round-option-item" onclick="selectCodeCountValue(5)">5 碼</div>
+                <div class="round-option-item" onclick="selectCodeCountValue(7)">7 碼</div>
+            </div>
+        </div>
+    </div>
+
+    <!-- 關數選擇彈窗 -->
     <div id="roundModalOverlay" class="modal-overlay" onclick="closeRoundModal()">
         <div class="modal-card" onclick="event.stopPropagation()">
             <span class="modal-close" onclick="closeRoundModal()">&times;</span>
-            <div class="modal-title">選擇關數 (1~7)</div>
-            
-            <div class="round-options-grid">
-                <div class="round-option-item" onclick="selectRoundValue(1)">1</div>
-                <div class="round-option-item" onclick="selectRoundValue(2)">2</div>
-                <div class="round-option-item" onclick="selectRoundValue(3)">3</div>
-                <div class="round-option-item" onclick="selectRoundValue(4)">4</div>
-                <div class="round-option-item" onclick="selectRoundValue(5)">5</div>
-                <div class="round-option-item" onclick="selectRoundValue(6)">6</div>
-                <div class="round-option-item" onclick="selectRoundValue(7)">7</div>
-            </div>
+            <div class="modal-title">選擇關數</div>
+            <!-- 將內部選項改為動態生成以配合碼數限制 -->
+            <div id="roundOptionsGrid" class="round-options-grid"></div>
         </div>
     </div>
 
@@ -597,42 +597,63 @@
         let targetEndTimeMs = 0;
         let lastPeriodLoaded = "";
         
-        // 🟢 定義當前模式基準值 (預設為 5：頭五/後五)
         let currentSplit = 5; 
+        
+        // 🟢 新增：當前選中的碼數，預設為 5
+        let currentCodeCount = 5;
 
         const chineseRounds = ["第一關", "第二關", "第三關", "第四關", "第五關", "第六關", "第七關"];
 
-        const divisorsMap = {
-            1: 5,
-            2: 15,
-            3: 37,
-            4: 81,
-            5: 175,
-            6: 359,
-            7: 747
-        };
-
-        // 🔄 切換頭尾判定模式
         function switchMode(splitValue) {
             if (currentSplit === splitValue) return;
             currentSplit = splitValue;
 
-            // 更新按鈕狀態
             document.querySelectorAll('.mode-btn').forEach(btn => btn.classList.remove('active'));
             document.getElementById(`modeBtn${splitValue}`).classList.add('active');
 
-            // 更新文字標籤
             const headMap = { 3: "三", 4: "四", 5: "五", 6: "六", 7: "七", 8: "八" };
             const tailMap = { 3: "七", 4: "六", 5: "五", 6: "四", 7: "三", 8: "二" };
             
             document.getElementById('headLabel').innerText = `頭${headMap[splitValue]}`;
             document.getElementById('tailLabel').innerText = `後${tailMap[splitValue]}`;
 
-            // 即時重繪表格
             renderTableUI();
         }
 
+        // --- 碼數彈窗邏輯 ---
+        function openCodeCountModal() {
+            document.getElementById('codeCountModalOverlay').style.display = 'flex';
+        }
+
+        function closeCodeCountModal() {
+            document.getElementById('codeCountModalOverlay').style.display = 'none';
+        }
+
+        function selectCodeCountValue(val) {
+            currentCodeCount = val;
+            document.getElementById('inputCodeCountDisplay').innerText = val;
+            
+            // 如果從 5碼 切到 7碼，且原本選擇的關數大於 5，自動清空避免錯誤
+            let currentRoundText = document.getElementById('inputRoundDisplay').innerText;
+            if (val === 7 && currentRoundText && parseInt(currentRoundText, 10) > 5) {
+                document.getElementById('inputRoundDisplay').innerText = '';
+            }
+            
+            closeCodeCountModal();
+        }
+
+        // --- 關數彈窗邏輯 ---
         function openRoundModal() {
+            const grid = document.getElementById('roundOptionsGrid');
+            grid.innerHTML = '';
+            
+            // 根據選中的碼數限制最多顯示的關數 (5碼=7關, 7碼=5關)
+            const maxRounds = currentCodeCount === 7 ? 5 : 7;
+            
+            for (let i = 1; i <= maxRounds; i++) {
+                grid.innerHTML += `<div class="round-option-item" onclick="selectRoundValue(${i})">${i}</div>`;
+            }
+            
             document.getElementById('roundModalOverlay').style.display = 'flex';
         }
 
@@ -683,10 +704,26 @@
 
             const amount = parseFloat(amountInput);
             const selectedRounds = parseInt(roundInput, 10);
-            const divisor = divisorsMap[selectedRounds];
+            
+            let divisor = 1;
+            let multiplier = 1;
+            let profitMultiplier = 1;
+
+            // 根據碼數決定相應的參數
+            if (currentCodeCount === 5) {
+                const divisorsMap5 = { 1: 5, 2: 15, 3: 37, 4: 81, 5: 175, 6: 359, 7: 747 };
+                divisor = divisorsMap5[selectedRounds];
+                multiplier = 2.065;
+                profitMultiplier = 4.7; // 5碼固定倍率
+            } else if (currentCodeCount === 7) {
+                const divisorsMap7 = { 1: 7, 2: 32, 3: 123, 4: 447, 5: 1613 };
+                divisor = divisorsMap7[selectedRounds];
+                multiplier = 3.5926;
+                profitMultiplier = 2.7; // 7碼的暫定獲利倍率
+            }
 
             const firstRoundAmount = amount / divisor;
-            const fixedProfit = firstRoundAmount * 4.7;
+            const fixedProfit = firstRoundAmount * profitMultiplier;
 
             const resultContainer = document.getElementById('resultTableContainer');
             const resultBody = document.getElementById('resultTableBody');
@@ -694,14 +731,13 @@
             resultBody.innerHTML = "";
 
             let currentRoundAmount = firstRoundAmount;
-
             const formattedProfit = Math.round(fixedProfit).toLocaleString();
 
             for (let i = 0; i < selectedRounds; i++) {
                 const roundText = chineseRounds[i] || `第${i+1}關`;
 
                 if (i > 0) {
-                    currentRoundAmount = currentRoundAmount * 2.065;
+                    currentRoundAmount = currentRoundAmount * multiplier;
                 }
 
                 const rawVal = Math.round(currentRoundAmount);
@@ -760,7 +796,6 @@
                 if (seenNumbers.length === 10) break;
             }
 
-            // 🎯 使用動態的 currentSplit 切割頭尾
             const headList = seenNumbers.slice(0, currentSplit);
             const tailList = seenNumbers.slice(currentSplit, 10);
 
@@ -825,7 +860,6 @@
 
             tableBody.innerHTML = "";
 
-            // 渲染正常的歷史紀錄
             const displayData = globalFullData.slice(0, 30);
 
             displayData.forEach((item, index) => {
