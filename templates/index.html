@@ -473,13 +473,14 @@
         </div>
 
         <div class="info-bar">
-            <!-- 🔄 新增的 5 種模式切換按鈕區塊 -->
+            <!-- 🔄 新增的 6 種模式切換按鈕區塊 -->
             <div class="mode-tabs">
                 <button id="modeBtn3" class="mode-btn" onclick="switchMode(3)">頭三/後七</button>
                 <button id="modeBtn4" class="mode-btn" onclick="switchMode(4)">頭四/後六</button>
                 <button id="modeBtn5" class="mode-btn active" onclick="switchMode(5)">頭五/後五</button>
                 <button id="modeBtn6" class="mode-btn" onclick="switchMode(6)">頭六/後四</button>
                 <button id="modeBtn7" class="mode-btn" onclick="switchMode(7)">頭七/後三</button>
+                <button id="modeBtn8" class="mode-btn" onclick="switchMode(8)">頭八/後二</button>
             </div>
 
             🟢 <b id="headLabel">頭五</b> | 🔴 <b id="tailLabel">後五</b> | 點擊<b>「冠~十」</b>查順反
@@ -621,8 +622,8 @@
             document.getElementById(`modeBtn${splitValue}`).classList.add('active');
 
             // 更新文字標籤
-            const headMap = { 3: "三", 4: "四", 5: "五", 6: "六", 7: "七" };
-            const tailMap = { 3: "七", 4: "六", 5: "五", 6: "四", 7: "三" };
+            const headMap = { 3: "三", 4: "四", 5: "五", 6: "六", 7: "七", 8: "八" };
+            const tailMap = { 3: "七", 4: "六", 5: "五", 6: "四", 7: "三", 8: "二" };
             
             document.getElementById('headLabel').innerText = `頭${headMap[splitValue]}`;
             document.getElementById('tailLabel').innerText = `後${tailMap[splitValue]}`;
