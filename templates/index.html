@@ -3,39 +3,39 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
-    <title>歷史頭尾數據動態對比看板 - 科技數據風</title>
+    <title>歷史頭尾數據動態對比看板 - 清爽極簡風</title>
     <style>
         * { box-sizing: border-box; margin: 0; padding: 0; }
         body {
-            font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, "Helvetica Neue", Arial, sans-serif;
-            background-color: #070d14;
-            color: #e2e8f0;
+            font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Arial, sans-serif;
+            background-color: #f1f5f9;
+            color: #334155;
             padding: 8px 4px;
         }
         .container {
             width: 100%;
             max-width: 480px;
             margin: 0 auto;
-            background: #0f172a;
+            background: #ffffff;
             padding: 12px 10px;
             border-radius: 12px;
-            border: 1px solid #1e293b;
-            box-shadow: 0 10px 25px -5px rgba(0, 0, 0, 0.6);
+            box-shadow: 0 4px 20px rgba(0, 0, 0, 0.08);
+            border: 1px solid #e2e8f0;
         }
         .header-area {
             display: flex;
             justify-content: space-between;
             align-items: center;
             margin-bottom: 10px;
-            border-bottom: 1px solid #1e293b;
+            border-bottom: 1px solid #f1f5f9;
             padding-bottom: 8px;
         }
-        h2 { color: #38bdf8; font-size: 15px; font-weight: 700; letter-spacing: 0.5px; }
+        h2 { color: #0f172a; font-size: 15px; font-weight: 700; }
         .lottery-tabs { display: flex; gap: 6px; }
         .tab-btn {
-            background-color: #1e293b;
-            color: #94a3b8;
-            border: 1px solid #334155;
+            background-color: #f8fafc;
+            color: #64748b;
+            border: 1px solid #cbd5e1;
             padding: 5px 10px;
             font-size: 11px;
             font-weight: 600;
@@ -44,19 +44,20 @@
             transition: all 0.2s;
         }
         .tab-btn.active {
-            background-color: #0284c7;
+            background-color: #0ea5e9;
             color: #ffffff;
-            border-color: #38bdf8;
+            border-color: #0284c7;
+            box-shadow: 0 2px 4px rgba(14, 165, 233, 0.3);
         }
         .info-bar {
             text-align: center;
             font-size: 11px;
-            color: #94a3b8;
+            color: #64748b;
             margin-bottom: 10px;
-            background: #111827;
+            background: #f8fafc;
             padding: 8px;
             border-radius: 8px;
-            border: 1px solid #1f2937;
+            border: 1px solid #e2e8f0;
         }
         .mode-tabs {
             display: flex;
@@ -66,61 +67,61 @@
             margin-bottom: 6px;
         }
         .mode-btn {
-            background-color: #1f2937;
-            color: #9ca3af;
-            border: 1px solid #374151;
+            background-color: #ffffff;
+            color: #475569;
+            border: 1px solid #cbd5e1;
             padding: 3px 7px;
             font-size: 10.5px;
-            font-weight: 500;
+            font-weight: 600;
             border-radius: 4px;
             cursor: pointer;
         }
         .mode-btn.active {
             background-color: #d97706;
             color: #ffffff;
-            border-color: #f59e0b;
+            border-color: #b45309;
         }
         .countdown-box {
             display: flex;
             justify-content: space-around;
             align-items: center;
-            background: #030712;
+            background: #ffffff;
             padding: 5px 8px;
             border-radius: 6px;
             margin-top: 6px;
             font-size: 11.5px;
             font-weight: 600;
-            color: #f3f4f6;
-            border: 1px solid #1f2937;
+            color: #1e293b;
+            border: 1px solid #e2e8f0;
         }
-        .timer-highlight { color: #fbbf24; font-family: monospace; font-size: 12px; }
-        .timer-highlight.red { color: #f87171; }
+        .timer-highlight { color: #d97706; font-family: monospace; font-size: 12px; }
+        .timer-highlight.red { color: #dc2626; }
         .table-wrapper { width: 100%; }
-        .lottery-table { width: 100%; border-collapse: separate; border-spacing: 0 2px; }
+        .lottery-table { width: 100%; border-collapse: separate; border-spacing: 0.5px 2px; }
         .period-header { font-size: 10.5px; color: #64748b; font-weight: 600; text-align: center; width: 48px; }
         .rank-header-container { display: flex; gap: 2px; }
         .rank-header-item {
             flex: 1;
             text-align: center;
             font-size: 12px;
-            font-weight: 600;
-            color: #38bdf8;
+            font-weight: 700;
+            color: #0284c7;
             padding: 4px 0;
             cursor: pointer;
             border-radius: 4px;
-            background-color: rgba(56, 189, 248, 0.08);
-            border: 1px solid rgba(56, 189, 248, 0.15);
+            background-color: #e0f2fe;
+            border: 1px solid #bae6fd;
         }
-        .rank-header-item:active { background-color: rgba(56, 189, 248, 0.25); }
+        .rank-header-item:active { background-color: #bae6fd; }
         .table-scroll-container {
             max-height: 295px;
             overflow-y: auto;
             border-radius: 4px;
         }
         .table-scroll-container::-webkit-scrollbar { width: 3px; }
-        .table-scroll-container::-webkit-scrollbar-thumb { background: #334155; border-radius: 3px; }
-        .lottery-row { background-color: #111827; }
-        .period-cell { padding: 2px; font-size: 10px; font-weight: 600; color: #94a3b8; text-align: center; width: 48px; }
+        .table-scroll-container::-webkit-scrollbar-thumb { background: #cbd5e1; border-radius: 3px; }
+        .lottery-row { background-color: #ffffff; }
+        .period-cell { padding: 2px; font-size: 10px; font-weight: 600; color: #475569; text-align: center; width: 48px; }
         .numbers-cell { padding: 2px 2px 2px 0; display: flex; gap: 2px; justify-content: space-between; }
         .num-box {
             flex: 1;
@@ -132,33 +133,34 @@
             align-items: center;
             justify-content: center;
             border-radius: 4px;
+            box-shadow: 0 1px 2px rgba(0,0,0,0.1);
         }
-        .num-box.green { background-color: #059669; border: 1px solid #10b981; }
-        .num-box.red { background-color: #dc2626; border: 1px solid #ef4444; }
-        .num-box.blue { background-color: #2563eb; border: 1px solid #3b82f6; }
+        .num-box.green { background-color: #10b981; }
+        .num-box.red { background-color: #ef4444; }
+        .num-box.blue { background-color: #3b82f6; }
 
         .calculator-area {
             margin-top: 10px;
-            background-color: #0b132b;
+            background-color: #f8fafc;
             border-radius: 8px;
             padding: 8px;
-            border: 1px solid #1e293b;
+            border: 1px solid #e2e8f0;
             display: flex;
             flex-direction: column;
             gap: 6px;
         }
         .calc-input-row { display: flex; align-items: center; justify-content: space-between; gap: 4px; }
         .input-group { display: flex; align-items: center; gap: 3px; flex: 1; }
-        .input-label { color: #38bdf8; font-size: 12px; font-weight: 600; white-space: nowrap; }
+        .input-label { color: #0284c7; font-size: 12px; font-weight: 700; white-space: nowrap; }
         .white-input {
             width: 100%;
             height: 32px;
-            background-color: #1e293b;
-            color: #ffffff;
-            border: 1px solid #334155;
+            background-color: #ffffff;
+            color: #0f172a;
+            border: 1px solid #cbd5e1;
             border-radius: 5px;
             font-size: 14px;
-            font-weight: 600;
+            font-weight: 700;
             text-align: center;
             outline: none;
         }
@@ -166,43 +168,43 @@
         .confirm-btn {
             height: 32px;
             padding: 0 8px;
-            background-color: #059669;
-            border: 1px solid #10b981;
+            background-color: #10b981;
+            border: 1px solid #059669;
             color: #ffffff;
             font-size: 11.5px;
-            font-weight: 600;
+            font-weight: 700;
             border-radius: 5px;
             cursor: pointer;
             white-space: nowrap;
         }
-        .result-table-container { display: none; margin-top: 4px; border-radius: 6px; overflow: hidden; border: 1px solid #334155; }
+        .result-table-container { display: none; margin-top: 4px; border-radius: 6px; overflow: hidden; border: 1px solid #cbd5e1; }
         .calc-table { width: 100%; border-collapse: collapse; text-align: center; font-size: 12px; }
-        .calc-table th { background-color: #0f172a; color: #38bdf8; font-weight: 600; padding: 5px; border-bottom: 1px solid #334155; border-right: 1px solid #334155; }
+        .calc-table th { background-color: #f1f5f9; color: #0284c7; font-weight: 700; padding: 5px; border-bottom: 1px solid #cbd5e1; border-right: 1px solid #cbd5e1; }
         .calc-table th:last-child { border-right: none; }
-        .calc-table td { padding: 5px; border-bottom: 1px solid #334155; border-right: 1px solid #334155; color: #f8fafc; font-weight: 600; }
+        .calc-table td { padding: 5px; border-bottom: 1px solid #cbd5e1; border-right: 1px solid #cbd5e1; color: #1e293b; font-weight: 700; }
         .calc-table td:last-child { border-right: none; }
-        .round-label { color: #94a3b8; background-color: #111827; }
-        .profit-val { color: #34d399; font-size: 15px; background-color: #0f172a; }
+        .round-label { color: #475569; background-color: #f8fafc; }
+        .profit-val { color: #059669; font-size: 15px; background-color: #f1f5f9; }
         .copyable-amount { cursor: pointer; }
-        .copyable-amount:active { background-color: #0284c7 !important; }
+        .copyable-amount:active { background-color: #e0f2fe !important; }
 
-        .modal-overlay { display: none; position: fixed; top: 0; left: 0; width: 100%; height: 100%; background-color: rgba(0, 0, 0, 0.7); z-index: 1000; align-items: center; justify-content: center; }
-        .modal-card { background-color: #0f172a; border: 1px solid #334155; border-radius: 10px; padding: 12px; width: 85%; max-width: 280px; position: relative; }
-        .modal-close { position: absolute; top: 4px; right: 8px; font-size: 16px; color: #94a3b8; cursor: pointer; }
-        .modal-title { color: #38bdf8; font-size: 13px; font-weight: 600; text-align: center; margin-bottom: 8px; border-bottom: 1px solid #1e293b; padding-bottom: 4px; }
-        .modal-content-box { background: #111827; padding: 8px; border-radius: 6px; font-size: 12px; line-height: 1.5; font-weight: 600; border: 1px solid #1f2937; }
-        .text-green { color: #34d399; }
-        .text-red { color: #f87171; }
+        .modal-overlay { display: none; position: fixed; top: 0; left: 0; width: 100%; height: 100%; background-color: rgba(0, 0, 0, 0.4); z-index: 1000; align-items: center; justify-content: center; }
+        .modal-card { background-color: #ffffff; border: 1px solid #cbd5e1; border-radius: 10px; padding: 12px; width: 85%; max-width: 280px; position: relative; box-shadow: 0 10px 25px rgba(0,0,0,0.1); }
+        .modal-close { position: absolute; top: 4px; right: 8px; font-size: 16px; color: #64748b; cursor: pointer; }
+        .modal-title { color: #0284c7; font-size: 13px; font-weight: 700; text-align: center; margin-bottom: 8px; border-bottom: 1px solid #f1f5f9; padding-bottom: 4px; }
+        .modal-content-box { background: #f8fafc; padding: 8px; border-radius: 6px; font-size: 12px; line-height: 1.5; font-weight: 700; border: 1px solid #e2e8f0; }
+        .text-green { color: #10b981; }
+        .text-red { color: #ef4444; }
         .round-options-grid { display: grid; grid-template-columns: repeat(4, 1fr); gap: 5px; }
-        .round-option-item { background-color: #1e293b; border: 1px solid #334155; color: #38bdf8; font-size: 14px; font-weight: 600; height: 34px; display: flex; align-items: center; justify-content: center; border-radius: 5px; cursor: pointer; }
-        .round-option-item:active { background-color: #0284c7; color: #fff; }
-        .toast-msg { display: none; position: fixed; bottom: 25px; left: 50%; transform: translateX(-50%); background-color: rgba(2, 132, 199, 0.95); color: #fff; padding: 5px 14px; border-radius: 20px; font-size: 12px; font-weight: 600; z-index: 2000; }
+        .round-option-item { background-color: #f1f5f9; border: 1px solid #cbd5e1; color: #0284c7; font-size: 14px; font-weight: 700; height: 34px; display: flex; align-items: center; justify-content: center; border-radius: 5px; cursor: pointer; }
+        .round-option-item:active { background-color: #0ea5e9; color: #fff; }
+        .toast-msg { display: none; position: fixed; bottom: 25px; left: 50%; transform: translateX(-50%); background-color: rgba(14, 165, 233, 0.95); color: #fff; padding: 5px 14px; border-radius: 20px; font-size: 12px; font-weight: 700; z-index: 2000; }
     </style>
 </head>
 <body>
     <div class="container">
         <div class="header-area">
-            <h2>⚡ <span id="lotteryTitle">極速飛艇</span></h2>
+            <h2>📊 <span id="lotteryTitle">極速飛艇</span></h2>
             <div class="lottery-tabs">
                 <button id="btn10035" class="tab-btn active" onclick="switchLottery('10035', '極速飛艇')">極速飛艇</button>
                 <button id="btn10057" class="tab-btn" onclick="switchLottery('10057', '幸運飛艇')">幸運飛艇</button>
