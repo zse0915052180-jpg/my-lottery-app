@@ -139,6 +139,36 @@
         .num-box.red { background-color: #ef4444; }
         .num-box.blue { background-color: #3b82f6; }
 
+        /* 🟢 新增：策略選單橫向區域樣式 */
+        .strategy-area {
+            margin-top: 10px;
+            background-color: #f8fafc;
+            border-radius: 8px;
+            padding: 8px;
+            border: 1px solid #e2e8f0;
+            display: flex;
+            gap: 6px;
+            overflow-x: auto;
+        }
+        .strategy-btn {
+            background-color: #ffffff;
+            color: #475569;
+            border: 1px solid #cbd5e1;
+            padding: 5px 12px;
+            font-size: 11.5px;
+            font-weight: 700;
+            border-radius: 6px;
+            cursor: pointer;
+            white-space: nowrap;
+            transition: all 0.2s;
+        }
+        .strategy-btn.active {
+            background-color: #0284c7;
+            color: #ffffff;
+            border-color: #0369a1;
+            box-shadow: 0 2px 4px rgba(2, 132, 199, 0.3);
+        }
+
         .calculator-area {
             margin-top: 10px;
             background-color: #f8fafc;
@@ -191,7 +221,7 @@
         .calc-table td { padding: 5px; border-bottom: 1px solid #cbd5e1; border-right: 1px solid #cbd5e1; color: #1e293b; font-weight: 700; }
         .calc-table td:last-child { border-right: none; }
         .round-label { color: #475569; background-color: #f8fafc; }
-        .profit-val { color: #059669; font-size: 15px; background-color: #f1f5f9; }
+        .profit-val { color: #10b981; font-size: 15px; background-color: #f1f5f9; }
         .copyable-amount { cursor: pointer; }
         .copyable-amount:active { background-color: #e0f2fe !important; }
 
@@ -258,6 +288,12 @@
                 <table class="lottery-table"><tbody id="tableBody"></tbody></table>
             </div>
         </div>
+
+        <!-- 🟢 新增：橫向策略區域與【倍投】格子 -->
+        <div class="strategy-area">
+            <button class="strategy-btn active" onclick="selectStrategy(this)">倍投</button>
+        </div>
+
         <div class="calculator-area">
             <div class="calc-input-row">
                 <div class="input-group"><span class="input-label">金額</span><input type="number" id="inputAmount" class="white-input"></div>
@@ -303,6 +339,11 @@
         let globalFullData = [], currentLotCode = '10035', countdownTimer = null, targetEndTimeMs = 0, lastPeriodLoaded = "", currentSplit = 5, currentCodeCount = 5;
         const chineseRounds = ["第一關", "第二關", "第三關", "第四關", "第五關", "第六關", "第七關", "第八關", "第九關"];
         
+        function selectStrategy(btn) {
+            document.querySelectorAll('.strategy-btn').forEach(b => b.classList.remove('active'));
+            btn.classList.add('active');
+        }
+
         function switchMode(val) {
             if (currentSplit === val) return;
             currentSplit = val;
@@ -381,7 +422,6 @@
                 profMul = 2.7;
             }
             
-            // 🟢 無條件捨去小數點，只取整數
             const first = Math.floor(amt / div);
             const profit = Math.floor(first * profMul).toLocaleString();
             
@@ -389,7 +429,6 @@
             let cur = first;
             for (let i = 0; i < r; i++) {
                 if (i > 0) {
-                    // 🟢 每一關都用前一關已經無條件捨去的整數來乘以倍率，並再次無條件捨去
                     cur = Math.floor(cur * mul);
                 }
                 const raw = cur;
