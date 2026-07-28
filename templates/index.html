@@ -59,6 +59,36 @@
             border-radius: 8px;
             border: 1px solid #e2e8f0;
         }
+
+        /* 🟢 上方體系橫向卷軸區塊 */
+        .system-scroll-bar {
+            display: flex;
+            gap: 6px;
+            overflow-x: auto;
+            padding-bottom: 4px;
+            margin-bottom: 6px;
+            scrollbar-width: none;
+        }
+        .system-scroll-bar::-webkit-scrollbar { display: none; }
+        .system-btn {
+            background-color: #ffffff;
+            color: #475569;
+            border: 1px solid #cbd5e1;
+            padding: 4px 12px;
+            font-size: 11px;
+            font-weight: 700;
+            border-radius: 6px;
+            cursor: pointer;
+            white-space: nowrap;
+            transition: all 0.2s;
+        }
+        .system-btn.active {
+            background-color: #475569;
+            color: #ffffff;
+            border-color: #334155;
+            box-shadow: 0 2px 4px rgba(71, 85, 105, 0.3);
+        }
+
         .mode-tabs {
             display: flex;
             gap: 4px;
@@ -248,6 +278,12 @@
             </div>
         </div>
         <div class="info-bar">
+            <!-- 上方體系橫向卷軸 -->
+            <div class="system-scroll-bar">
+                <button id="sysBtnStandard" class="system-btn active" onclick="switchSystem('standard')">順/反</button>
+                <button id="sysBtnFixed" class="system-btn" onclick="switchSystem('fixed')">固定號</button>
+            </div>
+
             <div class="mode-tabs">
                 <button id="modeBtn3" class="mode-btn" onclick="switchMode(3)">順三</button>
                 <button id="modeBtn4" class="mode-btn" onclick="switchMode(4)">順四</button>
@@ -256,7 +292,7 @@
                 <button id="modeBtn7" class="mode-btn" onclick="switchMode(7)">順七</button>
                 <button id="modeBtn8" class="mode-btn" onclick="switchMode(8)">順八</button>
             </div>
-            🟢 <b id="headLabel">順五</b> | 🔴 <b id="tailLabel">反五</b> | 點擊<b>「冠~十」</b>查順反
+            
             <div class="countdown-box">
                 <span id="nextPeriodText">下期: --</span>
                 <span id="timerText" class="timer-highlight">同步中...</span>
@@ -298,7 +334,7 @@
         <div class="calculator-area">
             <!-- 倍投輸入介面 -->
             <div id="betCalcInputs" class="calc-input-row">
-                <div class="input-group"><span class="input-label">金額</span><input type="number" id="inputAmount" class="white-input"></div>
+                <div class="input-group"><span class="input-label">本金</span><input type="number" id="inputAmount" class="white-input"></div>
                 <div class="input-group"><span class="input-label">碼數</span><div id="inputCodeCountDisplay" class="white-input clickable-box" onclick="openCodeCountModal()">5</div></div>
                 <div class="input-group"><span class="input-label">關數</span><div id="inputRoundDisplay" class="white-input clickable-box" onclick="openRoundModal()"></div></div>
                 <button class="confirm-btn" onclick="onConfirmClick()">計算</button>
@@ -320,7 +356,7 @@
                 </table>
             </div>
 
-            <!-- 複利結果表格 (欄位已更新) -->
+            <!-- 複利結果表格 -->
             <div id="compoundTableContainer" class="result-table-container">
                 <table class="calc-table">
                     <thead><tr><th style="width:12%;">#</th><th style="width:32%;">單次獲利(元)</th><th style="width:32%;">總額(元)</th><th style="width:24%;">總獲利率</th></tr></thead>
@@ -358,8 +394,20 @@
     <script>
         let globalFullData = [], currentLotCode = '10035', countdownTimer = null, targetEndTimeMs = 0, lastPeriodLoaded = "", currentSplit = 5, currentCodeCount = 5;
         let currentStrategy = 'bet';
+        let currentSystem = 'standard'; // 預設體系為標準 順/反
         const chineseRounds = ["第一關", "第二關", "第三關", "第四關", "第五關", "第六關", "第七關", "第八關", "第九關"];
         
+        function switchSystem(sys) {
+            currentSystem = sys;
+            document.querySelectorAll('.system-btn').forEach(b => b.classList.remove('active'));
+            if (sys === 'standard') {
+                document.getElementById('sysBtnStandard').classList.add('active');
+            } else {
+                document.getElementById('sysBtnFixed').classList.add('active');
+            }
+            renderTableUI();
+        }
+
         function switchStrategy(type) {
             currentStrategy = type;
             document.querySelectorAll('.strategy-btn').forEach(b => b.classList.remove('active'));
@@ -387,7 +435,7 @@
             const timesInput = parseInt(document.getElementById('compoundTimes').value, 10);
             const rateInput = parseFloat(document.getElementById('compoundRate').value);
 
-            if (isNaN(principalInput) || principalInput <= 0) { alert("請填寫有效的初期本金！"); return; }
+            if (isNaN(principalInput) || principalInput <= 0) { alert("請填寫有效的本金！"); return; }
             if (isNaN(timesInput) || timesInput <= 0) { alert("請填寫有效的操作次數！"); return; }
             if (isNaN(rateInput)) { alert("請填寫有效的獲利比例！"); return; }
 
@@ -416,12 +464,6 @@
             currentSplit = val;
             document.querySelectorAll('.mode-btn').forEach(b => b.classList.remove('active'));
             document.getElementById(`modeBtn${val}`).classList.add('active');
-            
-            const numMap = {3:"三", 4:"四", 5:"五", 6:"六", 7:"七", 8:"八"};
-            const tailNumMap = {3:"七", 4:"六", 5:"五", 6:"四", 7:"三", 8:"二"};
-            
-            document.getElementById('headLabel').innerText = `順${numMap[val]}`;
-            document.getElementById('tailLabel').innerText = `反${tailNumMap[val]}`;
             renderTableUI();
         }
         function openCodeCountModal() { document.getElementById('codeCountModalOverlay').style.display = 'flex'; }
@@ -470,7 +512,7 @@
         }
         function onConfirmClick() {
             const amt = parseFloat(document.getElementById('inputAmount').value), rnd = document.getElementById('inputRoundDisplay').innerText;
-            if (!amt || amt <= 0) { alert("請填寫有效金額！"); return; }
+            if (!amt || amt <= 0) { alert("請填寫有效的本金！"); return; }
             if (!rnd) { alert("請選擇關數！"); return; }
             const r = parseInt(rnd, 10);
             let div = 1, mul = 1, profMul = 1;
@@ -529,6 +571,13 @@
         }
         function showPositionModal(pos, title) {
             if (!globalFullData.length) return;
+            if (currentSystem === 'fixed') {
+                document.getElementById('modalTitle').innerText = `【${title}】固定號模式`;
+                document.getElementById('headText').innerText = '敬請期待...';
+                document.getElementById('tailText').innerText = '敬請期待...';
+                document.getElementById('modalOverlay').style.display = 'flex';
+                return;
+            }
             const { headList, tailList } = getHeadTailForPosition(globalFullData, pos);
             document.getElementById('modalTitle').innerText = `【${title}】當前對比`;
             document.getElementById('headText').innerText = [...headList].sort((a,b)=>a-b).join(' . ') + ' 號';
@@ -560,10 +609,14 @@
                 const past = globalFullData.slice(idx + 1), nums = item.number.replace(/\s+/g, '').split(',');
                 const boxes = nums.map((n, p) => {
                     const val = parseInt(n, 10); let cls = 'blue';
-                    if (past.length > 0) {
-                        const { headList, tailList } = getHeadTailForPosition(past, p);
-                        if (new Set(headList).has(val)) cls = 'green';
-                        else if (new Set(tailList).has(val)) cls = 'red';
+                    if (currentSystem === 'fixed') {
+                        cls = 'blue';
+                    } else {
+                        if (past.length > 0) {
+                            const { headList, tailList } = getHeadTailForPosition(past, p);
+                            if (new Set(headList).has(val)) cls = 'green';
+                            else if (new Set(tailList).has(val)) cls = 'red';
+                        }
                     }
                     return `<div class="num-box ${cls}">${val < 10 ? '0'+val : val}</div>`;
                 }).join('');
