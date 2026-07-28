@@ -60,7 +60,7 @@
             border: 1px solid #e2e8f0;
         }
 
-        /* 🟢 上方體系橫向卷軸區塊 */
+        /* 上方體系橫向卷軸區塊 */
         .system-scroll-bar {
             display: flex;
             gap: 6px;
@@ -111,6 +111,31 @@
             color: #ffffff;
             border-color: #b45309;
         }
+
+        /* 固定號模式下的四個按鈕區塊 */
+        .fixed-tabs {
+            display: none;
+            gap: 4px;
+            justify-content: center;
+            flex-wrap: wrap;
+            margin-bottom: 6px;
+        }
+        .fixed-btn {
+            background-color: #ffffff;
+            color: #475569;
+            border: 1px solid #cbd5e1;
+            padding: 3px 10px;
+            font-size: 10.5px;
+            font-weight: 600;
+            border-radius: 4px;
+            cursor: pointer;
+        }
+        .fixed-btn.active {
+            background-color: #0284c7;
+            color: #ffffff;
+            border-color: #0369a1;
+        }
+
         .countdown-box {
             display: flex;
             justify-content: space-around;
@@ -284,13 +309,22 @@
                 <button id="sysBtnFixed" class="system-btn" onclick="switchSystem('fixed')">固定號</button>
             </div>
 
-            <div class="mode-tabs">
+            <!-- 原本的順三~順八按鈕群組 -->
+            <div id="modeTabsContainer" class="mode-tabs">
                 <button id="modeBtn3" class="mode-btn" onclick="switchMode(3)">順三</button>
                 <button id="modeBtn4" class="mode-btn" onclick="switchMode(4)">順四</button>
                 <button id="modeBtn5" class="mode-btn active" onclick="switchMode(5)">順五</button>
                 <button id="modeBtn6" class="mode-btn" onclick="switchMode(6)">順六</button>
                 <button id="modeBtn7" class="mode-btn" onclick="switchMode(7)">順七</button>
                 <button id="modeBtn8" class="mode-btn" onclick="switchMode(8)">順八</button>
+            </div>
+
+            <!-- 🟢 新增：切換到固定號時顯示的四個按鈕群組 -->
+            <div id="fixedTabsContainer" class="fixed-tabs">
+                <button id="fixedBtn1" class="fixed-btn active" onclick="switchFixed(1)">1~7</button>
+                <button id="fixedBtn2" class="fixed-btn" onclick="switchFixed(2)">2~8</button>
+                <button id="fixedBtn3" class="fixed-btn" onclick="switchFixed(3)">3~9</button>
+                <button id="fixedBtn4" class="fixed-btn" onclick="switchFixed(4)">4~10</button>
             </div>
             
             <div class="countdown-box">
@@ -394,7 +428,8 @@
     <script>
         let globalFullData = [], currentLotCode = '10035', countdownTimer = null, targetEndTimeMs = 0, lastPeriodLoaded = "", currentSplit = 5, currentCodeCount = 5;
         let currentStrategy = 'bet';
-        let currentSystem = 'standard'; // 預設體系為標準 順/反
+        let currentSystem = 'standard'; // 'standard' (順/反) 或 'fixed' (固定號)
+        let currentFixedGroup = 1;      // 固定號目前選中的組別 (1~4)
         const chineseRounds = ["第一關", "第二關", "第三關", "第四關", "第五關", "第六關", "第七關", "第八關", "第九關"];
         
         function switchSystem(sys) {
@@ -402,9 +437,20 @@
             document.querySelectorAll('.system-btn').forEach(b => b.classList.remove('active'));
             if (sys === 'standard') {
                 document.getElementById('sysBtnStandard').classList.add('active');
+                document.getElementById('modeTabsContainer').style.display = 'flex';
+                document.getElementById('fixedTabsContainer').style.display = 'none';
             } else {
                 document.getElementById('sysBtnFixed').classList.add('active');
+                document.getElementById('modeTabsContainer').style.display = 'none';
+                document.getElementById('fixedTabsContainer').style.display = 'flex';
             }
+            renderTableUI();
+        }
+
+        function switchFixed(groupNum) {
+            currentFixedGroup = groupNum;
+            document.querySelectorAll('.fixed-btn').forEach(b => b.classList.remove('active'));
+            document.getElementById(`fixedBtn${groupNum}`).classList.add('active');
             renderTableUI();
         }
 
@@ -572,9 +618,9 @@
         function showPositionModal(pos, title) {
             if (!globalFullData.length) return;
             if (currentSystem === 'fixed') {
-                document.getElementById('modalTitle').innerText = `【${title}】固定號模式`;
-                document.getElementById('headText').innerText = '敬請期待...';
-                document.getElementById('tailText').innerText = '敬請期待...';
+                document.getElementById('modalTitle').innerText = `【${title}】固定號 (第${currentFixedGroup}組)`;
+                document.getElementById('headText').innerText = '預留功能中...';
+                document.getElementById('tailText').innerText = '預留功能中...';
                 document.getElementById('modalOverlay').style.display = 'flex';
                 return;
             }
@@ -610,6 +656,7 @@
                 const boxes = nums.map((n, p) => {
                     const val = parseInt(n, 10); let cls = 'blue';
                     if (currentSystem === 'fixed') {
+                        // 固定號模式暫時維持預設藍色，等待後續加入邏輯
                         cls = 'blue';
                     } else {
                         if (past.length > 0) {
