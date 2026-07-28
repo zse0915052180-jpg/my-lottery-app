@@ -112,7 +112,7 @@
             border-color: #b45309;
         }
 
-        /* 固定號模式下的四個按鈕區塊 */
+        /* 固定號模式下的四個按鈕群組 */
         .fixed-tabs {
             display: none;
             gap: 4px;
@@ -319,7 +319,7 @@
                 <button id="modeBtn8" class="mode-btn" onclick="switchMode(8)">順八</button>
             </div>
 
-            <!-- 🟢 新增：切換到固定號時顯示的四個按鈕群組 -->
+            <!-- 固定號模式下的四個按鈕群組 -->
             <div id="fixedTabsContainer" class="fixed-tabs">
                 <button id="fixedBtn1" class="fixed-btn active" onclick="switchFixed(1)">1~7</button>
                 <button id="fixedBtn2" class="fixed-btn" onclick="switchFixed(2)">2~8</button>
@@ -617,11 +617,8 @@
         }
         function showPositionModal(pos, title) {
             if (!globalFullData.length) return;
+            // 🟢 固定號體系下不需要彈窗，直接返回
             if (currentSystem === 'fixed') {
-                document.getElementById('modalTitle').innerText = `【${title}】固定號 (第${currentFixedGroup}組)`;
-                document.getElementById('headText').innerText = '預留功能中...';
-                document.getElementById('tailText').innerText = '預留功能中...';
-                document.getElementById('modalOverlay').style.display = 'flex';
                 return;
             }
             const { headList, tailList } = getHeadTailForPosition(globalFullData, pos);
@@ -656,8 +653,17 @@
                 const boxes = nums.map((n, p) => {
                     const val = parseInt(n, 10); let cls = 'blue';
                     if (currentSystem === 'fixed') {
-                        // 固定號模式暫時維持預設藍色，等待後續加入邏輯
-                        cls = 'blue';
+                        if (currentFixedGroup === 1 && (val === 8 || val === 9 || val === 10)) {
+                            cls = 'red';
+                        } else if (currentFixedGroup === 2 && (val === 1 || val === 9 || val === 10)) {
+                            cls = 'red';
+                        } else if (currentFixedGroup === 3 && (val === 1 || val === 2 || val === 10)) {
+                            cls = 'red';
+                        } else if (currentFixedGroup === 4 && (val === 1 || val === 2 || val === 3)) {
+                            cls = 'red';
+                        } else {
+                            cls = 'blue';
+                        }
                     } else {
                         if (past.length > 0) {
                             const { headList, tailList } = getHeadTailForPosition(past, p);
