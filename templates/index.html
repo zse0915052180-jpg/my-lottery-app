@@ -193,6 +193,8 @@
         .num-box.green { background-color: #10b981; }
         .num-box.red { background-color: #ef4444; }
         .num-box.blue { background-color: #3b82f6; }
+        /* 🟢 支援大中小模式專用的黃色方塊樣式 */
+        .num-box.yellow { background-color: #f59e0b; }
 
         /* 策略選單橫向區域 */
         .strategy-area {
@@ -307,6 +309,8 @@
             <div class="system-scroll-bar">
                 <button id="sysBtnStandard" class="system-btn active" onclick="switchSystem('standard')">順/反</button>
                 <button id="sysBtnFixed" class="system-btn" onclick="switchSystem('fixed')">固定號</button>
+                <!-- 🟢 新增【大中小】按鈕 -->
+                <button id="sysBtnSize" class="system-btn" onclick="switchSystem('size')">大中小</button>
             </div>
 
             <!-- 原本的順三~順八按鈕群組 -->
@@ -428,21 +432,27 @@
     <script>
         let globalFullData = [], currentLotCode = '10035', countdownTimer = null, targetEndTimeMs = 0, lastPeriodLoaded = "", currentSplit = 5, currentCodeCount = 5;
         let currentStrategy = 'bet';
-        let currentSystem = 'standard'; // 'standard' (順/反) 或 'fixed' (固定號)
+        let currentSystem = 'standard'; // 'standard' (順/反), 'fixed' (固定號), 'size' (大中小)
         let currentFixedGroup = 1;      // 固定號目前選中的組別 (1~4)
         const chineseRounds = ["第一關", "第二關", "第三關", "第四關", "第五關", "第六關", "第七關", "第八關", "第九關"];
         
         function switchSystem(sys) {
             currentSystem = sys;
             document.querySelectorAll('.system-btn').forEach(b => b.classList.remove('active'));
+            
+            // 控管上方子選單的顯示與隱藏
             if (sys === 'standard') {
                 document.getElementById('sysBtnStandard').classList.add('active');
                 document.getElementById('modeTabsContainer').style.display = 'flex';
                 document.getElementById('fixedTabsContainer').style.display = 'none';
-            } else {
+            } else if (sys === 'fixed') {
                 document.getElementById('sysBtnFixed').classList.add('active');
                 document.getElementById('modeTabsContainer').style.display = 'none';
                 document.getElementById('fixedTabsContainer').style.display = 'flex';
+            } else if (sys === 'size') {
+                document.getElementById('sysBtnSize').classList.add('active');
+                document.getElementById('modeTabsContainer').style.display = 'none';
+                document.getElementById('fixedTabsContainer').style.display = 'none';
             }
             renderTableUI();
         }
@@ -617,8 +627,8 @@
         }
         function showPositionModal(pos, title) {
             if (!globalFullData.length) return;
-            // 🟢 固定號體系下不需要彈窗，直接返回
-            if (currentSystem === 'fixed') {
+            // 固定號或大中小體系下不需要彈窗
+            if (currentSystem === 'fixed' || currentSystem === 'size') {
                 return;
             }
             const { headList, tailList } = getHeadTailForPosition(globalFullData, pos);
@@ -661,6 +671,17 @@
                             cls = 'red';
                         } else if (currentFixedGroup === 4 && (val === 1 || val === 2 || val === 3)) {
                             cls = 'red';
+                        } else {
+                            cls = 'blue';
+                        }
+                    } else if (currentSystem === 'size') {
+                        // 🟢 大中小模式專屬顏色規則
+                        if (val >= 1 && val <= 3) {
+                            cls = 'blue';   // 1, 2, 3 藍色
+                        } else if (val >= 4 && val <= 7) {
+                            cls = 'yellow'; // 4, 5, 6, 7 黃色
+                        } else if (val >= 8 && val <= 10) {
+                            cls = 'red';    // 8, 9, 10 紅色
                         } else {
                             cls = 'blue';
                         }
