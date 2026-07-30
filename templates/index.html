@@ -60,6 +60,15 @@
             border: 1px solid #e2e8f0;
         }
 
+        /* 牌路選擇標題樣式 */
+        .section-label {
+            font-size: 11px;
+            font-weight: 700;
+            color: #475569;
+            margin-bottom: 4px;
+            text-align: left;
+        }
+
         /* 上方體系橫向卷軸區塊 */
         .system-scroll-bar {
             display: flex;
@@ -181,7 +190,7 @@
         .num-box {
             flex: 1;
             height: 26px;
-            color: #ffffff; /* 預設為白字 (順/反、固定號) */
+            color: #ffffff;
             font-size: 12px;
             font-weight: 700;
             display: flex;
@@ -190,9 +199,7 @@
             border-radius: 8px;
             box-shadow: 0 1px 2px rgba(0,0,0,0.1);
         }
-        /* 🟢 大中小模式專用的黑字類別 */
         .num-box.text-black { color: #000000 !important; }
-
         .num-box.green { background-color: #10b981; }
         .num-box.red { background-color: #ef4444; }
         .num-box.blue { background-color: #3b82f6; }
@@ -307,6 +314,9 @@
             </div>
         </div>
         <div class="info-bar">
+            <!-- 牌路選擇標題 -->
+            <div class="section-label">牌路選擇</div>
+
             <!-- 上方體系橫向卷軸 -->
             <div class="system-scroll-bar">
                 <button id="sysBtnStandard" class="system-btn active" onclick="switchSystem('standard')">順/反</button>
@@ -682,7 +692,7 @@
                         } else {
                             cls = 'blue';
                         }
-                        textColorClass = ' text-black'; // 🟢 只有大中小模式套用黑字
+                        textColorClass = ' text-black';
                     } else {
                         if (past.length > 0) {
                             const { headList, tailList } = getHeadTailForPosition(past, p);
