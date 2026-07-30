@@ -181,15 +181,18 @@
         .num-box {
             flex: 1;
             height: 26px;
-            color: #000000;
+            color: #ffffff; /* 預設為白字 (順/反、固定號) */
             font-size: 12px;
             font-weight: 700;
             display: flex;
             align-items: center;
             justify-content: center;
-            border-radius: 8px; /* 🟢 圓角加大，讓四個角更圓滑 */
+            border-radius: 8px;
             box-shadow: 0 1px 2px rgba(0,0,0,0.1);
         }
+        /* 🟢 大中小模式專用的黑字類別 */
+        .num-box.text-black { color: #000000 !important; }
+
         .num-box.green { background-color: #10b981; }
         .num-box.red { background-color: #ef4444; }
         .num-box.blue { background-color: #3b82f6; }
@@ -656,7 +659,7 @@
             globalFullData.slice(0, 30).forEach((item, idx) => {
                 const past = globalFullData.slice(idx + 1), nums = item.number.replace(/\s+/g, '').split(',');
                 const boxes = nums.map((n, p) => {
-                    const val = parseInt(n, 10); let cls = 'blue';
+                    const val = parseInt(n, 10); let cls = 'blue'; let textColorClass = '';
                     if (currentSystem === 'fixed') {
                         if (currentFixedGroup === 1 && (val === 8 || val === 9 || val === 10)) {
                             cls = 'red';
@@ -679,6 +682,7 @@
                         } else {
                             cls = 'blue';
                         }
+                        textColorClass = ' text-black'; // 🟢 只有大中小模式套用黑字
                     } else {
                         if (past.length > 0) {
                             const { headList, tailList } = getHeadTailForPosition(past, p);
@@ -686,7 +690,7 @@
                             else if (new Set(tailList).has(val)) cls = 'red';
                         }
                     }
-                    return `<div class="num-box ${cls}">${val < 10 ? '0'+val : val}</div>`;
+                    return `<div class="num-box ${cls}${textColorClass}">${val < 10 ? '0'+val : val}</div>`;
                 }).join('');
                 tb.innerHTML += `<tr class="lottery-row"><td class="period-cell">${item.period.length > 7 ? item.period.slice(-6) : item.period}</td><td><div class="numbers-cell">${boxes}</div></td></tr>`;
             });
