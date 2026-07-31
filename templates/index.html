@@ -83,12 +83,8 @@
             white-space: nowrap;
             transition: all 0.2s;
         }
-        .main-nav-btn.active-route {
-            background-color: #475569;
-            color: #ffffff;
-            border-color: #334155;
-            box-shadow: 0 2px 4px rgba(71, 85, 105, 0.3);
-        }
+        /* 牌路與報牌共用紫色啟用底色 */
+        .main-nav-btn.active-route,
         .main-nav-btn.active-signal {
             background-color: #7c3aed;
             color: #ffffff;
@@ -474,12 +470,14 @@
         const rankNames = ['冠', '亞', '三', '四', '五', '六', '七', '八', '九', '十'];
         const chineseRounds = ["第一關", "第二關", "第三關", "第四關", "第五關", "第六關", "第七關", "第八關", "第九關"];
         let signalHistory = {};
+        let isSimulated = false;
 
         function switchMainTab(tab) {
             currentMainTab = tab;
             const routeBtn = document.getElementById('mainNavRoute');
             const signalBtn = document.getElementById('mainNavSignal');
             
+            // 兩者皆採用紫色啟用風格
             routeBtn.className = 'main-nav-btn' + (tab === 'route' ? ' active-route' : '');
             signalBtn.className = 'main-nav-btn' + (tab === 'signal' ? ' active-signal' : '');
             
@@ -639,6 +637,7 @@
             if (countdownTimer) clearInterval(countdownTimer);
             targetEndTimeMs = 0; lastPeriodLoaded = ""; document.getElementById('timerText').innerText = '同步中...';
             signalHistory = {};
+            isSimulated = false;
             fetchData();
         }
         function getHeadTailForPosition(past, pos, splitVal) {
@@ -681,11 +680,74 @@
             }, 1000);
         }
 
-        // 採用 順三（頭3後7）邏輯的報牌與結算核心
+        // 模擬往歷史回溯 100 期並產生報牌紀錄
+        function runSimulation100Periods() {
+            if (globalFullData.length < 20 || isSimulated) return;
+            isSimulated = true;
+            
+            // 從倒數第 100 期到第 1 期依序模擬
+            let simLimit = Math.min(globalFullData.length - 10, 100);
+            for (let i = simLimit; i >= 1; i--) {
+                let subData = globalFullData.slice(i); // 模擬當下的歷史資料集 (subData[0] 為當下最新期)
+                let targetPeriod = (BigInt(subData[0].period) + 1n).toString();
+                
+                let eligibleRanks = [];
+                for (let p = 0; p < 10; p++) {
+                    let redStreak = 0;
+                    for (let idx = 0; idx < subData.length - 1; idx++) {
+                        let item = subData[idx];
+                        let past = subData.slice(idx + 1);
+                        let nums = item.number.replace(/\s+/g, '').split(',');
+                        let val = parseInt(nums[p], 10);
+                        let { headList, tailList } = getHeadTailForPosition(past, p, 3);
+                        
+                        let isRed = tailList.includes(val);
+                        if (isRed) {
+                            redStreak++;
+                        } else {
+                            break;
+                        }
+                    }
+                    // 修正條件：紅色連 3 期
+                    if (redStreak >= 3) {
+                        let currentPast = subData.slice(1);
+                        let { headList } = getHeadTailForPosition(currentPast, p, 3);
+                        eligibleRanks.push({ pos: p, rankName: rankNames[p], greenNums: headList.join(', ') });
+                    }
+                }
+
+                if (eligibleRanks.length > 0) {
+                    let chosen = eligibleRanks[Math.floor(Math.random() * eligibleRanks.length)];
+                    // 結算該筆
+                    let actualOpened = globalFullData.find(item => item.period === targetPeriod);
+                    let status = 'pending';
+                    if (actualOpened) {
+                        let nums = actualOpened.number.replace(/\s+/g, '').split(',');
+                        let actualVal = parseInt(nums[chosen.pos], 10);
+                        let openedPast = globalFullData.slice(globalFullData.indexOf(actualOpened) + 1);
+                        let { headList } = getHeadTailForPosition(openedPast, chosen.pos, 3);
+                        if (headList.includes(actualVal)) status = 'win';
+                        else status = 'lose';
+                    }
+
+                    signalHistory[targetPeriod] = {
+                        period: targetPeriod,
+                        pos: chosen.pos,
+                        rankName: chosen.rankName,
+                        greenNums: chosen.greenNums,
+                        status: status
+                    };
+                }
+            }
+        }
+
         function processSignalGenerationAndSettling() {
             if (globalFullData.length < 15) return [];
 
-            // 1. 結算歷史已報牌的期數
+            // 執行 100 期模擬（只執行一次）
+            runSimulation100Periods();
+
+            // 1. 結算即時歷史
             for (let targetPeriod in signalHistory) {
                 let sig = signalHistory[targetPeriod];
                 if (sig.status === 'pending') {
@@ -695,55 +757,32 @@
                         let actualVal = parseInt(nums[sig.pos], 10);
                         let openedPast = globalFullData.slice(globalFullData.indexOf(openedItem) + 1);
                         if (openedPast.length > 0) {
-                            // 順三邏輯：頭3為綠色
                             let { headList } = getHeadTailForPosition(openedPast, sig.pos, 3);
-                            if (headList.includes(actualVal)) {
-                                sig.status = 'win'; // 收
-                            } else {
-                                sig.status = 'lose'; // 翻
-                            }
+                            if (headList.includes(actualVal)) sig.status = 'win';
+                            else sig.status = 'lose';
                         }
                     }
                 }
             }
 
-            // 2. 針對「下一期」進行條件偵測與隨機報牌
+            // 2. 針對下一期即時偵測
             const nextPeriod = (BigInt(globalFullData[0].period) + 1n).toString();
-            
             let existingForNext = Object.values(signalHistory).find(s => s.period === nextPeriod);
             if (!existingForNext && globalFullData.length >= 10) {
                 let eligibleRanks = [];
-
                 for (let p = 0; p < 10; p++) {
                     let redStreak = 0;
-                    let greenAppeared = false;
-
                     for (let idx = 0; idx < globalFullData.length - 1; idx++) {
                         let item = globalFullData[idx];
                         let past = globalFullData.slice(idx + 1);
                         let nums = item.number.replace(/\s+/g, '').split(',');
                         let val = parseInt(nums[p], 10);
-
-                        // 順三邏輯：前3碼為頭(綠色)，後7碼為尾(紅色)
                         let { headList, tailList } = getHeadTailForPosition(past, p, 3);
-                        
-                        let isGreen = headList.includes(val);
                         let isRed = tailList.includes(val);
-
-                        if (idx === 0) {
-                            if (isGreen) { greenAppeared = true; break; }
-                        }
-
-                        if (isRed && !greenAppeared) {
-                            redStreak++;
-                        } else {
-                            if (isGreen) greenAppeared = true;
-                            break;
-                        }
+                        if (isRed) redStreak++;
+                        else break;
                     }
-
-                    // 條件：紅色連8期以上且綠色都還沒出來
-                    if (redStreak >= 8 && !greenAppeared) {
+                    if (redStreak >= 3) {
                         let currentPast = globalFullData.slice(1);
                         let { headList } = getHeadTailForPosition(currentPast, p, 3);
                         eligibleRanks.push({ pos: p, rankName: rankNames[p], greenNums: headList.join(', ') });
@@ -767,10 +806,10 @@
             let rowsHtml = "";
 
             if (sortedPeriods.length === 0) {
-                return `<tr><td colspan="4" style="padding:30px; color:#64748b;">目前使用【順三】邏輯尚未偵測到符合條件的牌路，等待訊號中...</td></tr>`;
+                return `<tr><td colspan="4" style="padding:30px; color:#64748b;">目前使用【順三】紅色連3期邏輯模擬中，等待訊號...</td></tr>`;
             }
 
-            sortedPeriods.slice(0, 15).forEach(per => {
+            sortedPeriods.slice(0, 20).forEach(per => {
                 let sig = signalHistory[per];
                 let displayPeriod = per.length > 7 ? per.slice(-6) : per;
                 let statusHtml = "";
