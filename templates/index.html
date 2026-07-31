@@ -110,6 +110,25 @@
             box-shadow: 0 2px 4px rgba(71, 85, 105, 0.3);
         }
 
+        /* 報牌模式下的三～七碼按鈕樣式（與原系統按鈕相同） */
+        .signal-code-btn {
+            background-color: #ffffff;
+            color: #475569;
+            border: 1px solid #cbd5e1;
+            padding: 4px 10px;
+            font-size: 11px;
+            font-weight: 700;
+            border-radius: 6px;
+            cursor: pointer;
+            transition: all 0.2s;
+        }
+        .signal-code-btn.active {
+            background-color: #475569;
+            color: #ffffff;
+            border-color: #334155;
+            box-shadow: 0 2px 4px rgba(71, 85, 105, 0.3);
+        }
+
         /* 報牌模式下的上三下二按鈕區塊樣式 */
         .signal-btn-container {
             display: flex;
@@ -166,24 +185,6 @@
             background-color: #d97706;
             color: #ffffff;
             border-color: #b45309;
-        }
-
-        /* 報牌模式下的三~七碼按鈕，選中時底色變黑色 */
-        .signal-code-btn {
-            background-color: #ffffff;
-            color: #475569;
-            border: 1px solid #cbd5e1;
-            padding: 3px 10px;
-            font-size: 11px;
-            font-weight: 700;
-            border-radius: 4px;
-            cursor: pointer;
-            transition: all 0.2s;
-        }
-        .signal-code-btn.active {
-            background-color: #000000;
-            color: #ffffff;
-            border-color: #000000;
         }
 
         .fixed-tabs {
@@ -378,18 +379,20 @@
         </div>
         <div class="info-bar">
             <div class="main-nav-bar">
-                <div class="main-nav-group" id="systemNavGroup">
+                <!-- 左側：牌路模式時顯示 順/反、固定號、大中小；報牌模式時顯示 三碼～七碼 -->
+                <div class="main-nav-group" id="leftNavArea">
                     <button id="sysBtnStandard" class="system-btn active" onclick="switchSystem('standard')">順/反</button>
                     <button id="sysBtnFixed" class="system-btn" onclick="switchSystem('fixed')">固定號</button>
                     <button id="sysBtnSize" class="system-btn" onclick="switchSystem('size')">大中小</button>
                 </div>
+                <!-- 右側：永遠固定顯示【牌路】與【報牌】按鈕 -->
                 <div class="main-nav-group">
                     <button id="mainNavRoute" class="main-nav-btn active-route" onclick="switchMainTab('route')">牌路</button>
                     <button id="mainNavSignal" class="main-nav-btn" onclick="switchMainTab('signal')">報牌</button>
                 </div>
             </div>
 
-            <!-- 牌路模式下的模式選擇區塊 -->
+            <!-- 牌路模式下的順三～順八選擇區塊 -->
             <div id="modeTabsContainer" class="mode-tabs">
                 <button id="modeBtn3" class="mode-btn active" onclick="switchMode(3)">順三</button>
                 <button id="modeBtn4" class="mode-btn" onclick="switchMode(4)">順四</button>
@@ -397,15 +400,6 @@
                 <button id="modeBtn6" class="mode-btn" onclick="switchMode(6)">順六</button>
                 <button id="modeBtn7" class="mode-btn" onclick="switchMode(7)">順七</button>
                 <button id="modeBtn8" class="mode-btn" onclick="switchMode(8)">順八</button>
-            </div>
-
-            <!-- 報牌模式下的三碼～七碼選擇區塊 (預設隱藏) -->
-            <div id="signalCodeTabsContainer" class="mode-tabs" style="display: none;">
-                <button id="sigCodeBtn3" class="signal-code-btn active" onclick="switchSignalCode(3)">三碼</button>
-                <button id="sigCodeBtn4" class="signal-code-btn" onclick="switchSignalCode(4)">四碼</button>
-                <button id="sigCodeBtn5" class="signal-code-btn" onclick="switchSignalCode(5)">五碼</button>
-                <button id="sigCodeBtn6" class="signal-code-btn" onclick="switchSignalCode(6)">六碼</button>
-                <button id="sigCodeBtn7" class="signal-code-btn" onclick="switchSignalCode(7)">七碼</button>
             </div>
 
             <div id="fixedTabsContainer" class="fixed-tabs">
@@ -533,7 +527,7 @@
         let currentSystem = 'standard';
         let currentMainTab = 'route'; 
         let currentFixedGroup = 1;
-        let currentSignalCode = 3; // 報牌模式下的三~七碼
+        let currentSignalCode = 3; 
         const rankNames = ['冠軍', '亞軍', '三', '四', '五', '六', '七', '八', '九', '十'];
         const chineseRounds = ["第一關", "第二關", "第三關", "第四關", "第五關", "第六關", "第七關", "第八關", "第九關"];
 
@@ -547,35 +541,37 @@
             
             const routeArea = document.getElementById('routeTableArea');
             const signalArea = document.getElementById('signalButtonArea');
-            const systemNavGroup = document.getElementById('systemNavGroup');
+            const leftNavGroup = document.getElementById('leftNavArea');
             const modeTabs = document.getElementById('modeTabsContainer');
-            const signalCodeTabs = document.getElementById('signalCodeTabsContainer');
             const fixedTabs = document.getElementById('fixedTabsContainer');
 
             if (tab === 'signal') {
                 routeArea.style.display = 'none';
                 signalArea.style.display = 'block';
-                systemNavGroup.style.display = 'none'; // 隱藏順反、固定號、大中小
                 fixedTabs.style.display = 'none';
-                modeTabs.style.display = 'none';
-                signalCodeTabs.style.display = 'flex'; // 顯示三~七碼按鈕
+                modeTabs.style.display = 'none'; 
+
+                // 將左側原本的順/反位置換成三碼～七碼按鈕
+                leftNavGroup.innerHTML = `
+                    <button id="sigCodeBtn3" class="signal-code-btn ${currentSignalCode===3?'active':''}" onclick="switchSignalCode(3)">三碼</button>
+                    <button id="sigCodeBtn4" class="signal-code-btn ${currentSignalCode===4?'active':''}" onclick="switchSignalCode(4)">四碼</button>
+                    <button id="sigCodeBtn5" class="signal-code-btn ${currentSignalCode===5?'active':''}" onclick="switchSignalCode(5)">五碼</button>
+                    <button id="sigCodeBtn6" class="signal-code-btn ${currentSignalCode===6?'active':''}" onclick="switchSignalCode(6)">六碼</button>
+                    <button id="sigCodeBtn7" class="signal-code-btn ${currentSignalCode===7?'active':''}" onclick="switchSignalCode(7)">七碼</button>
+                `;
             } else {
                 routeArea.style.display = 'block';
                 signalArea.style.display = 'none';
-                systemNavGroup.style.display = 'flex'; // 恢復順反、固定號、大中小
-                signalCodeTabs.style.display = 'none';
                 
-                // 恢復原本牌路模式下的顯示狀態
-                if (currentSystem === 'standard') {
-                    modeTabs.style.display = 'flex';
-                    fixedTabs.style.display = 'none';
-                } else if (currentSystem === 'fixed') {
-                    modeTabs.style.display = 'none';
-                    fixedTabs.style.display = 'flex';
-                } else {
-                    modeTabs.style.display = 'none';
-                    fixedTabs.style.display = 'none';
-                }
+                // 恢復左側原本的順/反、固定號、大中小
+                leftNavGroup.innerHTML = `
+                    <button id="sysBtnStandard" class="system-btn active" onclick="switchSystem('standard')">順/反</button>
+                    <button id="sysBtnFixed" class="system-btn" onclick="switchSystem('fixed')">固定號</button>
+                    <button id="sysBtnSize" class="system-btn" onclick="switchSystem('size')">大中小</button>
+                `;
+                currentSystem = 'standard';
+                modeTabs.style.display = 'flex';
+                fixedTabs.style.display = 'none';
             }
             renderTableUI();
         }
