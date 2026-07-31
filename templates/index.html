@@ -60,6 +60,45 @@
             border: 1px solid #e2e8f0;
         }
 
+        /* 主功能切換區（牌路 / 報牌） */
+        .main-nav-bar {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 8px;
+            border-bottom: 1px solid #e2e8f0;
+            padding-bottom: 6px;
+        }
+        .main-nav-group { display: flex; gap: 6px; overflow-x: auto; scrollbar-width: none; }
+        .main-nav-group::-webkit-scrollbar { display: none; }
+        
+        .main-nav-btn {
+            background-color: #ffffff;
+            color: #475569;
+            border: 1px solid #cbd5e1;
+            padding: 4px 12px;
+            font-size: 11px;
+            font-weight: 700;
+            border-radius: 6px;
+            cursor: pointer;
+            white-space: nowrap;
+            transition: all 0.2s;
+        }
+        /* 牌路按鈕啟用色（黑色系） */
+        .main-nav-btn.active-route {
+            background-color: #475569;
+            color: #ffffff;
+            border-color: #334155;
+            box-shadow: 0 2px 4px rgba(71, 85, 105, 0.3);
+        }
+        /* 報牌按鈕啟用色（深紫色系，與黑色做區分） */
+        .main-nav-btn.active-signal {
+            background-color: #7c3aed;
+            color: #ffffff;
+            border-color: #6d28d9;
+            box-shadow: 0 2px 4px rgba(124, 58, 237, 0.3);
+        }
+
         /* 上方體系橫向卷軸區塊 */
         .system-scroll-bar {
             display: flex;
@@ -305,11 +344,17 @@
             </div>
         </div>
         <div class="info-bar">
-            <!-- 上方體系橫向卷軸 -->
-            <div class="system-scroll-bar">
-                <button id="sysBtnStandard" class="system-btn active" onclick="switchSystem('standard')">順/反</button>
-                <button id="sysBtnFixed" class="system-btn" onclick="switchSystem('fixed')">固定號</button>
-                <button id="sysBtnSize" class="system-btn" onclick="switchSystem('size')">大中小</button>
+            <!-- 上方主切換列：左側牌路相關按鈕，右側【牌路】與【報牌】主切換 -->
+            <div class="main-nav-bar">
+                <div class="main-nav-group">
+                    <button id="sysBtnStandard" class="system-btn active" onclick="switchSystem('standard')">順/反</button>
+                    <button id="sysBtnFixed" class="system-btn" onclick="switchSystem('fixed')">固定號</button>
+                    <button id="sysBtnSize" class="system-btn" onclick="switchSystem('size')">大中小</button>
+                </div>
+                <div class="main-nav-group">
+                    <button id="mainNavRoute" class="main-nav-btn active-route" onclick="switchMainTab('route')">牌路</button>
+                    <button id="mainNavSignal" class="main-nav-btn" onclick="switchMainTab('signal')">報牌</button>
+                </div>
             </div>
 
             <!-- 原本的順三~順八按鈕群組 -->
@@ -432,9 +477,21 @@
         let globalFullData = [], currentLotCode = '10035', countdownTimer = null, targetEndTimeMs = 0, lastPeriodLoaded = "", currentSplit = 5, currentCodeCount = 5;
         let currentStrategy = 'bet';
         let currentSystem = 'standard';
+        let currentMainTab = 'route'; // 'route' (牌路) 或 'signal' (報牌)
         let currentFixedGroup = 1;
         const chineseRounds = ["第一關", "第二關", "第三關", "第四關", "第五關", "第六關", "第七關", "第八關", "第九關"];
         
+        function switchMainTab(tab) {
+            currentMainTab = tab;
+            const routeBtn = document.getElementById('mainNavRoute');
+            const signalBtn = document.getElementById('mainNavSignal');
+            
+            routeBtn.className = 'main-nav-btn' + (tab === 'route' ? ' active-route' : '');
+            signalBtn.className = 'main-nav-btn' + (tab === 'signal' ? ' active-signal' : '');
+            
+            renderTableUI();
+        }
+
         function switchSystem(sys) {
             currentSystem = sys;
             document.querySelectorAll('.system-btn').forEach(b => b.classList.remove('active'));
@@ -623,7 +680,7 @@
             return { headList: seen.slice(0, currentSplit), tailList: seen.slice(currentSplit, 10) };
         }
         function showPositionModal(pos, title) {
-            if (!globalFullData.length) return;
+            if (!globalFullData.length || currentMainTab === 'signal') return;
             if (currentSystem === 'fixed' || currentSystem === 'size') {
                 return;
             }
@@ -654,6 +711,13 @@
         function renderTableUI() {
             const tb = document.getElementById('tableBody'); if (!globalFullData.length) return;
             tb.innerHTML = "";
+            
+            // 🟢 如果切換到「報牌」模式，下方表格先留白
+            if (currentMainTab === 'signal') {
+                tb.innerHTML = `<tr class="lottery-row"><td colspan="2" style="text-align:center; padding: 40px; color: #64748b; font-weight: 600;">🤖 報牌模式準備中，等待載入偵測規則...</td></tr>`;
+                return;
+            }
+
             globalFullData.slice(0, 30).forEach((item, idx) => {
                 const past = globalFullData.slice(idx + 1), nums = item.number.replace(/\s+/g, '').split(',');
                 const boxes = nums.map((n, p) => {
