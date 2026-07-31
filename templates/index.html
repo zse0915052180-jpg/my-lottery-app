@@ -110,22 +110,36 @@
             box-shadow: 0 2px 4px rgba(71, 85, 105, 0.3);
         }
 
+        /* 報牌區塊上三下二按鈕樣式 */
+        .signal-btn-container {
+            display: flex;
+            flex-direction: column;
+            gap: 5px;
+            padding: 6px 0;
+            border-bottom: 2px solid #000000;
+            margin-bottom: 6px;
+        }
+        .signal-row-flex {
+            display: flex;
+            justify-content: center;
+            gap: 6px;
+        }
         .signal-sub-btn {
             background-color: #ffffff;
             color: #475569;
             border: 1px solid #cbd5e1;
-            padding: 4px 10px;
-            font-size: 11px;
+            padding: 5px 14px;
+            font-size: 11.5px;
             font-weight: 700;
             border-radius: 6px;
             cursor: pointer;
-            white-space: nowrap;
             transition: all 0.2s;
         }
         .signal-sub-btn.active {
             background-color: #7c3aed;
             color: #ffffff;
             border-color: #6d28d9;
+            box-shadow: 0 2px 4px rgba(124, 58, 237, 0.3);
         }
 
         .mode-tabs {
@@ -382,6 +396,10 @@
                 <span id="timerText" class="timer-highlight">同步中...</span>
             </div>
         </div>
+
+        <!-- 報牌模式下的上三下二按鈕容器 -->
+        <div id="signalButtonArea" style="display: none;"></div>
+
         <div class="table-wrapper">
             <table id="routeHeaderTable" class="lottery-table">
                 <thead>
@@ -476,7 +494,7 @@
         let currentSystem = 'standard';
         let currentMainTab = 'route'; 
         let currentFixedGroup = 1;
-        let currentSignalSub = '三'; // 報牌底下的三四五六七預設
+        let currentSignalSub = '宰相'; // 預設選中的報牌按鈕
         const rankNames = ['冠軍', '亞軍', '三', '四', '五', '六', '七', '八', '九', '十'];
         const chineseRounds = ["第一關", "第二關", "第三關", "第四關", "第五關", "第六關", "第七關", "第八關", "第九關"];
 
@@ -492,24 +510,35 @@
             const blackBox = document.getElementById('blackBoxContainer');
             const modeTabs = document.getElementById('modeTabsContainer');
             const fixedTabs = document.getElementById('fixedTabsContainer');
+            const signalArea = document.getElementById('signalButtonArea');
 
             if (tab === 'signal') {
                 headerTable.style.display = 'none';
                 fixedTabs.style.display = 'none';
-                modeTabs.style.display = 'none'; // 依要求：切換報牌後紅框處消失
+                modeTabs.style.display = 'none'; 
+                blackBox.style.display = 'none'; // 隱藏原本的導覽列
+                signalArea.style.display = 'block'; // 顯示上三下二按鈕區塊
 
-                // 依要求：黑框處變成【三】【四】【五】【六】【七】
-                blackBox.innerHTML = `
-                    <button class="signal-sub-btn ${currentSignalSub==='三'?'active':''}" onclick="switchSignalSub('三')">三</button>
-                    <button class="signal-sub-btn ${currentSignalSub==='四'?'active':''}" onclick="switchSignalSub('四')">四</button>
-                    <button class="signal-sub-btn ${currentSignalSub==='五'?'active':''}" onclick="switchSignalSub('五')">五</button>
-                    <button class="signal-sub-btn ${currentSignalSub==='六'?'active':''}" onclick="switchSignalSub('六')">六</button>
-                    <button class="signal-sub-btn ${currentSignalSub==='七'?'active':''}" onclick="switchSignalSub('七')">七</button>
+                // 渲染上三下二按鈕
+                signalArea.innerHTML = `
+                    <div class="signal-btn-container">
+                        <div class="signal-row-flex">
+                            <button class="signal-sub-btn ${currentSignalSub==='宰相'?'active':''}" onclick="switchSignalSub('宰相')">宰相</button>
+                            <button class="signal-sub-btn ${currentSignalSub==='博士'?'active':''}" onclick="switchSignalSub('博士')">博士</button>
+                            <button class="signal-sub-btn ${currentSignalSub==='宗師'?'active':''}" onclick="switchSignalSub('宗師')">宗師</button>
+                        </div>
+                        <div class="signal-row-flex">
+                            <button class="signal-sub-btn ${currentSignalSub==='王牌'?'active':''}" onclick="switchSignalSub('王牌')">王牌</button>
+                            <button class="signal-sub-btn ${currentSignalSub==='小幫手'?'active':''}" onclick="switchSignalSub('小幫手')">小幫手</button>
+                        </div>
+                    </div>
                 `;
             } else {
                 headerTable.style.display = 'table';
                 modeTabs.style.display = 'flex';
-                // 還原黑框原本內容
+                blackBox.style.display = 'flex';
+                signalArea.style.display = 'none';
+
                 blackBox.innerHTML = `
                     <button id="sysBtnStandard" class="system-btn active" onclick="switchSystem('standard')">順/反</button>
                     <button id="sysBtnFixed" class="system-btn" onclick="switchSystem('fixed')">固定號</button>
@@ -522,7 +551,7 @@
 
         function switchSignalSub(sub) {
             currentSignalSub = sub;
-            switchMainTab('signal'); // 重新整理按鈕active狀態
+            switchMainTab('signal'); 
         }
 
         function switchSystem(sys) {
@@ -709,7 +738,6 @@
             tb.innerHTML = "";
             
             if (currentMainTab === 'signal') {
-                // 依要求：黃框處完全留白
                 tb.innerHTML = `<table class="signal-table">
                     <thead>
                         <tr>
