@@ -110,16 +110,16 @@
             box-shadow: 0 2px 4px rgba(71, 85, 105, 0.3);
         }
 
-        /* 報牌區塊上三下二按鈕樣式與比例調整 */
+        /* 報牌模式下的上三下二按鈕區塊樣式 */
         .signal-btn-container {
             display: flex;
             flex-direction: column;
-            gap: 8px;
-            padding: 12px 0;
-            border-bottom: 2px solid #000000;
-            margin-bottom: 6px;
+            gap: 10px;
+            padding: 20px 0;
+            margin-bottom: 10px;
             background: #ffffff;
             border-radius: 8px;
+            border: 1px solid #e2e8f0;
         }
         .signal-row-flex {
             display: flex;
@@ -130,7 +130,7 @@
             background-color: #ffffff;
             color: #0f172a;
             border: 2px solid #1e293b;
-            padding: 8px 22px;
+            padding: 8px 24px;
             font-size: 14px;
             font-weight: 800;
             border-radius: 8px;
@@ -143,25 +143,6 @@
             color: #ffffff;
             border-color: #000000;
             box-shadow: 0 3px 6px rgba(0, 0, 0, 0.2);
-        }
-
-        /* 左上角三碼、四碼等按鈕，選中時底色變黑色 */
-        .signal-code-btn {
-            background-color: #ffffff;
-            color: #475569;
-            border: 1px solid #cbd5e1;
-            padding: 5px 12px;
-            font-size: 11px;
-            font-weight: 700;
-            border-radius: 6px;
-            cursor: pointer;
-            transition: all 0.2s;
-        }
-        .signal-code-btn.active {
-            background-color: #000000;
-            color: #ffffff;
-            border-color: #000000;
-            box-shadow: 0 2px 4px rgba(0, 0, 0, 0.3);
         }
 
         .mode-tabs {
@@ -185,6 +166,24 @@
             background-color: #d97706;
             color: #ffffff;
             border-color: #b45309;
+        }
+
+        /* 報牌模式下的三~七碼按鈕，選中時底色變黑色 */
+        .signal-code-btn {
+            background-color: #ffffff;
+            color: #475569;
+            border: 1px solid #cbd5e1;
+            padding: 3px 10px;
+            font-size: 11px;
+            font-weight: 700;
+            border-radius: 4px;
+            cursor: pointer;
+            transition: all 0.2s;
+        }
+        .signal-code-btn.active {
+            background-color: #000000;
+            color: #ffffff;
+            border-color: #000000;
         }
 
         .fixed-tabs {
@@ -269,11 +268,6 @@
         .num-box.red { background-color: #ef4444; }
         .num-box.blue { background-color: #3b82f6; }
         .num-box.yellow { background-color: #f59e0b; }
-
-        .signal-table { width: 100%; border-collapse: collapse; font-size: 12.5px; background: #fff; table-layout: fixed; }
-        .signal-table th { background-color: #f8fafc; color: #7c3aed; font-weight: 800; padding: 8px 2px; border-bottom: 2px solid #000000; text-align: center; }
-        .signal-table td { padding: 10px 2px; font-weight: 800; color: #0f172a; text-align: center; vertical-align: middle; }
-        .signal-table tr.signal-row { border-bottom: 2.5px solid #000000; }
 
         .strategy-area {
             margin-top: 10px;
@@ -384,7 +378,7 @@
         </div>
         <div class="info-bar">
             <div class="main-nav-bar">
-                <div class="main-nav-group" id="blackBoxContainer">
+                <div class="main-nav-group" id="systemNavGroup">
                     <button id="sysBtnStandard" class="system-btn active" onclick="switchSystem('standard')">順/反</button>
                     <button id="sysBtnFixed" class="system-btn" onclick="switchSystem('fixed')">固定號</button>
                     <button id="sysBtnSize" class="system-btn" onclick="switchSystem('size')">大中小</button>
@@ -395,13 +389,23 @@
                 </div>
             </div>
 
-            <!-- 左上角改為三碼、四碼、五碼...，選中時底色變黑色 -->
+            <!-- 牌路模式下的模式選擇區塊 -->
             <div id="modeTabsContainer" class="mode-tabs">
-                <button id="modeBtn3" class="signal-code-btn active" onclick="switchMode(3)">三碼</button>
-                <button id="modeBtn4" class="signal-code-btn" onclick="switchMode(4)">四碼</button>
-                <button id="modeBtn5" class="signal-code-btn" onclick="switchMode(5)">五碼</button>
-                <button id="modeBtn6" class="signal-code-btn" onclick="switchMode(6)">六碼</button>
-                <button id="modeBtn7" class="signal-code-btn" onclick="switchMode(7)">七碼</button>
+                <button id="modeBtn3" class="mode-btn active" onclick="switchMode(3)">順三</button>
+                <button id="modeBtn4" class="mode-btn" onclick="switchMode(4)">順四</button>
+                <button id="modeBtn5" class="mode-btn" onclick="switchMode(5)">順五</button>
+                <button id="modeBtn6" class="mode-btn" onclick="switchMode(6)">順六</button>
+                <button id="modeBtn7" class="mode-btn" onclick="switchMode(7)">順七</button>
+                <button id="modeBtn8" class="mode-btn" onclick="switchMode(8)">順八</button>
+            </div>
+
+            <!-- 報牌模式下的三碼～七碼選擇區塊 (預設隱藏) -->
+            <div id="signalCodeTabsContainer" class="mode-tabs" style="display: none;">
+                <button id="sigCodeBtn3" class="signal-code-btn active" onclick="switchSignalCode(3)">三碼</button>
+                <button id="sigCodeBtn4" class="signal-code-btn" onclick="switchSignalCode(4)">四碼</button>
+                <button id="sigCodeBtn5" class="signal-code-btn" onclick="switchSignalCode(5)">五碼</button>
+                <button id="sigCodeBtn6" class="signal-code-btn" onclick="switchSignalCode(6)">六碼</button>
+                <button id="sigCodeBtn7" class="signal-code-btn" onclick="switchSignalCode(7)">七碼</button>
             </div>
 
             <div id="fixedTabsContainer" class="fixed-tabs">
@@ -417,33 +421,48 @@
             </div>
         </div>
 
-        <!-- 報牌模式下的上三下二按鈕容器 -->
-        <div id="signalButtonArea" style="display: none;"></div>
-
         <div class="table-wrapper">
-            <table id="routeHeaderTable" class="lottery-table">
-                <thead>
-                    <tr>
-                        <th class="period-header">期號</th>
-                        <th>
-                            <div class="rank-header-container">
-                                <div class="rank-header-item" onclick="showPositionModal(0, '冠軍')">冠</div>
-                                <div class="rank-header-item" onclick="showPositionModal(1, '亞軍')">亞</div>
-                                <div class="rank-header-item" onclick="showPositionModal(2, '三')">三</div>
-                                <div class="rank-header-item" onclick="showPositionModal(3, '四')">四</div>
-                                <div class="rank-header-item" onclick="showPositionModal(4, '五')">五</div>
-                                <div class="rank-header-item" onclick="showPositionModal(5, '六')">六</div>
-                                <div class="rank-header-item" onclick="showPositionModal(6, '七')">七</div>
-                                <div class="rank-header-item" onclick="showPositionModal(7, '八')">八</div>
-                                <div class="rank-header-item" onclick="showPositionModal(8, '九')">九</div>
-                                <div class="rank-header-item" onclick="showPositionModal(9, '十')">十</div>
-                            </div>
-                        </th>
-                    </tr>
-                </thead>
-            </table>
-            <div class="table-scroll-container">
-                <table class="lottery-table"><tbody id="tableBody"></tbody></table>
+            <!-- 牌路模式專屬的標頭與表格 -->
+            <div id="routeTableArea">
+                <table id="routeHeaderTable" class="lottery-table">
+                    <thead>
+                        <tr>
+                            <th class="period-header">期號</th>
+                            <th>
+                                <div class="rank-header-container">
+                                    <div class="rank-header-item" onclick="showPositionModal(0, '冠軍')">冠</div>
+                                    <div class="rank-header-item" onclick="showPositionModal(1, '亞軍')">亞</div>
+                                    <div class="rank-header-item" onclick="showPositionModal(2, '三')">三</div>
+                                    <div class="rank-header-item" onclick="showPositionModal(3, '四')">四</div>
+                                    <div class="rank-header-item" onclick="showPositionModal(4, '五')">五</div>
+                                    <div class="rank-header-item" onclick="showPositionModal(5, '六')">六</div>
+                                    <div class="rank-header-item" onclick="showPositionModal(6, '七')">七</div>
+                                    <div class="rank-header-item" onclick="showPositionModal(7, '八')">八</div>
+                                    <div class="rank-header-item" onclick="showPositionModal(8, '九')">九</div>
+                                    <div class="rank-header-item" onclick="showPositionModal(9, '十')">十</div>
+                                </div>
+                            </th>
+                        </tr>
+                    </thead>
+                </table>
+                <div class="table-scroll-container">
+                    <table class="lottery-table"><tbody id="tableBody"></tbody></table>
+                </div>
+            </div>
+
+            <!-- 報牌模式專屬的上三下二按鈕區塊 -->
+            <div id="signalButtonArea" style="display: none;">
+                <div class="signal-btn-container">
+                    <div class="signal-row-flex">
+                        <button class="signal-sub-btn active" onclick="switchSignalSub(this, '宰相')">宰相</button>
+                        <button class="signal-sub-btn" onclick="switchSignalSub(this, '小幫手')">小幫手</button>
+                        <button class="signal-sub-btn" onclick="switchSignalSub(this, '博士')">博士</button>
+                    </div>
+                    <div class="signal-row-flex">
+                        <button class="signal-sub-btn" onclick="switchSignalSub(this, '宗師')">宗師</button>
+                        <button class="signal-sub-btn" onclick="switchSignalSub(this, '王牌')">王牌</button>
+                    </div>
+                </div>
             </div>
         </div>
 
@@ -514,7 +533,7 @@
         let currentSystem = 'standard';
         let currentMainTab = 'route'; 
         let currentFixedGroup = 1;
-        let currentSignalSub = '宰相'; 
+        let currentSignalCode = 3; // 報牌模式下的三~七碼
         const rankNames = ['冠軍', '亞軍', '三', '四', '五', '六', '七', '八', '九', '十'];
         const chineseRounds = ["第一關", "第二關", "第三關", "第四關", "第五關", "第六關", "第七關", "第八關", "第九關"];
 
@@ -526,52 +545,51 @@
             routeBtn.className = 'main-nav-btn' + (tab === 'route' ? ' active-route' : '');
             signalBtn.className = 'main-nav-btn' + (tab === 'signal' ? ' active-signal' : '');
             
-            const headerTable = document.getElementById('routeHeaderTable');
-            const blackBox = document.getElementById('blackBoxContainer');
-            const modeTabs = document.getElementById('modeTabsContainer');
-            const fixedTabs = document.getElementById('fixedTabsContainer');
+            const routeArea = document.getElementById('routeTableArea');
             const signalArea = document.getElementById('signalButtonArea');
+            const systemNavGroup = document.getElementById('systemNavGroup');
+            const modeTabs = document.getElementById('modeTabsContainer');
+            const signalCodeTabs = document.getElementById('signalCodeTabsContainer');
+            const fixedTabs = document.getElementById('fixedTabsContainer');
 
             if (tab === 'signal') {
-                headerTable.style.display = 'none';
+                routeArea.style.display = 'none';
+                signalArea.style.display = 'block';
+                systemNavGroup.style.display = 'none'; // 隱藏順反、固定號、大中小
                 fixedTabs.style.display = 'none';
-                modeTabs.style.display = 'none'; 
-                blackBox.style.display = 'none'; 
-                signalArea.style.display = 'block'; 
-
-                // 根據截圖順序調整上三下二：宰相、小幫手、博士 / 宗師、王牌
-                signalArea.innerHTML = `
-                    <div class="signal-btn-container">
-                        <div class="signal-row-flex">
-                            <button class="signal-sub-btn ${currentSignalSub==='宰相'?'active':''}" onclick="switchSignalSub('宰相')">宰相</button>
-                            <button class="signal-sub-btn ${currentSignalSub==='小幫手'?'active':''}" onclick="switchSignalSub('小幫手')">小幫手</button>
-                            <button class="signal-sub-btn ${currentSignalSub==='博士'?'active':''}" onclick="switchSignalSub('博士')">博士</button>
-                        </div>
-                        <div class="signal-row-flex">
-                            <button class="signal-sub-btn ${currentSignalSub==='宗師'?'active':''}" onclick="switchSignalSub('宗師')">宗師</button>
-                            <button class="signal-sub-btn ${currentSignalSub==='王牌'?'active':''}" onclick="switchSignalSub('王牌')">王牌</button>
-                        </div>
-                    </div>
-                `;
+                modeTabs.style.display = 'none';
+                signalCodeTabs.style.display = 'flex'; // 顯示三~七碼按鈕
             } else {
-                headerTable.style.display = 'table';
-                modeTabs.style.display = 'flex';
-                blackBox.style.display = 'flex';
+                routeArea.style.display = 'block';
                 signalArea.style.display = 'none';
-
-                blackBox.innerHTML = `
-                    <button id="sysBtnStandard" class="system-btn active" onclick="switchSystem('standard')">順/反</button>
-                    <button id="sysBtnFixed" class="system-btn" onclick="switchSystem('fixed')">固定號</button>
-                    <button id="sysBtnSize" class="system-btn" onclick="switchSystem('size')">大中小</button>
-                `;
-                currentSystem = 'standard';
+                systemNavGroup.style.display = 'flex'; // 恢復順反、固定號、大中小
+                signalCodeTabs.style.display = 'none';
+                
+                // 恢復原本牌路模式下的顯示狀態
+                if (currentSystem === 'standard') {
+                    modeTabs.style.display = 'flex';
+                    fixedTabs.style.display = 'none';
+                } else if (currentSystem === 'fixed') {
+                    modeTabs.style.display = 'none';
+                    fixedTabs.style.display = 'flex';
+                } else {
+                    modeTabs.style.display = 'none';
+                    fixedTabs.style.display = 'none';
+                }
             }
             renderTableUI();
         }
 
-        function switchSignalSub(sub) {
-            currentSignalSub = sub;
-            switchMainTab('signal'); 
+        function switchSignalCode(val) {
+            currentSignalCode = val;
+            document.querySelectorAll('.signal-code-btn').forEach(b => b.classList.remove('active'));
+            document.getElementById(`sigCodeBtn${val}`).classList.add('active');
+        }
+
+        function switchSignalSub(btnElem, subName) {
+            const container = btnElem.closest('.signal-btn-container');
+            container.querySelectorAll('.signal-sub-btn').forEach(b => b.classList.remove('active'));
+            btnElem.classList.add('active');
         }
 
         function switchSystem(sys) {
@@ -655,10 +673,11 @@
         function switchMode(val) {
             if (currentSplit === val) return;
             currentSplit = val;
-            document.querySelectorAll('.signal-code-btn').forEach(b => b.classList.remove('active'));
+            document.querySelectorAll('#modeTabsContainer .mode-btn').forEach(b => b.classList.remove('active'));
             document.getElementById(`modeBtn${val}`).classList.add('active');
             renderTableUI();
         }
+
         function openCodeCountModal() { document.getElementById('codeCountModalOverlay').style.display = 'flex'; }
         function closeCodeCountModal() { document.getElementById('codeCountModalOverlay').style.display = 'none'; }
         function selectCodeCountValue(val) {
@@ -757,22 +776,7 @@
             const tb = document.getElementById('tableBody'); if (!globalFullData.length) return;
             tb.innerHTML = "";
             
-            if (currentMainTab === 'signal') {
-                tb.innerHTML = `<table class="signal-table">
-                    <thead>
-                        <tr>
-                            <th style="width: 25%; text-align: center;">期號</th>
-                            <th style="width: 18%; text-align: center;">名次</th>
-                            <th style="width: 32%; text-align: center;">號碼</th>
-                            <th style="width: 25%; text-align: center;">收/翻</th>
-                        </tr>
-                    </thead>
-                    <tbody>
-                        <tr><td colspan="4" style="padding:40px; text-align:center; color:#94a3b8;"></td></tr>
-                    </tbody>
-                </table>`;
-                return;
-            }
+            if (currentMainTab === 'signal') return;
 
             globalFullData.slice(0, 30).forEach((item, idx) => {
                 const past = globalFullData.slice(idx + 1), nums = item.number.replace(/\s+/g, '').split(',');
