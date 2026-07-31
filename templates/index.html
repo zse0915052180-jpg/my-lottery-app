@@ -556,7 +556,6 @@
             [4,5,6,7,8,9,10]
         ];
 
-        // 碼數對應的關數範圍設定
         const codeRoundsMap = {
             3: [4, 5, 6, 7, 8],
             4: [3, 4, 5, 6],
@@ -565,13 +564,21 @@
             7: [2, 3]
         };
 
-        // 碼數對應的倍投比例
         const codeMultipliers = {
             3: 1.44,
             4: 1.71,
             5: 2.06,
             6: 2.62,
             7: 3.59
+        };
+
+        // 各碼數對應的獲利乘數（第一關數字乘以此係數）
+        const profitMultipliers = {
+            3: 6.7,
+            4: 5.7,
+            5: 4.7,
+            6: 3.7,
+            7: 2.7
         };
 
         function getDeterministicPrediction(periodStr, pastData, subName) {
@@ -872,7 +879,6 @@
         function selectCodeCountValue(val) {
             currentCodeCount = val;
             document.getElementById('inputCodeCountDisplay').innerText = val;
-            // 當碼數改變時，自動將關數調整為該碼數的第一個合法選項
             const validRounds = codeRoundsMap[val];
             document.getElementById('inputRoundDisplay').innerText = validRounds[0];
             closeCodeCountModal();
@@ -909,7 +915,6 @@
             
             const mult = codeMultipliers[codeCount] || 1.44;
 
-            // 計算各關相對比例 (關數為 r)
             let ratios = [];
             let currentRatio = 1;
             for (let i = 0; i < r; i++) {
@@ -918,21 +923,18 @@
             }
             let sumRatio = ratios.reduce((a, b) => a + b, 0);
 
-            // 驗證並調整第一關基礎金額，使得 (總金額加總) * 碼數 儘量趨近於本金但不超過
             let bestFirst = Math.floor(amtInput / (sumRatio * codeCount));
             if (bestFirst < 1) bestFirst = 1;
 
             let finalAmounts = [];
             let totalCost = 0;
 
-            // 用迴圈向上測試最大可能的 first 金額，確保總投入 (金額加總 * 碼數) 不超過本金
             while (true) {
                 let testAmounts = ratios.map(rat => Math.round(rat * bestFirst));
                 let testSum = testAmounts.reduce((a, b) => a + b, 0);
                 if (testSum * codeCount <= amtInput) {
                     finalAmounts = testAmounts;
                     totalCost = testSum * codeCount;
-                    // 嘗試再加 1 看看會不會超標
                     let nextAmounts = ratios.map(rat => Math.round(rat * (bestFirst + 1)));
                     let nextSum = nextAmounts.reduce((a, b) => a + b, 0);
                     if (nextSum * codeCount > amtInput) {
@@ -948,8 +950,9 @@
                 }
             }
 
-            // 獲利計算公式：第一關數字 * 9.7 扣掉碼數
-            let profitVal = Math.floor(finalAmounts[0] * 9.7 - codeCount);
+            // 根據各碼數對應的固定獲利乘數計算獲利
+            let pFactor = profitMultipliers[codeCount] || 6.7;
+            let profitVal = Math.floor(finalAmounts[0] * pFactor);
             if (profitVal < 0) profitVal = 0;
 
             const resBody = document.getElementById('resultTableBody'); 
