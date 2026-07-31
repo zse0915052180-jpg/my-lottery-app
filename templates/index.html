@@ -83,7 +83,6 @@
             white-space: nowrap;
             transition: all 0.2s;
         }
-        /* 牌路與報牌共用紫色啟用底色 */
         .main-nav-btn.active-route,
         .main-nav-btn.active-signal {
             background-color: #7c3aed;
@@ -226,11 +225,14 @@
         .num-box.blue { background-color: #3b82f6; }
         .num-box.yellow { background-color: #f59e0b; }
 
-        .signal-table { width: 100%; border-collapse: collapse; text-align: center; font-size: 12px; background: #fff; }
-        .signal-table th { background-color: #f8fafc; color: #7c3aed; font-weight: 700; padding: 6px; border-bottom: 1px solid #cbd5e1; }
-        .signal-table td { padding: 7px 5px; border-bottom: 1px solid #e2e8f0; font-weight: 700; color: #1e293b; }
-        .signal-win { background-color: #d1fae5; color: #065f46; border-radius: 4px; padding: 2px 8px; display: inline-block; }
-        .signal-lose { background-color: #fee2e2; color: #991b1b; border-radius: 4px; padding: 2px 8px; display: inline-block; }
+        /* 報牌專用表格排版與分隔線設計 */
+        .signal-table { width: 100%; border-collapse: collapse; font-size: 13px; background: #fff; table-layout: fixed; }
+        .signal-table th { background-color: #f8fafc; color: #7c3aed; font-weight: 800; padding: 8px 4px; border-bottom: 2px solid #cbd5e1; text-align: center; }
+        .signal-table td { padding: 10px 4px; font-weight: 800; color: #0f172a; text-align: center; }
+        /* 每列之間加入明顯的分隔線 */
+        .signal-table tr.signal-row { border-bottom: 2px solid #e2e8f0; }
+        .signal-win { background-color: #d1fae5; color: #065f46; border-radius: 5px; padding: 3px 12px; display: inline-block; font-weight: 800; }
+        .signal-lose { background-color: #fee2e2; color: #991b1b; border-radius: 5px; padding: 3px 12px; display: inline-block; font-weight: 800; }
 
         .strategy-area {
             margin-top: 10px;
@@ -477,7 +479,6 @@
             const routeBtn = document.getElementById('mainNavRoute');
             const signalBtn = document.getElementById('mainNavSignal');
             
-            // 兩者皆採用紫色啟用風格
             routeBtn.className = 'main-nav-btn' + (tab === 'route' ? ' active-route' : '');
             signalBtn.className = 'main-nav-btn' + (tab === 'signal' ? ' active-signal' : '');
             
@@ -680,15 +681,13 @@
             }, 1000);
         }
 
-        // 模擬往歷史回溯 100 期並產生報牌紀錄
         function runSimulation100Periods() {
             if (globalFullData.length < 20 || isSimulated) return;
             isSimulated = true;
             
-            // 從倒數第 100 期到第 1 期依序模擬
             let simLimit = Math.min(globalFullData.length - 10, 100);
             for (let i = simLimit; i >= 1; i--) {
-                let subData = globalFullData.slice(i); // 模擬當下的歷史資料集 (subData[0] 為當下最新期)
+                let subData = globalFullData.slice(i); 
                 let targetPeriod = (BigInt(subData[0].period) + 1n).toString();
                 
                 let eligibleRanks = [];
@@ -708,7 +707,6 @@
                             break;
                         }
                     }
-                    // 修正條件：紅色連 3 期
                     if (redStreak >= 3) {
                         let currentPast = subData.slice(1);
                         let { headList } = getHeadTailForPosition(currentPast, p, 3);
@@ -718,7 +716,6 @@
 
                 if (eligibleRanks.length > 0) {
                     let chosen = eligibleRanks[Math.floor(Math.random() * eligibleRanks.length)];
-                    // 結算該筆
                     let actualOpened = globalFullData.find(item => item.period === targetPeriod);
                     let status = 'pending';
                     if (actualOpened) {
@@ -744,10 +741,8 @@
         function processSignalGenerationAndSettling() {
             if (globalFullData.length < 15) return [];
 
-            // 執行 100 期模擬（只執行一次）
             runSimulation100Periods();
 
-            // 1. 結算即時歷史
             for (let targetPeriod in signalHistory) {
                 let sig = signalHistory[targetPeriod];
                 if (sig.status === 'pending') {
@@ -765,7 +760,6 @@
                 }
             }
 
-            // 2. 針對下一期即時偵測
             const nextPeriod = (BigInt(globalFullData[0].period) + 1n).toString();
             let existingForNext = Object.values(signalHistory).find(s => s.period === nextPeriod);
             if (!existingForNext && globalFullData.length >= 10) {
@@ -801,7 +795,6 @@
                 }
             }
 
-            // 3. 整理顯示清單
             let sortedPeriods = Object.keys(signalHistory).sort().reverse();
             let rowsHtml = "";
 
@@ -818,14 +811,14 @@
                 } else if (sig.status === 'lose') {
                     statusHtml = `<span class="signal-lose">翻</span>`;
                 } else {
-                    statusHtml = `<span style="color:#d97706;">等待開獎</span>`;
+                    statusHtml = `<span style="color:#d97706; font-weight:800;">等待開獎</span>`;
                 }
 
-                rowsHtml += `<tr>
-                    <td>${displayPeriod}</td>
-                    <td>${sig.rankName}名</td>
-                    <td style="color:#10b981; font-weight:800;">${sig.greenNums}</td>
-                    <td>${statusHtml}</td>
+                rowsHtml += `<tr class="signal-row">
+                    <td style="width: 25%;">${displayPeriod}</td>
+                    <td style="width: 18%;">${sig.rankName}名</td>
+                    <td style="width: 32%; color:#10b981; font-weight:800; letter-spacing:0.5px;">${sig.greenNums}</td>
+                    <td style="width: 25%;">${statusHtml}</td>
                 </tr>`;
             });
 
@@ -840,7 +833,12 @@
                 let signalRows = processSignalGenerationAndSettling();
                 tb.innerHTML = `<table class="signal-table">
                     <thead>
-                        <tr><th>期號</th><th>名次</th><th>號碼</th><th>收/翻</th></tr>
+                        <tr>
+                            <th style="width: 25%;">期號</th>
+                            <th style="width: 18%;">名次</th>
+                            <th style="width: 32%;">號碼</th>
+                            <th style="width: 25%;">收/翻</th>
+                        </tr>
                     </thead>
                     <tbody>${signalRows}</tbody>
                 </table>`;
