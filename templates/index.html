@@ -523,6 +523,7 @@
             <div class="modal-title">選擇碼數</div>
             <div class="round-options-grid" style="grid-template-columns: repeat(3, 1fr);">
                 <div class="round-option-item" onclick="selectCodeCountValue(3)">3 碼</div>
+                <div class="round-option-item" onclick="selectCodeCountValue(4)">4 碼</div>
                 <div class="round-option-item" onclick="selectCodeCountValue(5)">5 碼</div>
                 <div class="round-option-item" onclick="selectCodeCountValue(7)">7 碼</div>
             </div>
@@ -547,9 +548,12 @@
         const rankNames = ['冠軍', '亞軍', '三名', '四名', '五名', '六名', '七名', '八名', '九名', '十名'];
         const rankShortNames = ['冠軍', '亞軍', '三', '四', '五', '六', '七', '八', '九', '十'];
         const chineseRounds = ["第一關", "第二關", "第三關", "第四關", "第五關", "第六關", "第七關", "第八關", "第九關"];
-        const fixedPools = [[1,2,3], [1,2,10], [1,9,10], [8,9,10]];
+        
+        // 嚴格定義三碼與四碼各自的固定號碼組合
+        const fixedPools3 = [[1,2,3], [1,2,10], [1,9,10], [8,9,10]];
+        const fixedPools4 = [[4,5,6,7]];
 
-        // 核心改進：基於期號與策略名稱的「確定性雜湊函數」，確保所有人、任何時候重新整理，算出來的預測完全一致且永不改變
+        // 嚴格確定性雜湊函數，確保三碼與四碼模式下的取號數量與來源完全符合規定
         function getDeterministicPrediction(periodStr, pastData, subName) {
             let seedStr = `${currentLotCode}_${currentSignalCode}_${subName}_${periodStr}`;
             let hash = 0;
@@ -560,20 +564,35 @@
             let positiveHash = Math.abs(hash);
 
             let randPos = positiveHash % 10;
-            let randLogic = Math.floor(positiveHash / 10) % 3;
+            let randLogic = Math.floor(positiveHash / 10) % 3; // 0, 1, 2
             let chosenNums = [];
 
-            if (randLogic === 0 && pastData.length > 0) {
-                let { headList } = getHeadTailForPosition(pastData, randPos, 3);
-                chosenNums = headList.slice(0, currentSignalCode);
-            } else if (randLogic === 1 && pastData.length > 0) {
-                let { tailList } = getHeadTailForPosition(pastData, randPos, 3);
-                chosenNums = tailList.slice(0, currentSignalCode);
+            if (currentSignalCode === 3) {
+                if (randLogic === 0 && pastData.length > 0) {
+                    let { headList } = getHeadTailForPosition(pastData, randPos, 3); // 順三綠色號碼
+                    chosenNums = headList.slice(0, 3);
+                } else if (randLogic === 1 && pastData.length > 0) {
+                    let { tailList } = getHeadTailForPosition(pastData, randPos, 3); // 順七紅色號碼
+                    chosenNums = tailList.slice(0, 3);
+                } else {
+                    let poolIdx = Math.floor(positiveHash / 100) % fixedPools3.length;
+                    chosenNums = fixedPools3[poolIdx].slice(0, 3);
+                }
+                if (chosenNums.length === 0) chosenNums = [1, 2, 3];
+            } else if (currentSignalCode === 4) {
+                if (randLogic === 0 && pastData.length > 0) {
+                    let { headList } = getHeadTailForPosition(pastData, randPos, 4); // 順四綠色號碼
+                    chosenNums = headList.slice(0, 4);
+                } else if (randLogic === 1 && pastData.length > 0) {
+                    let { tailList } = getHeadTailForPosition(pastData, randPos, 6); // 順六紅色號碼
+                    chosenNums = tailList.slice(0, 4);
+                } else {
+                    chosenNums = [4, 5, 6, 7]; // 固定號 4.5.6.7 號
+                }
+                if (chosenNums.length === 0) chosenNums = [4, 5, 6, 7];
             } else {
-                let poolIdx = Math.floor(positiveHash / 100) % fixedPools.length;
-                chosenNums = fixedPools[poolIdx].slice(0, currentSignalCode);
+                chosenNums = [1, 2, 3];
             }
-            if (chosenNums.length === 0) chosenNums = [1, 2, 3];
 
             return {
                 rank: rankShortNames[randPos],
