@@ -874,6 +874,8 @@
             if (!amt || amt <= 0) { alert("請填寫有效的本金！"); return; }
             if (!rnd) { alert("請選擇關數！"); return; }
             const r = parseInt(rnd, 10);
+            
+            // 恢復標準倍投分母係數
             let div = {1:5, 2:15, 3:37, 4:81, 5:175, 6:359, 7:747}[r] || 5;
             let mul = 2.065, profMul = 4.7;
             
