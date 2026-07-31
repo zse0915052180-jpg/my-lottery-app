@@ -91,15 +91,6 @@
             box-shadow: 0 2px 4px rgba(124, 58, 237, 0.3);
         }
 
-        .system-scroll-bar {
-            display: flex;
-            gap: 6px;
-            overflow-x: auto;
-            padding-bottom: 4px;
-            margin-bottom: 6px;
-            scrollbar-width: none;
-        }
-        .system-scroll-bar::-webkit-scrollbar { display: none; }
         .system-btn {
             background-color: #ffffff;
             color: #475569;
@@ -117,6 +108,24 @@
             color: #ffffff;
             border-color: #334155;
             box-shadow: 0 2px 4px rgba(71, 85, 105, 0.3);
+        }
+
+        .signal-sub-btn {
+            background-color: #ffffff;
+            color: #475569;
+            border: 1px solid #cbd5e1;
+            padding: 4px 10px;
+            font-size: 11px;
+            font-weight: 700;
+            border-radius: 6px;
+            cursor: pointer;
+            white-space: nowrap;
+            transition: all 0.2s;
+        }
+        .signal-sub-btn.active {
+            background-color: #7c3aed;
+            color: #ffffff;
+            border-color: #6d28d9;
         }
 
         .mode-tabs {
@@ -230,8 +239,6 @@
         .signal-table th { background-color: #f8fafc; color: #7c3aed; font-weight: 800; padding: 8px 2px; border-bottom: 2px solid #000000; text-align: center; }
         .signal-table td { padding: 10px 2px; font-weight: 800; color: #0f172a; text-align: center; vertical-align: middle; }
         .signal-table tr.signal-row { border-bottom: 2.5px solid #000000; }
-        .signal-win { background-color: #d1fae5; color: #065f46; border-radius: 5px; padding: 4px 10px; display: inline-block; font-weight: 800; }
-        .signal-lose { background-color: #fee2e2; color: #991b1b; border-radius: 5px; padding: 4px 10px; display: inline-block; font-weight: 800; }
 
         .strategy-area {
             margin-top: 10px;
@@ -342,7 +349,7 @@
         </div>
         <div class="info-bar">
             <div class="main-nav-bar">
-                <div class="main-nav-group">
+                <div class="main-nav-group" id="blackBoxContainer">
                     <button id="sysBtnStandard" class="system-btn active" onclick="switchSystem('standard')">順/反</button>
                     <button id="sysBtnFixed" class="system-btn" onclick="switchSystem('fixed')">固定號</button>
                     <button id="sysBtnSize" class="system-btn" onclick="switchSystem('size')">大中小</button>
@@ -353,6 +360,7 @@
                 </div>
             </div>
 
+            <!-- 紅框處的選擇區塊 -->
             <div id="modeTabsContainer" class="mode-tabs">
                 <button id="modeBtn3" class="mode-btn active" onclick="switchMode(3)">順三</button>
                 <button id="modeBtn4" class="mode-btn" onclick="switchMode(4)">順四</button>
@@ -468,10 +476,9 @@
         let currentSystem = 'standard';
         let currentMainTab = 'route'; 
         let currentFixedGroup = 1;
+        let currentSignalSub = '三'; // 報牌底下的三四五六七預設
         const rankNames = ['冠軍', '亞軍', '三', '四', '五', '六', '七', '八', '九', '十'];
         const chineseRounds = ["第一關", "第二關", "第三關", "第四關", "第五關", "第六關", "第七關", "第八關", "第九關"];
-        let signalHistory = {};
-        let isSimulated = false;
 
         function switchMainTab(tab) {
             currentMainTab = tab;
@@ -482,24 +489,44 @@
             signalBtn.className = 'main-nav-btn' + (tab === 'signal' ? ' active-signal' : '');
             
             const headerTable = document.getElementById('routeHeaderTable');
+            const blackBox = document.getElementById('blackBoxContainer');
+            const modeTabs = document.getElementById('modeTabsContainer');
+            const fixedTabs = document.getElementById('fixedTabsContainer');
+
             if (tab === 'signal') {
                 headerTable.style.display = 'none';
-                currentSystem = 'standard';
-                currentSplit = 3;
-                document.querySelectorAll('.system-btn').forEach(b => b.classList.remove('active'));
-                document.getElementById('sysBtnStandard').classList.add('active');
-                document.getElementById('modeTabsContainer').style.display = 'flex';
-                document.getElementById('fixedTabsContainer').style.display = 'none';
-                document.querySelectorAll('.mode-btn').forEach(b => b.classList.remove('active'));
-                document.getElementById('modeBtn3').classList.add('active');
+                fixedTabs.style.display = 'none';
+                modeTabs.style.display = 'none'; // 依要求：切換報牌後紅框處消失
+
+                // 依要求：黑框處變成【三】【四】【五】【六】【七】
+                blackBox.innerHTML = `
+                    <button class="signal-sub-btn ${currentSignalSub==='三'?'active':''}" onclick="switchSignalSub('三')">三</button>
+                    <button class="signal-sub-btn ${currentSignalSub==='四'?'active':''}" onclick="switchSignalSub('四')">四</button>
+                    <button class="signal-sub-btn ${currentSignalSub==='五'?'active':''}" onclick="switchSignalSub('五')">五</button>
+                    <button class="signal-sub-btn ${currentSignalSub==='六'?'active':''}" onclick="switchSignalSub('六')">六</button>
+                    <button class="signal-sub-btn ${currentSignalSub==='七'?'active':''}" onclick="switchSignalSub('七')">七</button>
+                `;
             } else {
                 headerTable.style.display = 'table';
+                modeTabs.style.display = 'flex';
+                // 還原黑框原本內容
+                blackBox.innerHTML = `
+                    <button id="sysBtnStandard" class="system-btn active" onclick="switchSystem('standard')">順/反</button>
+                    <button id="sysBtnFixed" class="system-btn" onclick="switchSystem('fixed')">固定號</button>
+                    <button id="sysBtnSize" class="system-btn" onclick="switchSystem('size')">大中小</button>
+                `;
+                currentSystem = 'standard';
             }
             renderTableUI();
         }
 
+        function switchSignalSub(sub) {
+            currentSignalSub = sub;
+            switchMainTab('signal'); // 重新整理按鈕active狀態
+        }
+
         function switchSystem(sys) {
-            if (currentMainTab === 'signal' && sys !== 'standard') return;
+            if (currentMainTab === 'signal') return;
             currentSystem = sys;
             document.querySelectorAll('.system-btn').forEach(b => b.classList.remove('active'));
             if (sys === 'standard') {
@@ -577,7 +604,6 @@
         }
 
         function switchMode(val) {
-            if (currentMainTab === 'signal' && val !== 3) return;
             if (currentSplit === val) return;
             currentSplit = val;
             document.querySelectorAll('.mode-btn').forEach(b => b.classList.remove('active'));
@@ -636,8 +662,6 @@
             document.getElementById(`btn${code}`).classList.add('active');
             if (countdownTimer) clearInterval(countdownTimer);
             targetEndTimeMs = 0; lastPeriodLoaded = ""; document.getElementById('timerText').innerText = '同步中...';
-            signalHistory = {};
-            isSimulated = false;
             fetchData();
         }
         function getHeadTailForPosition(past, pos, splitVal) {
@@ -680,171 +704,12 @@
             }, 1000);
         }
 
-        function runSimulation100Periods() {
-            if (globalFullData.length < 20 || isSimulated) return;
-            isSimulated = true;
-            
-            let simLimit = Math.min(globalFullData.length - 10, 100);
-            for (let i = simLimit; i >= 1; i--) {
-                let subData = globalFullData.slice(i); 
-                let targetPeriod = (BigInt(subData[0].period) + 1n).toString();
-                
-                let eligibleRanks = [];
-                for (let p = 0; p < 10; p++) {
-                    let redStreak = 0;
-                    for (let idx = 0; idx < subData.length - 1; idx++) {
-                        let item = subData[idx];
-                        let past = subData.slice(idx + 1);
-                        let nums = item.number.replace(/\s+/g, '').split(',');
-                        let val = parseInt(nums[p], 10);
-                        let { headList, tailList } = getHeadTailForPosition(past, p, 3);
-                        
-                        let isRed = tailList.includes(val);
-                        if (isRed) {
-                            redStreak++;
-                        } else {
-                            break;
-                        }
-                    }
-                    if (redStreak >= 3) {
-                        let currentPast = subData.slice(1);
-                        let { headList } = getHeadTailForPosition(currentPast, p, 3);
-                        eligibleRanks.push({ pos: p, rankName: rankNames[p], greenNums: headList.join(', ') });
-                    }
-                }
-
-                if (eligibleRanks.length > 0) {
-                    let chosen = eligibleRanks[Math.floor(Math.random() * eligibleRanks.length)];
-                    let actualOpened = globalFullData.find(item => item.period === targetPeriod);
-                    let status = 'pending';
-                    if (actualOpened) {
-                        let nums = actualOpened.number.replace(/\s+/g, '').split(',');
-                        let actualVal = parseInt(nums[chosen.pos], 10);
-                        let openedPast = globalFullData.slice(globalFullData.indexOf(actualOpened) + 1);
-                        let { headList } = getHeadTailForPosition(openedPast, chosen.pos, 3);
-                        if (headList.includes(actualVal)) status = 'win';
-                        else status = 'lose';
-                    }
-
-                    signalHistory[targetPeriod] = {
-                        period: targetPeriod,
-                        pos: chosen.pos,
-                        rankName: chosen.rankName,
-                        greenNums: chosen.greenNums,
-                        status: status
-                    };
-                }
-            }
-        }
-
-        function processSignalGenerationAndSettling() {
-            if (globalFullData.length < 15) return [];
-
-            runSimulation100Periods();
-
-            for (let targetPeriod in signalHistory) {
-                let sig = signalHistory[targetPeriod];
-                if (sig.status === 'pending') {
-                    let openedItem = globalFullData.find(item => item.period === targetPeriod);
-                    if (openedItem) {
-                        let nums = openedItem.number.replace(/\s+/g, '').split(',');
-                        let actualVal = parseInt(nums[sig.pos], 10);
-                        let openedPast = globalFullData.slice(globalFullData.indexOf(openedItem) + 1);
-                        if (openedPast.length > 0) {
-                            let { headList } = getHeadTailForPosition(openedPast, sig.pos, 3);
-                            if (headList.includes(actualVal)) sig.status = 'win';
-                            else sig.status = 'lose';
-                        }
-                    }
-                }
-            }
-
-            const nextPeriod = (BigInt(globalFullData[0].period) + 1n).toString();
-            let existingForNext = Object.values(signalHistory).find(s => s.period === nextPeriod);
-            if (!existingForNext && globalFullData.length >= 10) {
-                let eligibleRanks = [];
-                for (let p = 0; p < 10; p++) {
-                    let redStreak = 0;
-                    for (let idx = 0; idx < globalFullData.length - 1; idx++) {
-                        let item = globalFullData[idx];
-                        let past = globalFullData.slice(idx + 1);
-                        let nums = item.number.replace(/\s+/g, '').split(',');
-                        let val = parseInt(nums[p], 10);
-                        let { headList, tailList } = getHeadTailForPosition(past, p, 3);
-                        let isRed = tailList.includes(val);
-                        if (isRed) redStreak++;
-                        else break;
-                    }
-                    if (redStreak >= 3) {
-                        let currentPast = globalFullData.slice(1);
-                        let { headList } = getHeadTailForPosition(currentPast, p, 3);
-                        eligibleRanks.push({ pos: p, rankName: rankNames[p], greenNums: headList.join(', ') });
-                    }
-                }
-
-                if (eligibleRanks.length > 0) {
-                    let chosen = eligibleRanks[Math.floor(Math.random() * eligibleRanks.length)];
-                    signalHistory[nextPeriod] = {
-                        period: nextPeriod,
-                        pos: chosen.pos,
-                        rankName: chosen.rankName,
-                        greenNums: chosen.greenNums,
-                        status: 'pending'
-                    };
-                }
-            }
-
-            let sortedPeriods = Object.keys(signalHistory).sort().reverse();
-            let rowsHtml = "";
-
-            if (sortedPeriods.length === 0) {
-                let displayNext = nextPeriod.length > 7 ? nextPeriod.slice(-6) : nextPeriod;
-                return `<tr class="signal-row">
-                    <td style="width: 25%; text-align: center; vertical-align: middle;">${displayNext}</td>
-                    <td colspan="3" style="width: 75%; text-align: center; vertical-align: middle; color:#d97706; font-weight:800; letter-spacing:1px;">偵測牌路中....</td>
-                </tr>`;
-            }
-
-            sortedPeriods.slice(0, 20).forEach(per => {
-                let sig = signalHistory[per];
-                let displayPeriod = per.length > 7 ? per.slice(-6) : per;
-                let statusHtml = "";
-                
-                if (sig.status === 'win') {
-                    statusHtml = `<span class="signal-win">收</span>`;
-                } else if (sig.status === 'lose') {
-                    statusHtml = `<span class="signal-lose">翻</span>`;
-                } else {
-                    statusHtml = `<span style="color:#d97706; font-weight:800;">等待開獎</span>`;
-                }
-
-                rowsHtml += `<tr class="signal-row">
-                    <td style="width: 25%; text-align: center; vertical-align: middle;">${displayPeriod}</td>
-                    <td style="width: 18%; text-align: center; vertical-align: middle;">${sig.rankName}名</td>
-                    <td style="width: 32%; text-align: center; vertical-align: middle; color:#10b981; font-weight:800; letter-spacing:0.5px;">${sig.greenNums}</td>
-                    <td style="width: 25%; text-align: center; vertical-align: middle;">${statusHtml}</td>
-                </tr>`;
-            });
-
-            let topSignal = signalHistory[nextPeriod];
-            if (!topSignal) {
-                let displayNext = nextPeriod.length > 7 ? nextPeriod.slice(-6) : nextPeriod;
-                let detectionRow = `<tr class="signal-row">
-                    <td style="width: 25%; text-align: center; vertical-align: middle;">${displayNext}</td>
-                    <td colspan="3" style="width: 75%; text-align: center; vertical-align: middle; color:#d97706; font-weight:800; letter-spacing:1px;">偵測牌路中....</td>
-                </tr>`;
-                rowsHtml = detectionRow + rowsHtml;
-            }
-
-            return rowsHtml;
-        }
-
         function renderTableUI() {
             const tb = document.getElementById('tableBody'); if (!globalFullData.length) return;
             tb.innerHTML = "";
             
             if (currentMainTab === 'signal') {
-                let signalRows = processSignalGenerationAndSettling();
+                // 依要求：黃框處完全留白
                 tb.innerHTML = `<table class="signal-table">
                     <thead>
                         <tr>
@@ -854,7 +719,9 @@
                             <th style="width: 25%; text-align: center;">收/翻</th>
                         </tr>
                     </thead>
-                    <tbody>${signalRows}</tbody>
+                    <tbody>
+                        <tr><td colspan="4" style="padding:40px; text-align:center; color:#94a3b8;"></td></tr>
+                    </tbody>
                 </table>`;
                 return;
             }
