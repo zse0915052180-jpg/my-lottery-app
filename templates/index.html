@@ -225,14 +225,13 @@
         .num-box.blue { background-color: #3b82f6; }
         .num-box.yellow { background-color: #f59e0b; }
 
-        /* 報牌專用表格排版與分隔線設計 */
-        .signal-table { width: 100%; border-collapse: collapse; font-size: 13px; background: #fff; table-layout: fixed; }
-        .signal-table th { background-color: #f8fafc; color: #7c3aed; font-weight: 800; padding: 8px 4px; border-bottom: 2px solid #cbd5e1; text-align: center; }
-        .signal-table td { padding: 10px 4px; font-weight: 800; color: #0f172a; text-align: center; }
-        /* 每列之間加入明顯的分隔線 */
+        /* 報牌專用表格排版與置中設計 */
+        .signal-table { width: 100%; border-collapse: collapse; font-size: 12.5px; background: #fff; table-layout: fixed; }
+        .signal-table th { background-color: #f8fafc; color: #7c3aed; font-weight: 800; padding: 8px 2px; border-bottom: 2px solid #cbd5e1; text-align: center; }
+        .signal-table td { padding: 10px 2px; font-weight: 800; color: #0f172a; text-align: center; vertical-align: middle; }
         .signal-table tr.signal-row { border-bottom: 2px solid #e2e8f0; }
-        .signal-win { background-color: #d1fae5; color: #065f46; border-radius: 5px; padding: 3px 12px; display: inline-block; font-weight: 800; }
-        .signal-lose { background-color: #fee2e2; color: #991b1b; border-radius: 5px; padding: 3px 12px; display: inline-block; font-weight: 800; }
+        .signal-win { background-color: #d1fae5; color: #065f46; border-radius: 5px; padding: 4px 10px; display: inline-block; font-weight: 800; }
+        .signal-lose { background-color: #fee2e2; color: #991b1b; border-radius: 5px; padding: 4px 10px; display: inline-block; font-weight: 800; }
 
         .strategy-area {
             margin-top: 10px;
@@ -815,10 +814,10 @@
                 }
 
                 rowsHtml += `<tr class="signal-row">
-                    <td style="width: 25%;">${displayPeriod}</td>
-                    <td style="width: 18%;">${sig.rankName}名</td>
-                    <td style="width: 32%; color:#10b981; font-weight:800; letter-spacing:0.5px;">${sig.greenNums}</td>
-                    <td style="width: 25%;">${statusHtml}</td>
+                    <td style="width: 25%; text-align: center; vertical-align: middle;">${displayPeriod}</td>
+                    <td style="width: 18%; text-align: center; vertical-align: middle;">${sig.rankName}名</td>
+                    <td style="width: 32%; text-align: center; vertical-align: middle; color:#10b981; font-weight:800; letter-spacing:0.5px;">${sig.greenNums}</td>
+                    <td style="width: 25%; text-align: center; vertical-align: middle;">${statusHtml}</td>
                 </tr>`;
             });
 
@@ -834,10 +833,10 @@
                 tb.innerHTML = `<table class="signal-table">
                     <thead>
                         <tr>
-                            <th style="width: 25%;">期號</th>
-                            <th style="width: 18%;">名次</th>
-                            <th style="width: 32%;">號碼</th>
-                            <th style="width: 25%;">收/翻</th>
+                            <th style="width: 25%; text-align: center;">期號</th>
+                            <th style="width: 18%; text-align: center;">名次</th>
+                            <th style="width: 32%; text-align: center;">號碼</th>
+                            <th style="width: 25%; text-align: center;">收/翻</th>
                         </tr>
                     </thead>
                     <tbody>${signalRows}</tbody>
