@@ -67,15 +67,16 @@
             margin-bottom: 8px;
             border-bottom: 1px solid #e2e8f0;
             padding-bottom: 6px;
+            gap: 8px;
         }
-        .main-nav-group { display: flex; gap: 6px; overflow-x: auto; scrollbar-width: none; }
+        .main-nav-group { display: flex; gap: 4px; overflow-x: auto; scrollbar-width: none; }
         .main-nav-group::-webkit-scrollbar { display: none; }
         
         .main-nav-btn {
             background-color: #ffffff;
             color: #475569;
             border: 1px solid #cbd5e1;
-            padding: 4px 12px;
+            padding: 5px 10px;
             font-size: 11px;
             font-weight: 700;
             border-radius: 6px;
@@ -95,7 +96,7 @@
             background-color: #ffffff;
             color: #475569;
             border: 1px solid #cbd5e1;
-            padding: 4px 12px;
+            padding: 5px 8px;
             font-size: 11px;
             font-weight: 700;
             border-radius: 6px;
@@ -114,8 +115,8 @@
             background-color: #ffffff;
             color: #475569;
             border: 1px solid #cbd5e1;
-            padding: 4px 10px;
-            font-size: 11px;
+            padding: 5px 9px;
+            font-size: 11.5px;
             font-weight: 700;
             border-radius: 6px;
             cursor: pointer;
@@ -387,7 +388,7 @@
                     <button id="sysBtnFixed" class="system-btn" onclick="switchSystem('fixed')">固定號</button>
                     <button id="sysBtnSize" class="system-btn" onclick="switchSystem('size')">大中小</button>
                 </div>
-                <div class="main-nav-group">
+                <div class="main-nav-group" style="gap: 6px;">
                     <button id="mainNavRoute" class="main-nav-btn active-route" onclick="switchMainTab('route')">牌路</button>
                     <button id="mainNavSignal" class="main-nav-btn" onclick="switchMainTab('signal')">報牌</button>
                 </div>
@@ -629,7 +630,6 @@
                 chosenNums = [1, 2, 3];
             }
 
-            // 號碼組由左至右由小到大排序
             chosenNums.sort((a, b) => a - b);
 
             return {
@@ -659,11 +659,11 @@
                 modeTabs.style.display = 'none'; 
 
                 leftNavGroup.innerHTML = `
-                    <button id="sigCodeBtn3" class="signal-code-btn ${currentSignalCode===3?'active':''}" onclick="switchSignalCode(3)">三碼</button>
-                    <button id="sigCodeBtn4" class="signal-code-btn ${currentSignalCode===4?'active':''}" onclick="switchSignalCode(4)">四碼</button>
-                    <button id="sigCodeBtn5" class="signal-code-btn ${currentSignalCode===5?'active':''}" onclick="switchSignalCode(5)">五碼</button>
-                    <button id="sigCodeBtn6" class="signal-code-btn ${currentSignalCode===6?'active':''}" onclick="switchSignalCode(6)">六碼</button>
-                    <button id="sigCodeBtn7" class="signal-code-btn ${currentSignalCode===7?'active':''}" onclick="switchSignalCode(7)">七碼</button>
+                    <button id="sigCodeBtn3" class="signal-code-btn ${currentSignalCode===3?'active':''}" onclick="switchSignalCode(3)">三</button>
+                    <button id="sigCodeBtn4" class="signal-code-btn ${currentSignalCode===4?'active':''}" onclick="switchSignalCode(4)">四</button>
+                    <button id="sigCodeBtn5" class="signal-code-btn ${currentSignalCode===5?'active':''}" onclick="switchSignalCode(5)">五</button>
+                    <button id="sigCodeBtn6" class="signal-code-btn ${currentSignalCode===6?'active':''}" onclick="switchSignalCode(6)">六</button>
+                    <button id="sigCodeBtn7" class="signal-code-btn ${currentSignalCode===7?'active':''}" onclick="switchSignalCode(7)">七</button>
                 `;
                 renderSignalTable();
             } else {
