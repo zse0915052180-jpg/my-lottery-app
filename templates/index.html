@@ -544,13 +544,42 @@
         let currentSignalCode = 3; 
         let currentSignalSub = '宰相';
         
-        // 永久快取資料庫：用來鎖定每一期各策略的預測結果，形成永動機
-        let permanentSignalCache = {};
-
         const rankNames = ['冠軍', '亞軍', '三名', '四名', '五名', '六名', '七名', '八名', '九名', '十名'];
         const rankShortNames = ['冠軍', '亞軍', '三', '四', '五', '六', '七', '八', '九', '十'];
         const chineseRounds = ["第一關", "第二關", "第三關", "第四關", "第五關", "第六關", "第七關", "第八關", "第九關"];
         const fixedPools = [[1,2,3], [1,2,10], [1,9,10], [8,9,10]];
+
+        // 核心改進：基於期號與策略名稱的「確定性雜湊函數」，確保所有人、任何時候重新整理，算出來的預測完全一致且永不改變
+        function getDeterministicPrediction(periodStr, pastData, subName) {
+            let seedStr = `${currentLotCode}_${currentSignalCode}_${subName}_${periodStr}`;
+            let hash = 0;
+            for (let i = 0; i < seedStr.length; i++) {
+                hash = ((hash << 5) - hash) + seedStr.charCodeAt(i);
+                hash |= 0;
+            }
+            let positiveHash = Math.abs(hash);
+
+            let randPos = positiveHash % 10;
+            let randLogic = Math.floor(positiveHash / 10) % 3;
+            let chosenNums = [];
+
+            if (randLogic === 0 && pastData.length > 0) {
+                let { headList } = getHeadTailForPosition(pastData, randPos, 3);
+                chosenNums = headList.slice(0, currentSignalCode);
+            } else if (randLogic === 1 && pastData.length > 0) {
+                let { tailList } = getHeadTailForPosition(pastData, randPos, 3);
+                chosenNums = tailList.slice(0, currentSignalCode);
+            } else {
+                let poolIdx = Math.floor(positiveHash / 100) % fixedPools.length;
+                chosenNums = fixedPools[poolIdx].slice(0, currentSignalCode);
+            }
+            if (chosenNums.length === 0) chosenNums = [1, 2, 3];
+
+            return {
+                rank: rankShortNames[randPos],
+                nums: chosenNums
+            };
+        }
 
         function switchMainTab(tab) {
             currentMainTab = tab;
@@ -610,36 +639,6 @@
             renderSignalTable();
         }
 
-        function getOrCreatePrediction(periodStr, pastData, subName) {
-            let key = `${currentLotCode}_${currentSignalCode}_${subName}_${periodStr}`;
-            if (permanentSignalCache[key]) {
-                return permanentSignalCache[key];
-            }
-            // 隨機產生一次並永久鎖定該期該策略的預測
-            let randPos = Math.floor(Math.random() * 10);
-            let randLogic = Math.floor(Math.random() * 3);
-            let chosenNums = [];
-
-            if (randLogic === 0 && pastData.length > 0) {
-                let { headList } = getHeadTailForPosition(pastData, randPos, 3);
-                chosenNums = headList.slice(0, currentSignalCode);
-            } else if (randLogic === 1 && pastData.length > 0) {
-                let { tailList } = getHeadTailForPosition(pastData, randPos, 3);
-                chosenNums = tailList.slice(0, currentSignalCode);
-            } else {
-                let pool = fixedPools[Math.floor(Math.random() * fixedPools.length)];
-                chosenNums = pool.slice(0, currentSignalCode);
-            }
-            if (chosenNums.length === 0) chosenNums = [1, 2, 3];
-
-            let pred = {
-                rank: rankShortNames[randPos],
-                nums: chosenNums
-            };
-            permanentSignalCache[key] = pred;
-            return pred;
-        }
-
         function renderSignalTable() {
             const tbody = document.getElementById('signalTableBody');
             if (!globalFullData.length) {
@@ -656,8 +655,7 @@
             let nextPeriod = (BigInt(topItem.period) + 1n).toString();
             let nextPeriodStr = nextPeriod.length > 7 ? nextPeriod.slice(-6) : nextPeriod;
             
-            // 下一期的預測基於當前完整的 globalFullData 過去紀錄
-            let nextPred = getOrCreatePrediction(nextPeriodStr, globalFullData, subName);
+            let nextPred = getDeterministicPrediction(nextPeriodStr, globalFullData, subName);
             records.push({
                 period: nextPeriodStr,
                 rank: nextPred.rank,
@@ -672,7 +670,7 @@
                 let past = globalFullData.slice(i + 1);
                 let periodStr = item.period.length > 7 ? item.period.slice(-6) : item.period;
 
-                let pred = getOrCreatePrediction(periodStr, past, subName);
+                let pred = getDeterministicPrediction(periodStr, past, subName);
 
                 // 比對實際開獎結果
                 let nums = item.number.replace(/\s+/g, '').split(',');
