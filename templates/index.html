@@ -229,7 +229,6 @@
         .signal-table { width: 100%; border-collapse: collapse; font-size: 12.5px; background: #fff; table-layout: fixed; }
         .signal-table th { background-color: #f8fafc; color: #7c3aed; font-weight: 800; padding: 8px 2px; border-bottom: 2px solid #000000; text-align: center; }
         .signal-table td { padding: 10px 2px; font-weight: 800; color: #0f172a; text-align: center; vertical-align: middle; }
-        /* 明顯的粗黑線區隔 */
         .signal-table tr.signal-row { border-bottom: 2.5px solid #000000; }
         .signal-win { background-color: #d1fae5; color: #065f46; border-radius: 5px; padding: 4px 10px; display: inline-block; font-weight: 800; }
         .signal-lose { background-color: #fee2e2; color: #991b1b; border-radius: 5px; padding: 4px 10px; display: inline-block; font-weight: 800; }
@@ -382,8 +381,8 @@
                         <th class="period-header">期號</th>
                         <th>
                             <div class="rank-header-container">
-                                <div class="rank-header-item" onclick="showPositionModal(0, '冠')">冠</div>
-                                <div class="rank-header-item" onclick="showPositionModal(1, '亞')">亞</div>
+                                <div class="rank-header-item" onclick="showPositionModal(0, '冠軍')">冠</div>
+                                <div class="rank-header-item" onclick="showPositionModal(1, '亞軍')">亞</div>
                                 <div class="rank-header-item" onclick="showPositionModal(2, '三')">三</div>
                                 <div class="rank-header-item" onclick="showPositionModal(3, '四')">四</div>
                                 <div class="rank-header-item" onclick="showPositionModal(4, '五')">五</div>
@@ -767,7 +766,7 @@
                 for (let p = 0; p < 10; p++) {
                     let redStreak = 0;
                     for (let idx = 0; idx < globalFullData.length - 1; idx++) {
-                        let item = subData[idx]; // 注意：此處需用 globalFullData
+                        let item = globalFullData[idx];
                         let past = globalFullData.slice(idx + 1);
                         let nums = item.number.replace(/\s+/g, '').split(',');
                         let val = parseInt(nums[p], 10);
@@ -799,38 +798,34 @@
             let rowsHtml = "";
 
             if (sortedPeriods.length === 0) {
-                return `<tr><td colspan="4" style="padding:30px; color:#64748b;">目前使用【順三】紅色連3期邏輯模擬中，等待訊號...</td></tr>`;
+                let displayNext = nextPeriod.length > 7 ? nextPeriod.slice(-6) : nextPeriod;
+                return `<tr class="signal-row">
+                    <td style="width: 25%; text-align: center; vertical-align: middle;">${displayNext}</td>
+                    <td colspan="3" style="width: 75%; text-align: center; vertical-align: middle; color:#d97706; font-weight:800; letter-spacing:1px;">偵測牌路中....</td>
+                </tr>`;
             }
 
-            sortedPeriods.slice(0, 20).forEach((per, index) => {
+            sortedPeriods.slice(0, 20).forEach(per => {
                 let sig = signalHistory[per];
                 let displayPeriod = per.length > 7 ? per.slice(-6) : per;
                 let statusHtml = "";
                 
-                // 如果是最上面那一期（即尚未開獎的最新一期），且沒有符合條件的訊號，顯示偵測中
-                if (index === 0 && !sig) {
-                    // 若剛好當期沒有產出，會由下方處理
+                if (sig.status === 'win') {
+                    statusHtml = `<span class="signal-win">收</span>`;
+                } else if (sig.status === 'lose') {
+                    statusHtml = `<span class="signal-lose">翻</span>`;
+                } else {
+                    statusHtml = `<span style="color:#d97706; font-weight:800;">等待開獎</span>`;
                 }
 
-                if (sig) {
-                    if (sig.status === 'win') {
-                        statusHtml = `<span class="signal-win">收</span>`;
-                    } else if (sig.status === 'lose') {
-                        statusHtml = `<span class="signal-lose">翻</span>`;
-                    } else {
-                        statusHtml = `<span style="color:#d97706; font-weight:800;">等待開獎</span>`;
-                    }
-
-                    rowsHtml += `<tr class="signal-row">
-                        <td style="width: 25%; text-align: center; vertical-align: middle;">${displayPeriod}</td>
-                        <td style="width: 18%; text-align: center; vertical-align: middle;">${sig.rankName}名</td>
-                        <td style="width: 32%; text-align: center; vertical-align: middle; color:#10b981; font-weight:800; letter-spacing:0.5px;">${sig.greenNums}</td>
-                        <td style="width: 25%; text-align: center; vertical-align: middle;">${statusHtml}</td>
-                    </tr>`;
-                }
+                rowsHtml += `<tr class="signal-row">
+                    <td style="width: 25%; text-align: center; vertical-align: middle;">${displayPeriod}</td>
+                    <td style="width: 18%; text-align: center; vertical-align: middle;">${sig.rankName}名</td>
+                    <td style="width: 32%; text-align: center; vertical-align: middle; color:#10b981; font-weight:800; letter-spacing:0.5px;">${sig.greenNums}</td>
+                    <td style="width: 25%; text-align: center; vertical-align: middle;">${statusHtml}</td>
+                </tr>`;
             });
 
-            // 確保最上面若沒有訊號時，補上「偵測牌路中....」
             let topSignal = signalHistory[nextPeriod];
             if (!topSignal) {
                 let displayNext = nextPeriod.length > 7 ? nextPeriod.slice(-6) : nextPeriod;
