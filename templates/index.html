@@ -225,11 +225,12 @@
         .num-box.blue { background-color: #3b82f6; }
         .num-box.yellow { background-color: #f59e0b; }
 
-        /* 報牌專用表格排版與置中設計 */
+        /* 報牌專用表格排版與明顯黑線區隔 */
         .signal-table { width: 100%; border-collapse: collapse; font-size: 12.5px; background: #fff; table-layout: fixed; }
-        .signal-table th { background-color: #f8fafc; color: #7c3aed; font-weight: 800; padding: 8px 2px; border-bottom: 2px solid #cbd5e1; text-align: center; }
+        .signal-table th { background-color: #f8fafc; color: #7c3aed; font-weight: 800; padding: 8px 2px; border-bottom: 2px solid #000000; text-align: center; }
         .signal-table td { padding: 10px 2px; font-weight: 800; color: #0f172a; text-align: center; vertical-align: middle; }
-        .signal-table tr.signal-row { border-bottom: 2px solid #e2e8f0; }
+        /* 明顯的粗黑線區隔 */
+        .signal-table tr.signal-row { border-bottom: 2.5px solid #000000; }
         .signal-win { background-color: #d1fae5; color: #065f46; border-radius: 5px; padding: 4px 10px; display: inline-block; font-weight: 800; }
         .signal-lose { background-color: #fee2e2; color: #991b1b; border-radius: 5px; padding: 4px 10px; display: inline-block; font-weight: 800; }
 
@@ -468,7 +469,7 @@
         let currentSystem = 'standard';
         let currentMainTab = 'route'; 
         let currentFixedGroup = 1;
-        const rankNames = ['冠', '亞', '三', '四', '五', '六', '七', '八', '九', '十'];
+        const rankNames = ['冠軍', '亞軍', '三', '四', '五', '六', '七', '八', '九', '十'];
         const chineseRounds = ["第一關", "第二關", "第三關", "第四關", "第五關", "第六關", "第七關", "第八關", "第九關"];
         let signalHistory = {};
         let isSimulated = false;
@@ -766,7 +767,7 @@
                 for (let p = 0; p < 10; p++) {
                     let redStreak = 0;
                     for (let idx = 0; idx < globalFullData.length - 1; idx++) {
-                        let item = globalFullData[idx];
+                        let item = subData[idx]; // 注意：此處需用 globalFullData
                         let past = globalFullData.slice(idx + 1);
                         let nums = item.number.replace(/\s+/g, '').split(',');
                         let val = parseInt(nums[p], 10);
@@ -801,25 +802,44 @@
                 return `<tr><td colspan="4" style="padding:30px; color:#64748b;">目前使用【順三】紅色連3期邏輯模擬中，等待訊號...</td></tr>`;
             }
 
-            sortedPeriods.slice(0, 20).forEach(per => {
+            sortedPeriods.slice(0, 20).forEach((per, index) => {
                 let sig = signalHistory[per];
                 let displayPeriod = per.length > 7 ? per.slice(-6) : per;
                 let statusHtml = "";
-                if (sig.status === 'win') {
-                    statusHtml = `<span class="signal-win">收</span>`;
-                } else if (sig.status === 'lose') {
-                    statusHtml = `<span class="signal-lose">翻</span>`;
-                } else {
-                    statusHtml = `<span style="color:#d97706; font-weight:800;">等待開獎</span>`;
+                
+                // 如果是最上面那一期（即尚未開獎的最新一期），且沒有符合條件的訊號，顯示偵測中
+                if (index === 0 && !sig) {
+                    // 若剛好當期沒有產出，會由下方處理
                 }
 
-                rowsHtml += `<tr class="signal-row">
-                    <td style="width: 25%; text-align: center; vertical-align: middle;">${displayPeriod}</td>
-                    <td style="width: 18%; text-align: center; vertical-align: middle;">${sig.rankName}名</td>
-                    <td style="width: 32%; text-align: center; vertical-align: middle; color:#10b981; font-weight:800; letter-spacing:0.5px;">${sig.greenNums}</td>
-                    <td style="width: 25%; text-align: center; vertical-align: middle;">${statusHtml}</td>
-                </tr>`;
+                if (sig) {
+                    if (sig.status === 'win') {
+                        statusHtml = `<span class="signal-win">收</span>`;
+                    } else if (sig.status === 'lose') {
+                        statusHtml = `<span class="signal-lose">翻</span>`;
+                    } else {
+                        statusHtml = `<span style="color:#d97706; font-weight:800;">等待開獎</span>`;
+                    }
+
+                    rowsHtml += `<tr class="signal-row">
+                        <td style="width: 25%; text-align: center; vertical-align: middle;">${displayPeriod}</td>
+                        <td style="width: 18%; text-align: center; vertical-align: middle;">${sig.rankName}名</td>
+                        <td style="width: 32%; text-align: center; vertical-align: middle; color:#10b981; font-weight:800; letter-spacing:0.5px;">${sig.greenNums}</td>
+                        <td style="width: 25%; text-align: center; vertical-align: middle;">${statusHtml}</td>
+                    </tr>`;
+                }
             });
+
+            // 確保最上面若沒有訊號時，補上「偵測牌路中....」
+            let topSignal = signalHistory[nextPeriod];
+            if (!topSignal) {
+                let displayNext = nextPeriod.length > 7 ? nextPeriod.slice(-6) : nextPeriod;
+                let detectionRow = `<tr class="signal-row">
+                    <td style="width: 25%; text-align: center; vertical-align: middle;">${displayNext}</td>
+                    <td colspan="3" style="width: 75%; text-align: center; vertical-align: middle; color:#d97706; font-weight:800; letter-spacing:1px;">偵測牌路中....</td>
+                </tr>`;
+                rowsHtml = detectionRow + rowsHtml;
+            }
 
             return rowsHtml;
         }
