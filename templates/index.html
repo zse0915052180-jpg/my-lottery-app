@@ -274,6 +274,7 @@
         .signal-table td { padding: 8px 2px; font-weight: 700; color: #0f172a; text-align: center; vertical-align: middle; border-bottom: 1px solid #e2e8f0; }
         .signal-win { background-color: #d1fae5; color: #065f46; border-radius: 4px; padding: 2px 8px; display: inline-block; font-weight: 700; }
         .signal-lose { background-color: #fee2e2; color: #991b1b; border-radius: 4px; padding: 2px 8px; display: inline-block; font-weight: 700; }
+        .signal-waiting { background-color: #fef3c7; color: #d97706; border-radius: 4px; padding: 2px 8px; display: inline-block; font-weight: 700; }
 
         .strategy-area {
             margin-top: 10px;
@@ -446,17 +447,17 @@
                 </div>
             </div>
 
-            <!-- 報牌模式區塊（含上三下二按鈕與 50 期紀錄表格） -->
+            <!-- 報牌模式區塊 -->
             <div id="signalButtonArea" style="display: none;">
                 <div class="signal-btn-container">
                     <div class="signal-row-flex">
-                        <button class="signal-sub-btn active" onclick="switchSignalSub(this, '宰相')">宰相</button>
-                        <button class="signal-sub-btn" onclick="switchSignalSub(this, '小幫手')">小幫手</button>
-                        <button class="signal-sub-btn" onclick="switchSignalSub(this, '博士')">博士</button>
+                        <button class="signal-sub-btn active" id="subBtn_宰相" onclick="switchSignalSub('宰相')">宰相</button>
+                        <button class="signal-sub-btn" id="subBtn_小幫手" onclick="switchSignalSub('小幫手')">小幫手</button>
+                        <button class="signal-sub-btn" id="subBtn_博士" onclick="switchSignalSub('博士')">博士</button>
                     </div>
                     <div class="signal-row-flex">
-                        <button class="signal-sub-btn" onclick="switchSignalSub(this, '宗師')">宗師</button>
-                        <button class="signal-sub-btn" onclick="switchSignalSub(this, '王牌')">王牌</button>
+                        <button class="signal-sub-btn" id="subBtn_宗師" onclick="switchSignalSub('宗師')">宗師</button>
+                        <button class="signal-sub-btn" id="subBtn_王牌" onclick="switchSignalSub('王牌')">王牌</button>
                     </div>
                 </div>
                 <div class="table-scroll-container" style="max-height: 245px;">
@@ -544,8 +545,12 @@
         let currentFixedGroup = 1;
         let currentSignalCode = 3; 
         let currentSignalSub = '宰相';
+        
+        // 記憶各個策略的報牌紀錄，確保切換回來時數據一致
+        let strategySignalCache = {};
+
         const rankNames = ['冠軍', '亞軍', '三名', '四名', '五名', '六名', '七名', '八名', '九名', '十名'];
-        const rankShortNames = ['冠', '亞', '三', '四', '五', '六', '七', '八', '九', '十'];
+        const rankShortNames = ['冠軍', '亞軍', '三', '四', '五', '六', '七', '八', '九', '十'];
         const chineseRounds = ["第一關", "第二關", "第三關", "第四關", "第五關", "第六關", "第七關", "第八關", "第九關"];
         const fixedPools = [[1,2,3], [1,2,10], [1,9,10], [8,9,10]];
 
@@ -597,34 +602,61 @@
             currentSignalCode = val;
             document.querySelectorAll('.signal-code-btn').forEach(b => b.classList.remove('active'));
             document.getElementById(`sigCodeBtn${val}`).classList.add('active');
+            // 碼數改變時，清除當前策略快取重新生成
+            delete strategySignalCache[currentSignalSub];
             renderSignalTable();
         }
 
-        function switchSignalSub(btnElem, subName) {
-            const container = btnElem.closest('.signal-btn-container');
-            container.querySelectorAll('.signal-sub-btn').forEach(b => b.classList.remove('active'));
-            btnElem.classList.add('active');
+        function switchSignalSub(subName) {
+            document.querySelectorAll('.signal-sub-btn').forEach(b => b.classList.remove('active'));
+            document.getElementById(`subBtn_${subName}`).classList.add('active');
             currentSignalSub = subName;
             renderSignalTable();
         }
 
-        function renderSignalTable() {
-            const tbody = document.getElementById('signalTableBody');
-            if (!globalFullData.length) {
-                tbody.innerHTML = `<tr><td colspan="4" style="padding:20px; color:#64748b;">資料載入中...</td></tr>`;
-                return;
+        function generateSignalDataForStrategy(subName) {
+            if (!globalFullData.length) return [];
+            let cacheKey = `${currentLotCode}_${currentSignalCode}_${subName}`;
+            if (strategySignalCache[cacheKey]) {
+                return strategySignalCache[cacheKey];
             }
-            tbody.innerHTML = "";
-            let limit = Math.min(globalFullData.length, 50);
 
+            let records = [];
+            let nextPeriod = (BigInt(globalFullData[0].period) + 1n).toString();
+            let nextPeriodStr = nextPeriod.length > 7 ? nextPeriod.slice(-6) : nextPeriod;
+
+            // 1. 生成下一期等待開獎的預測
+            let randPosNext = Math.floor(Math.random() * 10);
+            let randLogicNext = Math.floor(Math.random() * 3);
+            let chosenNumsNext = [];
+            if (randLogicNext === 0) {
+                let { headList } = getHeadTailForPosition(globalFullData, randPosNext, 3);
+                chosenNumsNext = headList.slice(0, currentSignalCode);
+            } else if (randLogicNext === 1) {
+                let { tailList } = getHeadTailForPosition(globalFullData, randPosNext, 3);
+                chosenNumsNext = tailList.slice(0, currentSignalCode);
+            } else {
+                let pool = fixedPools[Math.floor(Math.random() * fixedPools.length)];
+                chosenNumsNext = pool.slice(0, currentSignalCode);
+            }
+            if (chosenNumsNext.length === 0) chosenNumsNext = [1, 2, 3];
+
+            records.push({
+                period: nextPeriodStr,
+                rank: rankShortNames[randPosNext],
+                nums: chosenNumsNext,
+                status: 'waiting'
+            });
+
+            // 2. 生成歷史 50 期紀錄
+            let limit = Math.min(globalFullData.length, 50);
             for (let i = 0; i < limit; i++) {
                 let item = globalFullData[i];
                 let past = globalFullData.slice(i + 1);
                 let periodStr = item.period.length > 7 ? item.period.slice(-6) : item.period;
 
-                // 隨機選定名次與邏輯類型
                 let randPos = Math.floor(Math.random() * 10);
-                let randLogic = Math.floor(Math.random() * 3); // 0: 順三綠, 1: 順七紅, 2: 固定組
+                let randLogic = Math.floor(Math.random() * 3);
                 let chosenNums = [];
 
                 if (randLogic === 0 && past.length > 0) {
@@ -639,19 +671,49 @@
                 }
                 if (chosenNums.length === 0) chosenNums = [1, 2, 3];
 
-                // 檢查開獎結果比對收/翻
                 let nums = item.number.replace(/\s+/g, '').split(',');
                 let actualVal = parseInt(nums[randPos], 10);
                 let isWin = chosenNums.includes(actualVal);
-                let statusHtml = isWin ? `<span class="signal-win">收</span>` : `<span class="signal-lose">翻</span>`;
+                let status = isWin ? 'win' : 'lose';
+
+                records.push({
+                    period: periodStr,
+                    rank: rankShortNames[randPos],
+                    nums: chosenNums,
+                    status: status
+                });
+            }
+
+            strategySignalCache[cacheKey] = records;
+            return records;
+        }
+
+        function renderSignalTable() {
+            const tbody = document.getElementById('signalTableBody');
+            if (!globalFullData.length) {
+                tbody.innerHTML = `<tr><td colspan="4" style="padding:20px; color:#64748b;">資料載入中...</td></tr>`;
+                return;
+            }
+            tbody.innerHTML = "";
+            let records = generateSignalDataForStrategy(currentSignalSub);
+
+            records.forEach(rec => {
+                let statusHtml = '';
+                if (rec.status === 'waiting') {
+                    statusHtml = `<span class="signal-waiting">等待開獎</span>`;
+                } else if (rec.status === 'win') {
+                    statusHtml = `<span class="signal-win">收</span>`;
+                } else {
+                    statusHtml = `<span class="signal-lose">翻</span>`;
+                }
 
                 tbody.innerHTML += `<tr>
-                    <td>${periodStr}</td>
-                    <td>${rankShortNames[randPos]}名</td>
-                    <td style="color:#0284c7;">${chosenNums.join(', ')}</td>
+                    <td>${rec.period}</td>
+                    <td>${rec.rank}</td>
+                    <td style="color:#0284c7;">${rec.nums.join(', ')}</td>
                     <td>${statusHtml}</td>
                 </tr>`;
-            }
+            });
         }
 
         function switchSystem(sys) {
@@ -787,6 +849,7 @@
         function switchLottery(code, name) {
             if (currentLotCode === code) return;
             currentLotCode = code;
+            strategySignalCache = {}; // 換彩種時清空快取
             document.getElementById('lotteryTitle').innerText = name;
             document.querySelectorAll('.tab-btn').forEach(b => b.classList.remove('active'));
             document.getElementById(`btn${code}`).classList.add('active');
@@ -877,6 +940,7 @@
                     document.getElementById('nextPeriodText').innerText = `下期: ${next.length > 7 ? next.slice(-6) : next}`;
                     if (top !== lastPeriodLoaded || targetEndTimeMs === 0) {
                         lastPeriodLoaded = top;
+                        strategySignalCache = {}; // 新期號進來時重整快取以更新狀態
                         if (data.remSeconds != null) { targetEndTimeMs = Date.now() + (parseInt(data.remSeconds, 10) * 1000); startCountdown(); }
                     }
                     renderTableUI();
