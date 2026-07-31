@@ -478,8 +478,8 @@
         <div class="calculator-area">
             <div id="betCalcInputs" class="calc-input-row">
                 <div class="input-group"><span class="input-label">本金</span><input type="number" id="inputAmount" class="white-input"></div>
-                <div class="input-group"><span class="input-label">碼數</span><div id="inputCodeCountDisplay" class="white-input clickable-box" onclick="openCodeCountModal()">5</div></div>
-                <div class="input-group"><span class="input-label">關數</span><div id="inputRoundDisplay" class="white-input clickable-box" onclick="openRoundModal()"></div></div>
+                <div class="input-group"><span class="input-label">碼數</span><div id="inputCodeCountDisplay" class="white-input clickable-box" onclick="openCodeCountModal()">3</div></div>
+                <div class="input-group"><span class="input-label">關數</span><div id="inputRoundDisplay" class="white-input clickable-box" onclick="openRoundModal()">4</div></div>
                 <button class="confirm-btn" onclick="onConfirmClick()">計算</button>
             </div>
 
@@ -517,12 +517,12 @@
         <div class="modal-card" onclick="event.stopPropagation()">
             <span class="modal-close" onclick="closeCodeCountModal()">&times;</span>
             <div class="modal-title">選擇碼數</div>
-            <div class="round-options-grid" style="grid-template-columns: repeat(3, 1fr);">
-                <div class="round-option-item" onclick="selectCodeCountValue(3)">3 碼</div>
-                <div class="round-option-item" onclick="selectCodeCountValue(4)">4 碼</div>
-                <div class="round-option-item" onclick="selectCodeCountValue(5)">5 碼</div>
-                <div class="round-option-item" onclick="selectCodeCountValue(6)">6 碼</div>
-                <div class="round-option-item" onclick="selectCodeCountValue(7)">7 碼</div>
+            <div class="round-options-grid" style="grid-template-columns: repeat(5, 1fr);">
+                <div class="round-option-item" onclick="selectCodeCountValue(3)">3</div>
+                <div class="round-option-item" onclick="selectCodeCountValue(4)">4</div>
+                <div class="round-option-item" onclick="selectCodeCountValue(5)">5</div>
+                <div class="round-option-item" onclick="selectCodeCountValue(6)">6</div>
+                <div class="round-option-item" onclick="selectCodeCountValue(7)">7</div>
             </div>
         </div>
     </div>
@@ -534,7 +534,7 @@
         </div>
     </div>
     <script>
-        let globalFullData = [], currentLotCode = '10035', countdownTimer = null, targetEndTimeMs = 0, lastPeriodLoaded = "", currentSplit = 3, currentCodeCount = 5;
+        let globalFullData = [], currentLotCode = '10035', countdownTimer = null, targetEndTimeMs = 0, lastPeriodLoaded = "", currentSplit = 3, currentCodeCount = 3;
         let currentStrategy = 'bet';
         let currentSystem = 'standard';
         let currentMainTab = 'route'; 
@@ -555,6 +555,24 @@
             [3,4,5,6,7,8,9],
             [4,5,6,7,8,9,10]
         ];
+
+        // 碼數對應的關數範圍設定
+        const codeRoundsMap = {
+            3: [4, 5, 6, 7, 8],
+            4: [3, 4, 5, 6],
+            5: [2, 3, 4],
+            6: [2, 3],
+            7: [2, 3]
+        };
+
+        // 碼數對應的倍投比例
+        const codeMultipliers = {
+            3: 1.44,
+            4: 1.71,
+            5: 2.06,
+            6: 2.62,
+            7: 3.59
+        };
 
         function getDeterministicPrediction(periodStr, pastData, subName) {
             let seedStr = `${currentLotCode}_${currentSignalCode}_${subName}_${periodStr}`;
@@ -846,22 +864,32 @@
             renderTableUI();
         }
 
-        function openCodeCountModal() { document.getElementById('codeCountModalOverlay').style.display = 'flex'; }
+        function openCodeCountModal() { 
+            document.getElementById('codeCountModalOverlay').style.display = 'flex'; 
+        }
         function closeCodeCountModal() { document.getElementById('codeCountModalOverlay').style.display = 'none'; }
+        
         function selectCodeCountValue(val) {
             currentCodeCount = val;
             document.getElementById('inputCodeCountDisplay').innerText = val;
+            // 當碼數改變時，自動將關數調整為該碼數的第一個合法選項
+            const validRounds = codeRoundsMap[val];
+            document.getElementById('inputRoundDisplay').innerText = validRounds[0];
             closeCodeCountModal();
         }
+
         function openRoundModal() {
-            const grid = document.getElementById('roundOptionsGrid'); grid.innerHTML = '';
-            for (let i = 1; i <= 7; i++) {
-                grid.innerHTML += `<div class="round-option-item" onclick="selectRoundValue(${i})">${i}</div>`;
-            }
+            const grid = document.getElementById('roundOptionsGrid'); 
+            grid.innerHTML = '';
+            const validRounds = codeRoundsMap[currentCodeCount] || [4, 5, 6, 7, 8];
+            validRounds.forEach(r => {
+                grid.innerHTML += `<div class="round-option-item" onclick="selectRoundValue(${r})">${r}</div>`;
+            });
             document.getElementById('roundModalOverlay').style.display = 'flex';
         }
         function closeRoundModal() { document.getElementById('roundModalOverlay').style.display = 'none'; }
         function selectRoundValue(val) { document.getElementById('inputRoundDisplay').innerText = val; closeRoundModal(); }
+        
         function copyAmount(txt, raw) {
             navigator.clipboard.writeText(raw.toString()).then(() => showToast(`已複製：${txt}`));
         }
@@ -869,29 +897,74 @@
             const t = document.getElementById('toastMsg'); t.innerText = msg; t.style.display = 'block';
             setTimeout(() => t.style.display = 'none', 1500);
         }
+
         function onConfirmClick() {
-            const amt = parseFloat(document.getElementById('inputAmount').value), rnd = document.getElementById('inputRoundDisplay').innerText;
-            if (!amt || amt <= 0) { alert("請填寫有效的本金！"); return; }
-            if (!rnd) { alert("請選擇關數！"); return; }
-            const r = parseInt(rnd, 10);
+            const amtInput = parseFloat(document.getElementById('inputAmount').value);
+            const rndInput = document.getElementById('inputRoundDisplay').innerText;
+            const codeCount = currentCodeCount;
+
+            if (isNaN(amtInput) || amtInput <= 0) { alert("請填寫有效的本金！"); return; }
+            if (!rndInput) { alert("請選擇關數！"); return; }
+            const r = parseInt(rndInput, 10);
             
-            // 恢復標準倍投分母係數
-            let div = {1:5, 2:15, 3:37, 4:81, 5:175, 6:359, 7:747}[r] || 5;
-            let mul = 2.065, profMul = 4.7;
-            
-            const first = Math.floor(amt / div);
-            const profit = Math.floor(first * profMul).toLocaleString();
-            
-            const resBody = document.getElementById('resultTableBody'); resBody.innerHTML = "";
-            let cur = first;
+            const mult = codeMultipliers[codeCount] || 1.44;
+
+            // 計算各關相對比例 (關數為 r)
+            let ratios = [];
+            let currentRatio = 1;
             for (let i = 0; i < r; i++) {
-                if (i > 0) cur = Math.floor(cur * mul);
-                const raw = cur;
-                const fmt = raw.toLocaleString();
-                resBody.innerHTML += i === 0 ? `<tr><td class="round-label">${chineseRounds[i]}</td><td class="copyable-amount" onclick="copyAmount('${fmt}',${raw})">${fmt}</td><td class="profit-val" rowspan="${r}">${profit}</td></tr>` : `<tr><td class="round-label">${chineseRounds[i]}</td><td class="copyable-amount" onclick="copyAmount('${fmt}',${raw})">${fmt}</td></tr>`;
+                ratios.push(currentRatio);
+                currentRatio *= mult;
+            }
+            let sumRatio = ratios.reduce((a, b) => a + b, 0);
+
+            // 驗證並調整第一關基礎金額，使得 (總金額加總) * 碼數 儘量趨近於本金但不超過
+            let bestFirst = Math.floor(amtInput / (sumRatio * codeCount));
+            if (bestFirst < 1) bestFirst = 1;
+
+            let finalAmounts = [];
+            let totalCost = 0;
+
+            // 用迴圈向上測試最大可能的 first 金額，確保總投入 (金額加總 * 碼數) 不超過本金
+            while (true) {
+                let testAmounts = ratios.map(rat => Math.round(rat * bestFirst));
+                let testSum = testAmounts.reduce((a, b) => a + b, 0);
+                if (testSum * codeCount <= amtInput) {
+                    finalAmounts = testAmounts;
+                    totalCost = testSum * codeCount;
+                    // 嘗試再加 1 看看會不會超標
+                    let nextAmounts = ratios.map(rat => Math.round(rat * (bestFirst + 1)));
+                    let nextSum = nextAmounts.reduce((a, b) => a + b, 0);
+                    if (nextSum * codeCount > amtInput) {
+                        break;
+                    }
+                    bestFirst++;
+                } else {
+                    if (bestFirst > 1) {
+                        bestFirst--;
+                        finalAmounts = ratios.map(rat => Math.round(rat * bestFirst));
+                    }
+                    break;
+                }
+            }
+
+            // 獲利計算公式：第一關數字 * 9.7 扣掉碼數
+            let profitVal = Math.floor(finalAmounts[0] * 9.7 - codeCount);
+            if (profitVal < 0) profitVal = 0;
+
+            const resBody = document.getElementById('resultTableBody'); 
+            resBody.innerHTML = "";
+            
+            for (let i = 0; i < r; i++) {
+                let raw = finalAmounts[i];
+                let fmt = raw.toLocaleString();
+                resBody.innerHTML += i === 0 ? 
+                    `<tr><td class="round-label">${chineseRounds[i]}</td><td class="copyable-amount" onclick="copyAmount('${fmt}',${raw})">${fmt}</td><td class="profit-val" rowspan="${r}">${profitVal.toLocaleString()}</td></tr>` : 
+                    `<tr><td class="round-label">${chineseRounds[i]}</td><td class="copyable-amount" onclick="copyAmount('${fmt}',${raw})">${fmt}</td></tr>`;
             }
             document.getElementById('resultTableContainer').style.display = 'block';
         }
+
         function switchLottery(code, name) {
             if (currentLotCode === code) return;
             currentLotCode = code;
