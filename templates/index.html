@@ -60,7 +60,6 @@
             border: 1px solid #e2e8f0;
         }
 
-        /* 主功能切換區（牌路 / 報牌） */
         .main-nav-bar {
             display: flex;
             justify-content: space-between;
@@ -84,14 +83,12 @@
             white-space: nowrap;
             transition: all 0.2s;
         }
-        /* 牌路按鈕啟用色（黑色系） */
         .main-nav-btn.active-route {
             background-color: #475569;
             color: #ffffff;
             border-color: #334155;
             box-shadow: 0 2px 4px rgba(71, 85, 105, 0.3);
         }
-        /* 報牌按鈕啟用色（深紫色系，與黑色做區分） */
         .main-nav-btn.active-signal {
             background-color: #7c3aed;
             color: #ffffff;
@@ -99,7 +96,6 @@
             box-shadow: 0 2px 4px rgba(124, 58, 237, 0.3);
         }
 
-        /* 上方體系橫向卷軸區塊 */
         .system-scroll-bar {
             display: flex;
             gap: 6px;
@@ -151,7 +147,6 @@
             border-color: #b45309;
         }
 
-        /* 固定號模式下的四個按鈕群組 */
         .fixed-tabs {
             display: none;
             gap: 4px;
@@ -235,7 +230,12 @@
         .num-box.blue { background-color: #3b82f6; }
         .num-box.yellow { background-color: #f59e0b; }
 
-        /* 策略選單橫向區域 */
+        .signal-table { width: 100%; border-collapse: collapse; text-align: center; font-size: 12px; background: #fff; }
+        .signal-table th { background-color: #f8fafc; color: #7c3aed; font-weight: 700; padding: 6px; border-bottom: 1px solid #cbd5e1; }
+        .signal-table td { padding: 7px 5px; border-bottom: 1px solid #e2e8f0; font-weight: 700; color: #1e293b; }
+        .signal-win { background-color: #d1fae5; color: #065f46; border-radius: 4px; padding: 2px 8px; display: inline-block; }
+        .signal-lose { background-color: #fee2e2; color: #991b1b; border-radius: 4px; padding: 2px 8px; display: inline-block; }
+
         .strategy-area {
             margin-top: 10px;
             background-color: #f8fafc;
@@ -344,7 +344,6 @@
             </div>
         </div>
         <div class="info-bar">
-            <!-- 上方主切換列：左側牌路相關按鈕，右側【牌路】與【報牌】主切換 -->
             <div class="main-nav-bar">
                 <div class="main-nav-group">
                     <button id="sysBtnStandard" class="system-btn active" onclick="switchSystem('standard')">順/反</button>
@@ -357,17 +356,15 @@
                 </div>
             </div>
 
-            <!-- 原本的順三~順八按鈕群組 -->
             <div id="modeTabsContainer" class="mode-tabs">
-                <button id="modeBtn3" class="mode-btn" onclick="switchMode(3)">順三</button>
+                <button id="modeBtn3" class="mode-btn active" onclick="switchMode(3)">順三</button>
                 <button id="modeBtn4" class="mode-btn" onclick="switchMode(4)">順四</button>
-                <button id="modeBtn5" class="mode-btn active" onclick="switchMode(5)">順五</button>
+                <button id="modeBtn5" class="mode-btn" onclick="switchMode(5)">順五</button>
                 <button id="modeBtn6" class="mode-btn" onclick="switchMode(6)">順六</button>
                 <button id="modeBtn7" class="mode-btn" onclick="switchMode(7)">順七</button>
                 <button id="modeBtn8" class="mode-btn" onclick="switchMode(8)">順八</button>
             </div>
 
-            <!-- 固定號模式下的四個按鈕群組 -->
             <div id="fixedTabsContainer" class="fixed-tabs">
                 <button id="fixedBtn1" class="fixed-btn active" onclick="switchFixed(1)">1~7</button>
                 <button id="fixedBtn2" class="fixed-btn" onclick="switchFixed(2)">2~8</button>
@@ -381,7 +378,7 @@
             </div>
         </div>
         <div class="table-wrapper">
-            <table class="lottery-table">
+            <table id="routeHeaderTable" class="lottery-table">
                 <thead>
                     <tr>
                         <th class="period-header">期號</th>
@@ -407,14 +404,12 @@
             </div>
         </div>
 
-        <!-- 橫向策略區域：倍投與複利計算切換 -->
         <div class="strategy-area">
             <button id="stratBtnBet" class="strategy-btn active" onclick="switchStrategy('bet')">倍投</button>
             <button id="stratBtnCompound" class="strategy-btn" onclick="switchStrategy('compound')">複利計算</button>
         </div>
 
         <div class="calculator-area">
-            <!-- 倍投輸入介面 -->
             <div id="betCalcInputs" class="calc-input-row">
                 <div class="input-group"><span class="input-label">本金</span><input type="number" id="inputAmount" class="white-input"></div>
                 <div class="input-group"><span class="input-label">碼數</span><div id="inputCodeCountDisplay" class="white-input clickable-box" onclick="openCodeCountModal()">5</div></div>
@@ -422,7 +417,6 @@
                 <button class="confirm-btn" onclick="onConfirmClick()">計算</button>
             </div>
 
-            <!-- 複利計算輸入介面 -->
             <div id="compoundCalcInputs" class="calc-input-row" style="display: none;">
                 <div class="input-group"><span class="input-label">本金</span><input type="number" id="compoundPrincipal" class="white-input" value="10000"></div>
                 <div class="input-group"><span class="input-label">操作次數</span><input type="number" id="compoundTimes" class="white-input" value="10"></div>
@@ -430,7 +424,6 @@
                 <button class="confirm-btn" onclick="onCompoundConfirmClick()">計算</button>
             </div>
 
-            <!-- 倍投結果表格 -->
             <div id="resultTableContainer" class="result-table-container">
                 <table class="calc-table">
                     <thead><tr><th style="width:28%;">關數</th><th style="width:36%;">金額</th><th style="width:36%;">獲利</th></tr></thead>
@@ -438,7 +431,6 @@
                 </table>
             </div>
 
-            <!-- 複利結果表格 -->
             <div id="compoundTableContainer" class="result-table-container">
                 <table class="calc-table">
                     <thead><tr><th style="width:12%;">#</th><th style="width:32%;">單次獲利(元)</th><th style="width:32%;">總額(元)</th><th style="width:24%;">總獲利率</th></tr></thead>
@@ -474,13 +466,15 @@
         </div>
     </div>
     <script>
-        let globalFullData = [], currentLotCode = '10035', countdownTimer = null, targetEndTimeMs = 0, lastPeriodLoaded = "", currentSplit = 5, currentCodeCount = 5;
+        let globalFullData = [], currentLotCode = '10035', countdownTimer = null, targetEndTimeMs = 0, lastPeriodLoaded = "", currentSplit = 3, currentCodeCount = 5;
         let currentStrategy = 'bet';
         let currentSystem = 'standard';
-        let currentMainTab = 'route'; // 'route' (牌路) 或 'signal' (報牌)
+        let currentMainTab = 'route'; 
         let currentFixedGroup = 1;
+        const rankNames = ['冠', '亞', '三', '四', '五', '六', '七', '八', '九', '十'];
         const chineseRounds = ["第一關", "第二關", "第三關", "第四關", "第五關", "第六關", "第七關", "第八關", "第九關"];
-        
+        let signalHistory = {};
+
         function switchMainTab(tab) {
             currentMainTab = tab;
             const routeBtn = document.getElementById('mainNavRoute');
@@ -489,10 +483,25 @@
             routeBtn.className = 'main-nav-btn' + (tab === 'route' ? ' active-route' : '');
             signalBtn.className = 'main-nav-btn' + (tab === 'signal' ? ' active-signal' : '');
             
+            const headerTable = document.getElementById('routeHeaderTable');
+            if (tab === 'signal') {
+                headerTable.style.display = 'none';
+                currentSystem = 'standard';
+                currentSplit = 3;
+                document.querySelectorAll('.system-btn').forEach(b => b.classList.remove('active'));
+                document.getElementById('sysBtnStandard').classList.add('active');
+                document.getElementById('modeTabsContainer').style.display = 'flex';
+                document.getElementById('fixedTabsContainer').style.display = 'none';
+                document.querySelectorAll('.mode-btn').forEach(b => b.classList.remove('active'));
+                document.getElementById('modeBtn3').classList.add('active');
+            } else {
+                headerTable.style.display = 'table';
+            }
             renderTableUI();
         }
 
         function switchSystem(sys) {
+            if (currentMainTab === 'signal' && sys !== 'standard') return;
             currentSystem = sys;
             document.querySelectorAll('.system-btn').forEach(b => b.classList.remove('active'));
             if (sys === 'standard') {
@@ -570,6 +579,7 @@
         }
 
         function switchMode(val) {
+            if (currentMainTab === 'signal' && val !== 3) return;
             if (currentSplit === val) return;
             currentSplit = val;
             document.querySelectorAll('.mode-btn').forEach(b => b.classList.remove('active'));
@@ -581,32 +591,11 @@
         function selectCodeCountValue(val) {
             currentCodeCount = val;
             document.getElementById('inputCodeCountDisplay').innerText = val;
-            
-            const currentRound = parseInt(document.getElementById('inputRoundDisplay').innerText, 10);
-            if (val === 3 && (isNaN(currentRound) || currentRound < 4 || currentRound > 9)) {
-                document.getElementById('inputRoundDisplay').innerText = '';
-            } else if (val === 5 && currentRound > 7) {
-                document.getElementById('inputRoundDisplay').innerText = '';
-            } else if (val === 7 && currentRound > 5) {
-                document.getElementById('inputRoundDisplay').innerText = '';
-            }
             closeCodeCountModal();
         }
         function openRoundModal() {
             const grid = document.getElementById('roundOptionsGrid'); grid.innerHTML = '';
-            let minR = 1, maxR = 7;
-            if (currentCodeCount === 3) {
-                minR = 4; maxR = 9;
-                grid.style.gridTemplateColumns = 'repeat(3, 1fr)';
-            } else if (currentCodeCount === 7) {
-                minR = 1; maxR = 5;
-                grid.style.gridTemplateColumns = 'repeat(4, 1fr)';
-            } else {
-                minR = 1; maxR = 7;
-                grid.style.gridTemplateColumns = 'repeat(4, 1fr)';
-            }
-            
-            for (let i = minR; i <= maxR; i++) {
+            for (let i = 1; i <= 7; i++) {
                 grid.innerHTML += `<div class="round-option-item" onclick="selectRoundValue(${i})">${i}</div>`;
             }
             document.getElementById('roundModalOverlay').style.display = 'flex';
@@ -625,21 +614,8 @@
             if (!amt || amt <= 0) { alert("請填寫有效的本金！"); return; }
             if (!rnd) { alert("請選擇關數！"); return; }
             const r = parseInt(rnd, 10);
-            let div = 1, mul = 1, profMul = 1;
-            
-            if (currentCodeCount === 3) {
-                div = {4:23, 5:36, 6:55, 7:83, 8:123, 9:181}[r];
-                mul = 1.445;
-                profMul = 6.7;
-            } else if (currentCodeCount === 5) {
-                div = {1:5, 2:15, 3:37, 4:81, 5:175, 6:359, 7:747}[r];
-                mul = 2.065;
-                profMul = 4.7;
-            } else {
-                div = {1:7, 2:33, 3:100, 4:346, 5:1222}[r];
-                mul = 3.6;
-                profMul = 2.7;
-            }
+            let div = {1:5, 2:15, 3:37, 4:81, 5:175, 6:359, 7:747}[r] || 5;
+            let mul = 2.065, profMul = 4.7;
             
             const first = Math.floor(amt / div);
             const profit = Math.floor(first * profMul).toLocaleString();
@@ -647,12 +623,9 @@
             const resBody = document.getElementById('resultTableBody'); resBody.innerHTML = "";
             let cur = first;
             for (let i = 0; i < r; i++) {
-                if (i > 0) {
-                    cur = Math.floor(cur * mul);
-                }
+                if (i > 0) cur = Math.floor(cur * mul);
                 const raw = cur;
                 const fmt = raw.toLocaleString();
-                
                 resBody.innerHTML += i === 0 ? `<tr><td class="round-label">${chineseRounds[i]}</td><td class="copyable-amount" onclick="copyAmount('${fmt}',${raw})">${fmt}</td><td class="profit-val" rowspan="${r}">${profit}</td></tr>` : `<tr><td class="round-label">${chineseRounds[i]}</td><td class="copyable-amount" onclick="copyAmount('${fmt}',${raw})">${fmt}</td></tr>`;
             }
             document.getElementById('resultTableContainer').style.display = 'block';
@@ -665,9 +638,10 @@
             document.getElementById(`btn${code}`).classList.add('active');
             if (countdownTimer) clearInterval(countdownTimer);
             targetEndTimeMs = 0; lastPeriodLoaded = ""; document.getElementById('timerText').innerText = '同步中...';
+            signalHistory = {};
             fetchData();
         }
-        function getHeadTailForPosition(past, pos) {
+        function getHeadTailForPosition(past, pos, splitVal) {
             let seen = [];
             for (let item of past) {
                 const nums = item.number.replace(/\s+/g, '').split(',');
@@ -677,14 +651,12 @@
                 }
                 if (seen.length === 10) break;
             }
-            return { headList: seen.slice(0, currentSplit), tailList: seen.slice(currentSplit, 10) };
+            return { headList: seen.slice(0, splitVal), tailList: seen.slice(splitVal, 10) };
         }
         function showPositionModal(pos, title) {
             if (!globalFullData.length || currentMainTab === 'signal') return;
-            if (currentSystem === 'fixed' || currentSystem === 'size') {
-                return;
-            }
-            const { headList, tailList } = getHeadTailForPosition(globalFullData, pos);
+            if (currentSystem === 'fixed' || currentSystem === 'size') return;
+            const { headList, tailList } = getHeadTailForPosition(globalFullData, pos, currentSplit);
             document.getElementById('modalTitle').innerText = `【${title}】當前對比`;
             document.getElementById('headText').innerText = [...headList].sort((a,b)=>a-b).join(' . ') + ' 號';
             document.getElementById('tailText').innerText = [...tailList].sort((a,b)=>a-b).join(' . ') + ' 號';
@@ -708,13 +680,131 @@
                 }
             }, 1000);
         }
+
+        // 採用 順三（頭3後7）邏輯的報牌與結算核心
+        function processSignalGenerationAndSettling() {
+            if (globalFullData.length < 15) return [];
+
+            // 1. 結算歷史已報牌的期數
+            for (let targetPeriod in signalHistory) {
+                let sig = signalHistory[targetPeriod];
+                if (sig.status === 'pending') {
+                    let openedItem = globalFullData.find(item => item.period === targetPeriod);
+                    if (openedItem) {
+                        let nums = openedItem.number.replace(/\s+/g, '').split(',');
+                        let actualVal = parseInt(nums[sig.pos], 10);
+                        let openedPast = globalFullData.slice(globalFullData.indexOf(openedItem) + 1);
+                        if (openedPast.length > 0) {
+                            // 順三邏輯：頭3為綠色
+                            let { headList } = getHeadTailForPosition(openedPast, sig.pos, 3);
+                            if (headList.includes(actualVal)) {
+                                sig.status = 'win'; // 收
+                            } else {
+                                sig.status = 'lose'; // 翻
+                            }
+                        }
+                    }
+                }
+            }
+
+            // 2. 針對「下一期」進行條件偵測與隨機報牌
+            const nextPeriod = (BigInt(globalFullData[0].period) + 1n).toString();
+            
+            let existingForNext = Object.values(signalHistory).find(s => s.period === nextPeriod);
+            if (!existingForNext && globalFullData.length >= 10) {
+                let eligibleRanks = [];
+
+                for (let p = 0; p < 10; p++) {
+                    let redStreak = 0;
+                    let greenAppeared = false;
+
+                    for (let idx = 0; idx < globalFullData.length - 1; idx++) {
+                        let item = globalFullData[idx];
+                        let past = globalFullData.slice(idx + 1);
+                        let nums = item.number.replace(/\s+/g, '').split(',');
+                        let val = parseInt(nums[p], 10);
+
+                        // 順三邏輯：前3碼為頭(綠色)，後7碼為尾(紅色)
+                        let { headList, tailList } = getHeadTailForPosition(past, p, 3);
+                        
+                        let isGreen = headList.includes(val);
+                        let isRed = tailList.includes(val);
+
+                        if (idx === 0) {
+                            if (isGreen) { greenAppeared = true; break; }
+                        }
+
+                        if (isRed && !greenAppeared) {
+                            redStreak++;
+                        } else {
+                            if (isGreen) greenAppeared = true;
+                            break;
+                        }
+                    }
+
+                    // 條件：紅色連8期以上且綠色都還沒出來
+                    if (redStreak >= 8 && !greenAppeared) {
+                        let currentPast = globalFullData.slice(1);
+                        let { headList } = getHeadTailForPosition(currentPast, p, 3);
+                        eligibleRanks.push({ pos: p, rankName: rankNames[p], greenNums: headList.join(', ') });
+                    }
+                }
+
+                if (eligibleRanks.length > 0) {
+                    let chosen = eligibleRanks[Math.floor(Math.random() * eligibleRanks.length)];
+                    signalHistory[nextPeriod] = {
+                        period: nextPeriod,
+                        pos: chosen.pos,
+                        rankName: chosen.rankName,
+                        greenNums: chosen.greenNums,
+                        status: 'pending'
+                    };
+                }
+            }
+
+            // 3. 整理顯示清單
+            let sortedPeriods = Object.keys(signalHistory).sort().reverse();
+            let rowsHtml = "";
+
+            if (sortedPeriods.length === 0) {
+                return `<tr><td colspan="4" style="padding:30px; color:#64748b;">目前使用【順三】邏輯尚未偵測到符合條件的牌路，等待訊號中...</td></tr>`;
+            }
+
+            sortedPeriods.slice(0, 15).forEach(per => {
+                let sig = signalHistory[per];
+                let displayPeriod = per.length > 7 ? per.slice(-6) : per;
+                let statusHtml = "";
+                if (sig.status === 'win') {
+                    statusHtml = `<span class="signal-win">收</span>`;
+                } else if (sig.status === 'lose') {
+                    statusHtml = `<span class="signal-lose">翻</span>`;
+                } else {
+                    statusHtml = `<span style="color:#d97706;">等待開獎</span>`;
+                }
+
+                rowsHtml += `<tr>
+                    <td>${displayPeriod}</td>
+                    <td>${sig.rankName}名</td>
+                    <td style="color:#10b981; font-weight:800;">${sig.greenNums}</td>
+                    <td>${statusHtml}</td>
+                </tr>`;
+            });
+
+            return rowsHtml;
+        }
+
         function renderTableUI() {
             const tb = document.getElementById('tableBody'); if (!globalFullData.length) return;
             tb.innerHTML = "";
             
-            // 🟢 如果切換到「報牌」模式，下方表格先留白
             if (currentMainTab === 'signal') {
-                tb.innerHTML = `<tr class="lottery-row"><td colspan="2" style="text-align:center; padding: 40px; color: #64748b; font-weight: 600;">🤖 報牌模式準備中，等待載入偵測規則...</td></tr>`;
+                let signalRows = processSignalGenerationAndSettling();
+                tb.innerHTML = `<table class="signal-table">
+                    <thead>
+                        <tr><th>期號</th><th>名次</th><th>號碼</th><th>收/翻</th></tr>
+                    </thead>
+                    <tbody>${signalRows}</tbody>
+                </table>`;
                 return;
             }
 
@@ -723,31 +813,20 @@
                 const boxes = nums.map((n, p) => {
                     const val = parseInt(n, 10); let cls = 'blue'; let textColorClass = '';
                     if (currentSystem === 'fixed') {
-                        if (currentFixedGroup === 1 && (val === 8 || val === 9 || val === 10)) {
-                            cls = 'red';
-                        } else if (currentFixedGroup === 2 && (val === 1 || val === 9 || val === 10)) {
-                            cls = 'red';
-                        } else if (currentFixedGroup === 3 && (val === 1 || val === 2 || val === 10)) {
-                            cls = 'red';
-                        } else if (currentFixedGroup === 4 && (val === 1 || val === 2 || val === 3)) {
-                            cls = 'red';
-                        } else {
-                            cls = 'blue';
-                        }
+                        if (currentFixedGroup === 1 && (val === 8 || val === 9 || val === 10)) cls = 'red';
+                        else if (currentFixedGroup === 2 && (val === 1 || val === 9 || val === 10)) cls = 'red';
+                        else if (currentFixedGroup === 3 && (val === 1 || val === 2 || val === 10)) cls = 'red';
+                        else if (currentFixedGroup === 4 && (val === 1 || val === 2 || val === 3)) cls = 'red';
+                        else cls = 'blue';
                     } else if (currentSystem === 'size') {
-                        if (val >= 1 && val <= 3) {
-                            cls = 'blue';
-                        } else if (val >= 4 && val <= 7) {
-                            cls = 'yellow';
-                        } else if (val >= 8 && val <= 10) {
-                            cls = 'red';
-                        } else {
-                            cls = 'blue';
-                        }
+                        if (val >= 1 && val <= 3) cls = 'blue';
+                        else if (val >= 4 && val <= 7) cls = 'yellow';
+                        else if (val >= 8 && val <= 10) cls = 'red';
+                        else cls = 'blue';
                         textColorClass = ' text-black';
                     } else {
                         if (past.length > 0) {
-                            const { headList, tailList } = getHeadTailForPosition(past, p);
+                            const { headList, tailList } = getHeadTailForPosition(past, p, currentSplit);
                             if (new Set(headList).has(val)) cls = 'green';
                             else if (new Set(tailList).has(val)) cls = 'red';
                         }
