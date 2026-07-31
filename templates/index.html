@@ -128,7 +128,6 @@
             box-shadow: 0 2px 4px rgba(71, 85, 105, 0.3);
         }
 
-        /* 報牌模式下的 5 個策略按鈕改為全橫向排列 */
         .signal-btn-container {
             display: flex;
             flex-direction: row;
@@ -154,7 +153,6 @@
             white-space: nowrap;
             transition: all 0.2s;
         }
-        /* 點擊後的淺黃色風格（符合系統溫和色調） */
         .signal-sub-btn.active {
             background-color: #fef08a;
             color: #854d0e;
@@ -446,7 +444,7 @@
                 </div>
             </div>
 
-            <!-- 報牌模式區塊（全橫向排列策略按鈕） -->
+            <!-- 報牌模式區塊 -->
             <div id="signalButtonArea" style="display: none;">
                 <div class="signal-btn-container">
                     <button class="signal-sub-btn active" id="subBtn_宰相" onclick="switchSignalSub('宰相')">宰相</button>
@@ -630,6 +628,9 @@
             } else {
                 chosenNums = [1, 2, 3];
             }
+
+            // 號碼組由左至右由小到大排序
+            chosenNums.sort((a, b) => a - b);
 
             return {
                 rank: rankShortNames[randPos],
