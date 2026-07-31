@@ -110,7 +110,6 @@
             box-shadow: 0 2px 4px rgba(71, 85, 105, 0.3);
         }
 
-        /* 報牌模式下的三～七碼按鈕樣式（與原系統按鈕相同） */
         .signal-code-btn {
             background-color: #ffffff;
             color: #475569;
@@ -133,9 +132,9 @@
         .signal-btn-container {
             display: flex;
             flex-direction: column;
-            gap: 10px;
-            padding: 20px 0;
-            margin-bottom: 10px;
+            gap: 6px;
+            padding: 8px 0;
+            margin-bottom: 8px;
             background: #ffffff;
             border-radius: 8px;
             border: 1px solid #e2e8f0;
@@ -143,25 +142,24 @@
         .signal-row-flex {
             display: flex;
             justify-content: center;
-            gap: 12px;
+            gap: 8px;
         }
         .signal-sub-btn {
             background-color: #ffffff;
             color: #0f172a;
             border: 2px solid #1e293b;
-            padding: 8px 24px;
-            font-size: 14px;
+            padding: 5px 16px;
+            font-size: 12.5px;
             font-weight: 800;
-            border-radius: 8px;
+            border-radius: 6px;
             cursor: pointer;
             transition: all 0.2s;
-            box-shadow: 0 2px 4px rgba(0,0,0,0.05);
         }
         .signal-sub-btn.active {
             background-color: #000000;
             color: #ffffff;
             border-color: #000000;
-            box-shadow: 0 3px 6px rgba(0, 0, 0, 0.2);
+            box-shadow: 0 2px 4px rgba(0, 0, 0, 0.2);
         }
 
         .mode-tabs {
@@ -269,6 +267,13 @@
         .num-box.red { background-color: #ef4444; }
         .num-box.blue { background-color: #3b82f6; }
         .num-box.yellow { background-color: #f59e0b; }
+
+        /* 報牌專用表格排版 */
+        .signal-table { width: 100%; border-collapse: collapse; font-size: 12px; background: #fff; }
+        .signal-table th { background-color: #f8fafc; color: #0284c7; font-weight: 700; padding: 6px 2px; border-bottom: 2px solid #cbd5e1; text-align: center; }
+        .signal-table td { padding: 8px 2px; font-weight: 700; color: #0f172a; text-align: center; vertical-align: middle; border-bottom: 1px solid #e2e8f0; }
+        .signal-win { background-color: #d1fae5; color: #065f46; border-radius: 4px; padding: 2px 8px; display: inline-block; font-weight: 700; }
+        .signal-lose { background-color: #fee2e2; color: #991b1b; border-radius: 4px; padding: 2px 8px; display: inline-block; font-weight: 700; }
 
         .strategy-area {
             margin-top: 10px;
@@ -379,20 +384,17 @@
         </div>
         <div class="info-bar">
             <div class="main-nav-bar">
-                <!-- 左側：牌路模式時顯示 順/反、固定號、大中小；報牌模式時顯示 三碼～七碼 -->
                 <div class="main-nav-group" id="leftNavArea">
                     <button id="sysBtnStandard" class="system-btn active" onclick="switchSystem('standard')">順/反</button>
                     <button id="sysBtnFixed" class="system-btn" onclick="switchSystem('fixed')">固定號</button>
                     <button id="sysBtnSize" class="system-btn" onclick="switchSystem('size')">大中小</button>
                 </div>
-                <!-- 右側：永遠固定顯示【牌路】與【報牌】按鈕 -->
                 <div class="main-nav-group">
                     <button id="mainNavRoute" class="main-nav-btn active-route" onclick="switchMainTab('route')">牌路</button>
                     <button id="mainNavSignal" class="main-nav-btn" onclick="switchMainTab('signal')">報牌</button>
                 </div>
             </div>
 
-            <!-- 牌路模式下的順三～順八選擇區塊 -->
             <div id="modeTabsContainer" class="mode-tabs">
                 <button id="modeBtn3" class="mode-btn active" onclick="switchMode(3)">順三</button>
                 <button id="modeBtn4" class="mode-btn" onclick="switchMode(4)">順四</button>
@@ -416,7 +418,7 @@
         </div>
 
         <div class="table-wrapper">
-            <!-- 牌路模式專屬的標頭與表格 -->
+            <!-- 牌路模式表格 -->
             <div id="routeTableArea">
                 <table id="routeHeaderTable" class="lottery-table">
                     <thead>
@@ -444,7 +446,7 @@
                 </div>
             </div>
 
-            <!-- 報牌模式專屬的上三下二按鈕區塊 -->
+            <!-- 報牌模式區塊（含上三下二按鈕與 50 期紀錄表格） -->
             <div id="signalButtonArea" style="display: none;">
                 <div class="signal-btn-container">
                     <div class="signal-row-flex">
@@ -456,6 +458,19 @@
                         <button class="signal-sub-btn" onclick="switchSignalSub(this, '宗師')">宗師</button>
                         <button class="signal-sub-btn" onclick="switchSignalSub(this, '王牌')">王牌</button>
                     </div>
+                </div>
+                <div class="table-scroll-container" style="max-height: 245px;">
+                    <table class="signal-table">
+                        <thead>
+                            <tr>
+                                <th style="width: 28%;">期號</th>
+                                <th style="width: 22%;">名次</th>
+                                <th style="width: 30%;">號碼</th>
+                                <th style="width: 20%;">收/翻</th>
+                            </tr>
+                        </thead>
+                        <tbody id="signalTableBody"></tbody>
+                    </table>
                 </div>
             </div>
         </div>
@@ -528,8 +543,11 @@
         let currentMainTab = 'route'; 
         let currentFixedGroup = 1;
         let currentSignalCode = 3; 
-        const rankNames = ['冠軍', '亞軍', '三', '四', '五', '六', '七', '八', '九', '十'];
+        let currentSignalSub = '宰相';
+        const rankNames = ['冠軍', '亞軍', '三名', '四名', '五名', '六名', '七名', '八名', '九名', '十名'];
+        const rankShortNames = ['冠', '亞', '三', '四', '五', '六', '七', '八', '九', '十'];
         const chineseRounds = ["第一關", "第二關", "第三關", "第四關", "第五關", "第六關", "第七關", "第八關", "第九關"];
+        const fixedPools = [[1,2,3], [1,2,10], [1,9,10], [8,9,10]];
 
         function switchMainTab(tab) {
             currentMainTab = tab;
@@ -551,7 +569,6 @@
                 fixedTabs.style.display = 'none';
                 modeTabs.style.display = 'none'; 
 
-                // 將左側原本的順/反位置換成三碼～七碼按鈕
                 leftNavGroup.innerHTML = `
                     <button id="sigCodeBtn3" class="signal-code-btn ${currentSignalCode===3?'active':''}" onclick="switchSignalCode(3)">三碼</button>
                     <button id="sigCodeBtn4" class="signal-code-btn ${currentSignalCode===4?'active':''}" onclick="switchSignalCode(4)">四碼</button>
@@ -559,11 +576,11 @@
                     <button id="sigCodeBtn6" class="signal-code-btn ${currentSignalCode===6?'active':''}" onclick="switchSignalCode(6)">六碼</button>
                     <button id="sigCodeBtn7" class="signal-code-btn ${currentSignalCode===7?'active':''}" onclick="switchSignalCode(7)">七碼</button>
                 `;
+                renderSignalTable();
             } else {
                 routeArea.style.display = 'block';
                 signalArea.style.display = 'none';
                 
-                // 恢復左側原本的順/反、固定號、大中小
                 leftNavGroup.innerHTML = `
                     <button id="sysBtnStandard" class="system-btn active" onclick="switchSystem('standard')">順/反</button>
                     <button id="sysBtnFixed" class="system-btn" onclick="switchSystem('fixed')">固定號</button>
@@ -572,20 +589,69 @@
                 currentSystem = 'standard';
                 modeTabs.style.display = 'flex';
                 fixedTabs.style.display = 'none';
+                renderTableUI();
             }
-            renderTableUI();
         }
 
         function switchSignalCode(val) {
             currentSignalCode = val;
             document.querySelectorAll('.signal-code-btn').forEach(b => b.classList.remove('active'));
             document.getElementById(`sigCodeBtn${val}`).classList.add('active');
+            renderSignalTable();
         }
 
         function switchSignalSub(btnElem, subName) {
             const container = btnElem.closest('.signal-btn-container');
             container.querySelectorAll('.signal-sub-btn').forEach(b => b.classList.remove('active'));
             btnElem.classList.add('active');
+            currentSignalSub = subName;
+            renderSignalTable();
+        }
+
+        function renderSignalTable() {
+            const tbody = document.getElementById('signalTableBody');
+            if (!globalFullData.length) {
+                tbody.innerHTML = `<tr><td colspan="4" style="padding:20px; color:#64748b;">資料載入中...</td></tr>`;
+                return;
+            }
+            tbody.innerHTML = "";
+            let limit = Math.min(globalFullData.length, 50);
+
+            for (let i = 0; i < limit; i++) {
+                let item = globalFullData[i];
+                let past = globalFullData.slice(i + 1);
+                let periodStr = item.period.length > 7 ? item.period.slice(-6) : item.period;
+
+                // 隨機選定名次與邏輯類型
+                let randPos = Math.floor(Math.random() * 10);
+                let randLogic = Math.floor(Math.random() * 3); // 0: 順三綠, 1: 順七紅, 2: 固定組
+                let chosenNums = [];
+
+                if (randLogic === 0 && past.length > 0) {
+                    let { headList } = getHeadTailForPosition(past, randPos, 3);
+                    chosenNums = headList.slice(0, currentSignalCode);
+                } else if (randLogic === 1 && past.length > 0) {
+                    let { tailList } = getHeadTailForPosition(past, randPos, 3);
+                    chosenNums = tailList.slice(0, currentSignalCode);
+                } else {
+                    let pool = fixedPools[Math.floor(Math.random() * fixedPools.length)];
+                    chosenNums = pool.slice(0, currentSignalCode);
+                }
+                if (chosenNums.length === 0) chosenNums = [1, 2, 3];
+
+                // 檢查開獎結果比對收/翻
+                let nums = item.number.replace(/\s+/g, '').split(',');
+                let actualVal = parseInt(nums[randPos], 10);
+                let isWin = chosenNums.includes(actualVal);
+                let statusHtml = isWin ? `<span class="signal-win">收</span>` : `<span class="signal-lose">翻</span>`;
+
+                tbody.innerHTML += `<tr>
+                    <td>${periodStr}</td>
+                    <td>${rankShortNames[randPos]}名</td>
+                    <td style="color:#0284c7;">${chosenNums.join(', ')}</td>
+                    <td>${statusHtml}</td>
+                </tr>`;
+            }
         }
 
         function switchSystem(sys) {
@@ -814,6 +880,7 @@
                         if (data.remSeconds != null) { targetEndTimeMs = Date.now() + (parseInt(data.remSeconds, 10) * 1000); startCountdown(); }
                     }
                     renderTableUI();
+                    if (currentMainTab === 'signal') renderSignalTable();
                 }
             } catch (e) { console.error(e); }
         }
