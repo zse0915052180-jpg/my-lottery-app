@@ -40,17 +40,25 @@
         }
         h2 { color: #0f172a; font-size: 14px; font-weight: 700; white-space: nowrap; }
         
-        /* 音符按鈕與跑馬燈樣式調整 */
+        /* 強制預設收合為圓球狀，點擊播放後才展開 */
         .music-control-area {
-            display: flex;
-            align-items: center;
-            gap: 4px;
-            background: #f8fafc;
-            border: 1px solid #cbd5e1;
-            padding: 2px 5px;
-            border-radius: 12px;
-            flex: 1;
-            min-width: 0;
+            display: flex !important;
+            align-items: center !important;
+            gap: 4px !important;
+            background: #f8fafc !important;
+            border: 1px solid #cbd5e1 !important;
+            padding: 2px 5px !important;
+            border-radius: 15px !important;
+            width: 32px !important;
+            min-width: 32px !important;
+            overflow: hidden !important;
+            transition: width 0.3s ease !important;
+        }
+        .music-control-area.playing {
+            width: 140px !important;
+            min-width: 140px !important;
+            background: #e0f2fe !important;
+            border-color: #7dd3fc !important;
         }
         .music-btn {
             background: none;
@@ -59,6 +67,12 @@
             cursor: pointer;
             padding: 0;
             flex-shrink: 0;
+            width: 24px;
+            height: 24px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            border-radius: 50%;
             transition: transform 0.2s;
         }
         .music-btn.playing {
@@ -72,10 +86,13 @@
             width: 100%;
             overflow: hidden;
             white-space: nowrap;
-            font-size: 10.5px;
+            font-size: 10px;
             font-weight: 700;
             color: #0284c7;
             display: none;
+        }
+        .music-control-area.playing .marquee-container {
+            display: block;
         }
         .marquee-text {
             display: inline-block;
@@ -87,7 +104,6 @@
             100% { transform: translate(-100%, 0); }
         }
 
-        /* 確保右上角兩顆按鈕固定寬度並完美呈現四個字 */
         .lottery-tabs { display: flex; gap: 4px; flex-shrink: 0; }
         .tab-btn {
             background-color: #f8fafc;
@@ -441,7 +457,7 @@
         <div class="header-area">
             <div class="title-left-group">
                 <h2>📊 <span id="lotteryTitle">極速飛艇</span></h2>
-                <div class="music-control-area">
+                <div id="musicControlArea" class="music-control-area">
                     <button id="musicToggleBtn" class="music-btn" onclick="toggleMusic()" title="點擊開關音樂">🎵</button>
                     <div id="marqueeContainer" class="marquee-container">
                         <div id="marqueeText" class="marquee-text">準備播放...</div>
@@ -625,13 +641,13 @@
         let currentSignalCode = 3; 
         let currentSignalSub = '宰相';
 
-        // 內建 YouTube 歌曲曲庫
+        // 您指定的 5 首歌曲專屬曲庫
         const musicPlaylist = [
-            { id: '5qap5aO4i9A', title: 'lofi hip hop radio - beats to relax/study to', artist: 'Lofi Girl' },
-            { id: 'jfKfPfyJRdk', title: 'lofi hip hop radio - beats to sleep/chill to', artist: 'Lofi Girl' },
-            { id: '1fuehs2FTnM', title: 'Faded', artist: 'Alan Walker' },
-            { id: '9bZkp7q19f0', title: 'Gangnam Style', artist: 'PSY' },
-            { id: 'RgKAFK5djSk', title: 'See You Again', artist: 'Wiz Khalifa ft. Charlie Puth' }
+            { id: '_LbQyPyup24', title: '狂飆腎上腺素欲罷不能的旋律 ｜ 震碎靈魂的週末炸場專屬', artist: '台灣夜店DJ舞曲' },
+            { id: '82Blqjragi0', title: '觸電般的靈魂震盪快感 ｜ 喚醒沉睡野性的午夜狂歡', artist: '台灣夜店DJ舞曲' },
+            { id: '7i9nOQbVA2E', title: '夜驾必听 Rap EDM 2026 ｜ 心碎重低音中文女声', artist: 'Rap EDM' },
+            { id: 'K3WjeYMKqHw', title: '戴上耳機徹底淪陷的魔性旋律 ｜ 震碎現實的失重快感', artist: 'EDM夜色' },
+            { id: '9sBsNG5rJ8Y', title: '2026全中文舞曲串燒 ｜ 臺灣REMIX HUB獨家精選', artist: '臺灣REMIX HUB' }
         ];
 
         let ytPlayer = null;
@@ -658,8 +674,8 @@
         }
 
         function toggleMusic() {
+            const controlArea = document.getElementById('musicControlArea');
             const btn = document.getElementById('musicToggleBtn');
-            const container = document.getElementById('marqueeContainer');
             const textElem = document.getElementById('marqueeText');
 
             if (!isMusicPlaying) {
@@ -668,10 +684,9 @@
                     return;
                 }
                 isMusicPlaying = true;
+                controlArea.classList.add('playing');
                 btn.classList.add('playing');
-                container.style.display = 'block';
                 
-                currentSongIndex = Math.floor(Math.random() * musicPlaylist.length);
                 let song = musicPlaylist[currentSongIndex];
                 textElem.innerText = `🎶 播放中: ${song.title} - ${song.artist}`;
 
@@ -679,8 +694,8 @@
                 ytPlayer.playVideo();
             } else {
                 isMusicPlaying = false;
+                controlArea.classList.remove('playing');
                 btn.classList.remove('playing');
-                container.style.display = 'none';
 
                 if (ytPlayer && typeof ytPlayer.stopVideo === 'function') {
                     ytPlayer.stopVideo();
