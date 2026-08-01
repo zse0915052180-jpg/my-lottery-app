@@ -40,7 +40,6 @@
         }
         h2 { color: #0f172a; font-size: 14px; font-weight: 700; white-space: nowrap; }
         
-        /* 強制預設收合為圓球狀，點擊播放後才展開 */
         .music-control-area {
             display: flex !important;
             align-items: center !important;
@@ -661,16 +660,9 @@
                 width: '0',
                 playerVars: { 'autoplay': 0, 'controls': 0, 'playsinline': 1 },
                 events: {
-                    'onReady': () => { isPlayerReady = true; },
-                    'onStateChange': onPlayerStateChange
+                    'onReady': () => { isPlayerReady = true; }
                 }
             });
-        }
-
-        function onPlayerStateChange(event) {
-            if (event.data === YT.PlayerState.ENDED) {
-                playRandomSong();
-            }
         }
 
         function toggleMusic() {
@@ -687,6 +679,8 @@
                 controlArea.classList.add('playing');
                 btn.classList.add('playing');
                 
+                // 每次打開時，切換到下一首歌
+                currentSongIndex = (currentSongIndex + 1) % musicPlaylist.length;
                 let song = musicPlaylist[currentSongIndex];
                 textElem.innerText = `🎶 播放中: ${song.title} - ${song.artist}`;
 
@@ -700,18 +694,6 @@
                 if (ytPlayer && typeof ytPlayer.stopVideo === 'function') {
                     ytPlayer.stopVideo();
                 }
-            }
-        }
-
-        function playRandomSong() {
-            if (!isMusicPlaying) return;
-            currentSongIndex = (currentSongIndex + 1) % musicPlaylist.length;
-            let song = musicPlaylist[currentSongIndex];
-            const textElem = document.getElementById('marqueeText');
-            textElem.innerText = `🎶 播放中: ${song.title} - ${song.artist}`;
-            if (ytPlayer && typeof ytPlayer.loadVideoById === 'function') {
-                ytPlayer.loadVideoById(song.id);
-                ytPlayer.playVideo();
             }
         }
         
