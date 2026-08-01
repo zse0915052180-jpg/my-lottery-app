@@ -146,7 +146,7 @@
             color: #475569;
             border: 1px solid #cbd5e1;
             padding: 6px 2px;
-            font-size: 11.5px;
+            font-size: 11px;
             font-weight: 700;
             border-radius: 6px;
             cursor: pointer;
@@ -572,7 +572,6 @@
             7: 3.59
         };
 
-        // 各碼數對應的獲利乘數（第一關數字乘以此係數）
         const profitMultipliers = {
             3: 6.7,
             4: 5.7,
@@ -581,8 +580,8 @@
             7: 2.7
         };
 
-        function getDeterministicPrediction(periodStr, pastData, subName) {
-            let seedStr = `${currentLotCode}_${currentSignalCode}_${subName}_${periodStr}`;
+        function getDeterministicPrediction(periodStr, pastData, subName, codeVal) {
+            let seedStr = `${currentLotCode}_${codeVal}_${subName}_${periodStr}`;
             let hash = 0;
             for (let i = 0; i < seedStr.length; i++) {
                 hash = ((hash << 5) - hash) + seedStr.charCodeAt(i);
@@ -594,7 +593,7 @@
             let randLogic = Math.floor(positiveHash / 10) % 3;
             let chosenNums = [];
 
-            if (currentSignalCode === 3) {
+            if (codeVal === 3) {
                 if (randLogic === 0 && pastData.length > 0) {
                     let { headList } = getHeadTailForPosition(pastData, randPos, 3);
                     chosenNums = headList.slice(0, 3);
@@ -606,7 +605,7 @@
                     chosenNums = fixedPools3[poolIdx].slice(0, 3);
                 }
                 if (chosenNums.length === 0) chosenNums = [1, 2, 3];
-            } else if (currentSignalCode === 4) {
+            } else if (codeVal === 4) {
                 if (randLogic === 0 && pastData.length > 0) {
                     let { headList } = getHeadTailForPosition(pastData, randPos, 4);
                     chosenNums = headList.slice(0, 4);
@@ -617,7 +616,7 @@
                     chosenNums = [4, 5, 6, 7];
                 }
                 if (chosenNums.length === 0) chosenNums = [4, 5, 6, 7];
-            } else if (currentSignalCode === 5) {
+            } else if (codeVal === 5) {
                 if (randLogic % 2 === 0 && pastData.length > 0) {
                     let { headList } = getHeadTailForPosition(pastData, randPos, 5);
                     chosenNums = headList.slice(0, 5);
@@ -628,7 +627,7 @@
                     chosenNums = [1, 2, 3, 4, 5];
                 }
                 if (chosenNums.length === 0) chosenNums = [1, 2, 3, 4, 5];
-            } else if (currentSignalCode === 6) {
+            } else if (codeVal === 6) {
                 if (randLogic === 0 && pastData.length > 0) {
                     let { tailList } = getHeadTailForPosition(pastData, randPos, 4);
                     chosenNums = tailList.slice(0, 6);
@@ -639,7 +638,7 @@
                     chosenNums = [1, 2, 3, 8, 9, 10];
                 }
                 if (chosenNums.length === 0) chosenNums = [1, 2, 3, 8, 9, 10];
-            } else if (currentSignalCode === 7) {
+            } else if (codeVal === 7) {
                 if (randLogic === 0 && pastData.length > 0) {
                     let { tailList } = getHeadTailForPosition(pastData, randPos, 3);
                     chosenNums = tailList.slice(0, 7);
@@ -721,12 +720,46 @@
             renderSignalTable();
         }
 
+        // 計算並更新勝率到按鈕名稱後面
+        function updateSubButtonWinRates(subNamesList) {
+            if (!globalFullData.length) return;
+            let limit = Math.min(globalFullData.length, 50);
+
+            subNamesList.forEach(subName => {
+                let winCount = 0;
+                for (let i = 0; i < limit; i++) {
+                    let item = globalFullData[i];
+                    let past = globalFullData.slice(i + 1);
+                    let periodStr = item.period.length > 7 ? item.period.slice(-6) : item.period;
+
+                    let pred = getDeterministicPrediction(periodStr, past, subName, currentSignalCode);
+                    let nums = item.number.replace(/\s+/g, '').split(',');
+                    let rankIdx = rankShortNames.indexOf(pred.rank);
+                    let actualVal = parseInt(nums[rankIdx], 10);
+                    if (pred.nums.includes(actualVal)) {
+                        winCount++;
+                    }
+                }
+                let winRate = Math.floor((winCount / limit) * 100);
+                let btn = document.getElementById(`subBtn_${subName}`);
+                if (btn) {
+                    btn.innerText = `${subName} ${winRate}%`;
+                }
+            });
+        }
+
         function renderSignalTable() {
             const tbody = document.getElementById('signalTableBody');
+            const subNames = ['宰相', '小幫手', '博士', '宗師', '王牌'];
+            
             if (!globalFullData.length) {
                 tbody.innerHTML = `<tr><td colspan="4" style="padding:20px; color:#64748b;">資料載入中...</td></tr>`;
                 return;
             }
+
+            // 更新按鈕上的勝率
+            updateSubButtonWinRates(subNames);
+
             tbody.innerHTML = "";
 
             let records = [];
@@ -736,7 +769,7 @@
             let nextPeriod = (BigInt(topItem.period) + 1n).toString();
             let nextPeriodStr = nextPeriod.length > 7 ? nextPeriod.slice(-6) : nextPeriod;
             
-            let nextPred = getDeterministicPrediction(nextPeriodStr, globalFullData, subName);
+            let nextPred = getDeterministicPrediction(nextPeriodStr, globalFullData, subName, currentSignalCode);
             records.push({
                 period: nextPeriodStr,
                 rank: nextPred.rank,
@@ -750,7 +783,7 @@
                 let past = globalFullData.slice(i + 1);
                 let periodStr = item.period.length > 7 ? item.period.slice(-6) : item.period;
 
-                let pred = getDeterministicPrediction(periodStr, past, subName);
+                let pred = getDeterministicPrediction(periodStr, past, subName, currentSignalCode);
 
                 let nums = item.number.replace(/\s+/g, '').split(',');
                 let rankIdx = rankShortNames.indexOf(pred.rank);
@@ -950,7 +983,6 @@
                 }
             }
 
-            // 根據各碼數對應的固定獲利乘數計算獲利
             let pFactor = profitMultipliers[codeCount] || 6.7;
             let profitVal = Math.floor(finalAmounts[0] * pFactor);
             if (profitVal < 0) profitVal = 0;
