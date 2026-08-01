@@ -29,8 +29,61 @@
             margin-bottom: 10px;
             border-bottom: 1px solid #f1f5f9;
             padding-bottom: 8px;
+            position: relative;
         }
-        h2 { color: #0f172a; font-size: 15px; font-weight: 700; }
+        .title-left-group {
+            display: flex;
+            align-items: center;
+            gap: 8px;
+            overflow: hidden;
+        }
+        h2 { color: #0f172a; font-size: 15px; font-weight: 700; white-space: nowrap; }
+        
+        /* 音符按鈕與跑馬燈樣式 */
+        .music-control-area {
+            display: flex;
+            align-items: center;
+            gap: 6px;
+            background: #f8fafc;
+            border: 1px solid #cbd5e1;
+            padding: 2px 6px;
+            border-radius: 15px;
+            max-width: 200px;
+        }
+        .music-btn {
+            background: none;
+            border: none;
+            font-size: 14px;
+            cursor: pointer;
+            padding: 0;
+            transition: transform 0.2s;
+        }
+        .music-btn.playing {
+            animation: pulseNote 0.8s infinite alternate;
+        }
+        @keyframes pulseNote {
+            0% { transform: scale(1); }
+            100% { transform: scale(1.25); }
+        }
+        .marquee-container {
+            width: 110px;
+            overflow: hidden;
+            white-space: nowrap;
+            font-size: 11px;
+            font-weight: 700;
+            color: #0284c7;
+            display: none;
+        }
+        .marquee-text {
+            display: inline-block;
+            padding-left: 100%;
+            animation: marqueeScroll 8s linear infinite;
+        }
+        @keyframes marqueeScroll {
+            0% { transform: translate(0, 0); }
+            100% { transform: translate(-100%, 0); }
+        }
+
         .lottery-tabs { display: flex; gap: 6px; }
         .tab-btn {
             background-color: #f8fafc;
@@ -266,8 +319,6 @@
         .num-box.red { background-color: #ef4444; }
         .num-box.blue { background-color: #3b82f6; }
         .num-box.yellow { background-color: #f59e0b; }
-
-        /* 冷溫熱專用深色系 */
         .num-box.hot-red { background-color: #dc2626 !important; }
         .num-box.warm-yellow { background-color: #d97706 !important; }
         .num-box.cold-blue { background-color: #2563eb !important; }
@@ -380,12 +431,24 @@
 <body>
     <div class="container">
         <div class="header-area">
-            <h2>📊 <span id="lotteryTitle">極速飛艇</span></h2>
+            <div class="title-left-group">
+                <h2>📊 <span id="lotteryTitle">極速飛艇</span></h2>
+                <div class="music-control-area">
+                    <button id="musicToggleBtn" class="music-btn" onclick="toggleMusic()" title="點擊開關音樂">🎵</button>
+                    <div id="marqueeContainer" class="marquee-container">
+                        <div id="marqueeText" class="marquee-text">準備播放...</div>
+                    </div>
+                </div>
+            </div>
             <div class="lottery-tabs">
                 <button id="btn10035" class="tab-btn active" onclick="switchLottery('10035', '極速飛艇')">極速飛艇</button>
                 <button id="btn10057" class="tab-btn" onclick="switchLottery('10057', '幸運飛艇')">幸運飛艇</button>
             </div>
         </div>
+
+        <!-- 隱藏的 YouTube 音訊播放器容器 -->
+        <div id="youtubePlayer" style="display:none;"></div>
+
         <div class="info-bar">
             <div class="main-nav-bar">
                 <div class="main-nav-group" id="leftNavArea">
@@ -499,6 +562,7 @@
             <div id="resultTableContainer" class="result-table-container">
                 <table class="calc-table">
                     <thead><tr><th style="width:28%;">關數</th><th style="width:36%;">金額</th><th style="width:36%;">獲利</th></tr></thead>
+                    <audio id="audioElement"></audio>
                     <tbody id="resultTableBody"></tbody>
                 </table>
             </div>
@@ -542,6 +606,9 @@
             <div id="roundOptionsGrid" class="round-options-grid"></div>
         </div>
     </div>
+
+    <!--載入 YouTube IFrame API -->
+    <script src="https://www.youtube.com/iframe_api"></script>
     <script>
         let globalFullData = [], currentLotCode = '10035', countdownTimer = null, targetEndTimeMs = 0, lastPeriodLoaded = "", currentSplit = 3, currentCodeCount = 3;
         let currentStrategy = 'bet';
@@ -550,6 +617,84 @@
         let currentFixedGroup = 1;
         let currentSignalCode = 3; 
         let currentSignalSub = '宰相';
+
+        // 內建 YouTube 歌曲曲庫（您可以隨時提供 YouTube 網址或 ID 讓我擴充）
+        const musicPlaylist = [
+            { id: '5qap5aO4i9A', title: 'lofi hip hop radio - beats to relax/study to', artist: 'Lofi Girl' },
+            { id: 'jfKfPfyJRdk', title: 'lofi hip hop radio - beats to sleep/chill to', artist: 'Lofi Girl' },
+            { id: '1fuehs2FTnM', title: 'Faded', artist: 'Alan Walker' },
+            { id: '9bZkp7q19f0', title: 'Gangnam Style', artist: 'PSY' },
+            { id: 'RgKAFK5djSk', title: 'See You Again', artist: 'Wiz Khalifa ft. Charlie Puth' }
+        ];
+
+        let ytPlayer = null;
+        let isMusicPlaying = false;
+        let currentSongIndex = 0;
+
+        // 初始化 YouTube API
+        function onYouTubeIframeAPIReady() {
+            ytPlayer = new YT.Player('youtubePlayer', {
+                height: '0',
+                width: '0',
+                playerVars: { 'autoplay': 0, 'controls': 0 },
+                events: {
+                    'onStateChange': onPlayerStateChange
+                }
+            });
+        }
+
+        function onPlayerStateChange(event) {
+            // 當歌曲播完 (0)，自動切換下一首
+            if (event.data === YT.PlayerState.ENDED) {
+                playRandomSong();
+            }
+        }
+
+        function toggleMusic() {
+            const btn = document.getElementById('musicToggleBtn');
+            const container = document.getElementById('marqueeContainer');
+            const textElem = document.getElementById('marqueeText');
+
+            if (!isMusicPlaying) {
+                // 開啟音樂
+                isMusicPlaying = true;
+                btn.classList.add('playing');
+                container.style.display = 'block';
+                
+                // 隨機選一首歌
+                currentSongIndex = Math.floor(Math.random() * musicPlaylist.length);
+                let song = musicPlaylist[currentSongIndex];
+                textElem.innerText = `🎶 播放中: ${song.title} - ${song.artist}`;
+
+                if (ytPlayer && typeof ytPlayer.loadVideoById === 'function') {
+                    ytPlayer.loadVideoById(song.id);
+                    ytPlayer.playVideo();
+                } else {
+                    showToast("音樂載入中，請稍候...");
+                }
+            } else {
+                // 關閉音樂
+                isMusicPlaying = false;
+                btn.classList.remove('playing');
+                container.style.display = 'none';
+
+                if (ytPlayer && typeof ytPlayer.stopVideo === 'function') {
+                    ytPlayer.stopVideo();
+                }
+            }
+        }
+
+        function playRandomSong() {
+            if (!isMusicPlaying) return;
+            currentSongIndex = (currentSongIndex + 1) % musicPlaylist.length;
+            let song = musicPlaylist[currentSongIndex];
+            const textElem = document.getElementById('marqueeText');
+            textElem.innerText = `🎶 播放中: ${song.title} - ${song.artist}`;
+            if (ytPlayer && typeof ytPlayer.loadVideoById === 'function') {
+                ytPlayer.loadVideoById(song.id);
+                ytPlayer.playVideo();
+            }
+        }
         
         const rankNames = ['冠軍', '亞軍', '三名', '四名', '五名', '六名', '七名', '八名', '九名', '十名'];
         const rankShortNames = ['冠軍', '亞軍', '三名', '四名', '五名', '六名', '七名', '八名', '九名', '十名'];
@@ -653,7 +798,7 @@
                     chosenNums = tailList.slice(0, 7);
                 } else if (randLogic === 1 && pastData.length > 0) {
                     let { headList } = getHeadTailForPosition(pastData, randPos, 7);
-                    chosenNums = tailList.slice(0, 7);
+                    chosenNums = headList.slice(0, 7);
                 } else {
                     let poolIdx = Math.floor(positiveHash / 100) % fixedPools7.length;
                     chosenNums = fixedPools7[poolIdx];
@@ -1042,7 +1187,6 @@
             return { headList: seen.slice(0, splitVal), tailList: seen.slice(splitVal, 10) };
         }
 
-        // 計算冷溫熱排列順序（由上往下不重複）
         function getHotColdListForPosition(past, pos) {
             let seen = [];
             for (let item of past) {
@@ -1053,14 +1197,13 @@
                 }
                 if (seen.length === 10) break;
             }
-            // 若歷史不足10個，補齊剩餘未出現的號碼
             for (let i = 1; i <= 10; i++) {
                 if (!seen.includes(i)) seen.push(i);
             }
             return {
-                hot: seen.slice(0, 3),      // 前3碼 🔴
-                warm: seen.slice(3, 7),     // 中間4碼 🟡
-                cold: seen.slice(7, 10)     // 最後3碼 🔵
+                hot: seen.slice(0, 3),      
+                warm: seen.slice(3, 7),     
+                cold: seen.slice(7, 10)     
             };
         }
 
@@ -1078,7 +1221,7 @@
                     <div style="color:#2563eb;">🔵 冷號 (後3) : ${cold.join(' . ')} 號</div>
                 `;
             } else if (currentSystem === 'fixed' || currentSystem === 'size') {
-                return; // 固定號與大中小不彈出
+                return;
             } else {
                 const { headList, tailList } = getHeadTailForPosition(globalFullData, pos, currentSplit);
                 document.getElementById('modalTitle').innerText = `【${title}】當前對比`;
