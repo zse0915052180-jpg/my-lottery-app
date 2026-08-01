@@ -267,6 +267,11 @@
         .num-box.blue { background-color: #3b82f6; }
         .num-box.yellow { background-color: #f59e0b; }
 
+        /* 冷溫熱專用深色系 */
+        .num-box.hot-red { background-color: #dc2626 !important; }
+        .num-box.warm-yellow { background-color: #d97706 !important; }
+        .num-box.cold-blue { background-color: #2563eb !important; }
+
         .signal-table { width: 100%; border-collapse: collapse; font-size: 12px; background: #fff; }
         .signal-table th { background-color: #f8fafc; color: #0284c7; font-weight: 700; padding: 6px 2px; border-bottom: 2px solid #cbd5e1; text-align: center; }
         .signal-table td { padding: 8px 2px; font-weight: 700; color: #0f172a; text-align: center; vertical-align: middle; border-bottom: 1px solid #e2e8f0; }
@@ -387,6 +392,7 @@
                     <button id="sysBtnStandard" class="system-btn active" onclick="switchSystem('standard')">順/反</button>
                     <button id="sysBtnFixed" class="system-btn" onclick="switchSystem('fixed')">固定號</button>
                     <button id="sysBtnSize" class="system-btn" onclick="switchSystem('size')">大中小</button>
+                    <button id="sysBtnHotCold" class="system-btn" onclick="switchSystem('hotcold')">冷溫熱</button>
                 </div>
                 <div class="main-nav-group" style="gap: 6px;">
                     <button id="mainNavRoute" class="main-nav-btn active-route" onclick="switchMainTab('route')">牌路</button>
@@ -510,7 +516,10 @@
         <div class="modal-card" onclick="event.stopPropagation()">
             <span class="modal-close" onclick="closeModalDirect()">&times;</span>
             <div id="modalTitle" class="modal-title">名次對比</div>
-            <div class="modal-content-box"><div class="text-green">順 : <span id="headText"></span></div><div class="text-red">反 : <span id="tailText"></span></div></div>
+            <div class="modal-content-box" id="modalContentBox">
+                <div class="text-green">順 : <span id="headText"></span></div>
+                <div class="text-red">反 : <span id="tailText"></span></div>
+            </div>
         </div>
     </div>
     <div id="codeCountModalOverlay" class="modal-overlay" onclick="closeCodeCountModal()">
@@ -644,7 +653,7 @@
                     chosenNums = tailList.slice(0, 7);
                 } else if (randLogic === 1 && pastData.length > 0) {
                     let { headList } = getHeadTailForPosition(pastData, randPos, 7);
-                    chosenNums = headList.slice(0, 7);
+                    chosenNums = tailList.slice(0, 7);
                 } else {
                     let poolIdx = Math.floor(positiveHash / 100) % fixedPools7.length;
                     chosenNums = fixedPools7[poolIdx];
@@ -695,13 +704,21 @@
                 signalArea.style.display = 'none';
                 
                 leftNavGroup.innerHTML = `
-                    <button id="sysBtnStandard" class="system-btn active" onclick="switchSystem('standard')">順/反</button>
-                    <button id="sysBtnFixed" class="system-btn" onclick="switchSystem('fixed')">固定號</button>
-                    <button id="sysBtnSize" class="system-btn" onclick="switchSystem('size')">大中小</button>
+                    <button id="sysBtnStandard" class="system-btn ${currentSystem==='standard'?'active':''}" onclick="switchSystem('standard')">順/反</button>
+                    <button id="sysBtnFixed" class="system-btn ${currentSystem==='fixed'?'active':''}" onclick="switchSystem('fixed')">固定號</button>
+                    <button id="sysBtnSize" class="system-btn ${currentSystem==='size'?'active':''}" onclick="switchSystem('size')">大中小</button>
+                    <button id="sysBtnHotCold" class="system-btn ${currentSystem==='hotcold'?'active':''}" onclick="switchSystem('hotcold')">冷溫熱</button>
                 `;
-                currentSystem = 'standard';
-                modeTabs.style.display = 'flex';
-                fixedTabs.style.display = 'none';
+                if (currentSystem === 'standard') {
+                    modeTabs.style.display = 'flex';
+                    fixedTabs.style.display = 'none';
+                } else if (currentSystem === 'fixed') {
+                    modeTabs.style.display = 'none';
+                    fixedTabs.style.display = 'flex';
+                } else {
+                    modeTabs.style.display = 'none';
+                    fixedTabs.style.display = 'none';
+                }
                 renderTableUI();
             }
         }
@@ -720,7 +737,6 @@
             renderSignalTable();
         }
 
-        // 計算並更新勝率到按鈕名稱後面
         function updateSubButtonWinRates(subNamesList) {
             if (!globalFullData.length) return;
             let limit = Math.min(globalFullData.length, 50);
@@ -757,9 +773,7 @@
                 return;
             }
 
-            // 更新按鈕上的勝率
             updateSubButtonWinRates(subNames);
-
             tbody.innerHTML = "";
 
             let records = [];
@@ -832,6 +846,10 @@
                 document.getElementById('fixedTabsContainer').style.display = 'flex';
             } else if (sys === 'size') {
                 document.getElementById('sysBtnSize').classList.add('active');
+                document.getElementById('modeTabsContainer').style.display = 'none';
+                document.getElementById('fixedTabsContainer').style.display = 'none';
+            } else if (sys === 'hotcold') {
+                document.getElementById('sysBtnHotCold').classList.add('active');
                 document.getElementById('modeTabsContainer').style.display = 'none';
                 document.getElementById('fixedTabsContainer').style.display = 'none';
             }
@@ -1010,6 +1028,7 @@
             targetEndTimeMs = 0; lastPeriodLoaded = ""; document.getElementById('timerText').innerText = '同步中...';
             fetchData();
         }
+
         function getHeadTailForPosition(past, pos, splitVal) {
             let seen = [];
             for (let item of past) {
@@ -1022,16 +1041,57 @@
             }
             return { headList: seen.slice(0, splitVal), tailList: seen.slice(splitVal, 10) };
         }
+
+        // 計算冷溫熱排列順序（由上往下不重複）
+        function getHotColdListForPosition(past, pos) {
+            let seen = [];
+            for (let item of past) {
+                const nums = item.number.replace(/\s+/g, '').split(',');
+                if (nums[pos] !== undefined) {
+                    const v = parseInt(nums[pos], 10);
+                    if (!seen.includes(v)) seen.push(v);
+                }
+                if (seen.length === 10) break;
+            }
+            // 若歷史不足10個，補齊剩餘未出現的號碼
+            for (let i = 1; i <= 10; i++) {
+                if (!seen.includes(i)) seen.push(i);
+            }
+            return {
+                hot: seen.slice(0, 3),      // 前3碼 🔴
+                warm: seen.slice(3, 7),     // 中間4碼 🟡
+                cold: seen.slice(7, 10)     // 最後3碼 🔵
+            };
+        }
+
         function showPositionModal(pos, title) {
             if (!globalFullData.length || currentMainTab === 'signal') return;
-            if (currentSystem === 'fixed' || currentSystem === 'size') return;
-            const { headList, tailList } = getHeadTailForPosition(globalFullData, pos, currentSplit);
-            document.getElementById('modalTitle').innerText = `【${title}】當前對比`;
-            document.getElementById('headText').innerText = [...headList].sort((a,b)=>a-b).join(' . ') + ' 號';
-            document.getElementById('tailText').innerText = [...tailList].sort((a,b)=>a-b).join(' . ') + ' 號';
+            
+            const modalBox = document.getElementById('modalContentBox');
+            
+            if (currentSystem === 'hotcold') {
+                const { hot, warm, cold } = getHotColdListForPosition(globalFullData, pos);
+                document.getElementById('modalTitle').innerText = `【${title}】冷溫熱分佈`;
+                modalBox.innerHTML = `
+                    <div style="color:#dc2626; margin-bottom:4px;">🔴 熱號 (前3) : ${hot.join(' . ')} 號</div>
+                    <div style="color:#d97706; margin-bottom:4px;">🟡 溫號 (中4) : ${warm.join(' . ')} 號</div>
+                    <div style="color:#2563eb;">🔵 冷號 (後3) : ${cold.join(' . ')} 號</div>
+                `;
+            } else if (currentSystem === 'fixed' || currentSystem === 'size') {
+                return; // 固定號與大中小不彈出
+            } else {
+                const { headList, tailList } = getHeadTailForPosition(globalFullData, pos, currentSplit);
+                document.getElementById('modalTitle').innerText = `【${title}】當前對比`;
+                modalBox.innerHTML = `
+                    <div class="text-green">順 : <span id="headText">${[...headList].sort((a,b)=>a-b).join(' . ')} 號</span></div>
+                    <div class="text-red">反 : <span id="tailText">${[...tailList].sort((a,b)=>a-b).join(' . ')} 號</span></div>
+                `;
+            }
             document.getElementById('modalOverlay').style.display = 'flex';
         }
+
         function closeModalDirect() { document.getElementById('modalOverlay').style.display = 'none'; }
+        
         function startCountdown() {
             if (countdownTimer) clearInterval(countdownTimer);
             countdownTimer = setInterval(() => {
@@ -1060,6 +1120,7 @@
                 const past = globalFullData.slice(idx + 1), nums = item.number.replace(/\s+/g, '').split(',');
                 const boxes = nums.map((n, p) => {
                     const val = parseInt(n, 10); let cls = 'blue'; let textColorClass = '';
+                    
                     if (currentSystem === 'fixed') {
                         if (currentFixedGroup === 1 && (val === 8 || val === 9 || val === 10)) cls = 'red';
                         else if (currentFixedGroup === 2 && (val === 1 || val === 9 || val === 10)) cls = 'red';
@@ -1072,6 +1133,15 @@
                         else if (val >= 8 && val <= 10) cls = 'red';
                         else cls = 'blue';
                         textColorClass = ' text-black';
+                    } else if (currentSystem === 'hotcold') {
+                        if (past.length > 0) {
+                            const { hot, warm, cold } = getHotColdListForPosition(past, p);
+                            if (hot.includes(val)) cls = 'hot-red';
+                            else if (warm.includes(val)) cls = 'warm-yellow';
+                            else if (cold.includes(val)) cls = 'cold-blue';
+                        } else {
+                            cls = 'blue';
+                        }
                     } else {
                         if (past.length > 0) {
                             const { headList, tailList } = getHeadTailForPosition(past, p, currentSplit);
@@ -1084,6 +1154,7 @@
                 tb.innerHTML += `<tr class="lottery-row"><td class="period-cell">${item.period.length > 7 ? item.period.slice(-6) : item.period}</td><td><div class="numbers-cell">${boxes}</div></td></tr>`;
             });
         }
+        
         async function fetchData() {
             try {
                 const res = await fetch(`/api/get-lottery?lotCode=${currentLotCode}`), data = await res.json();
