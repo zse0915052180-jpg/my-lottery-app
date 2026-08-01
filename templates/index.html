@@ -29,33 +29,36 @@
             margin-bottom: 10px;
             border-bottom: 1px solid #f1f5f9;
             padding-bottom: 8px;
-            position: relative;
+            gap: 4px;
         }
         .title-left-group {
             display: flex;
             align-items: center;
-            gap: 8px;
-            overflow: hidden;
+            gap: 4px;
+            flex: 1;
+            min-width: 0;
         }
-        h2 { color: #0f172a; font-size: 15px; font-weight: 700; white-space: nowrap; }
+        h2 { color: #0f172a; font-size: 14px; font-weight: 700; white-space: nowrap; }
         
-        /* 音符按鈕與跑馬燈樣式 */
+        /* 音符按鈕與跑馬燈樣式調整 */
         .music-control-area {
             display: flex;
             align-items: center;
-            gap: 6px;
+            gap: 4px;
             background: #f8fafc;
             border: 1px solid #cbd5e1;
-            padding: 2px 6px;
-            border-radius: 15px;
-            max-width: 200px;
+            padding: 2px 5px;
+            border-radius: 12px;
+            flex: 1;
+            min-width: 0;
         }
         .music-btn {
             background: none;
             border: none;
-            font-size: 14px;
+            font-size: 13px;
             cursor: pointer;
             padding: 0;
+            flex-shrink: 0;
             transition: transform 0.2s;
         }
         .music-btn.playing {
@@ -66,10 +69,10 @@
             100% { transform: scale(1.25); }
         }
         .marquee-container {
-            width: 110px;
+            width: 100%;
             overflow: hidden;
             white-space: nowrap;
-            font-size: 11px;
+            font-size: 10.5px;
             font-weight: 700;
             color: #0284c7;
             display: none;
@@ -77,23 +80,27 @@
         .marquee-text {
             display: inline-block;
             padding-left: 100%;
-            animation: marqueeScroll 8s linear infinite;
+            animation: marqueeScroll 9s linear infinite;
         }
         @keyframes marqueeScroll {
             0% { transform: translate(0, 0); }
             100% { transform: translate(-100%, 0); }
         }
 
-        .lottery-tabs { display: flex; gap: 6px; }
+        /* 確保右上角兩顆按鈕固定寬度並完美呈現四個字 */
+        .lottery-tabs { display: flex; gap: 4px; flex-shrink: 0; }
         .tab-btn {
             background-color: #f8fafc;
             color: #64748b;
             border: 1px solid #cbd5e1;
-            padding: 5px 10px;
+            padding: 6px 8px;
             font-size: 11px;
-            font-weight: 600;
+            font-weight: 700;
             border-radius: 6px;
             cursor: pointer;
+            white-space: nowrap;
+            text-align: center;
+            width: 72px;
             transition: all 0.2s;
         }
         .tab-btn.active {
@@ -102,6 +109,7 @@
             border-color: #0284c7;
             box-shadow: 0 2px 4px rgba(14, 165, 233, 0.3);
         }
+
         .info-bar {
             text-align: center;
             font-size: 11px;
@@ -562,7 +570,6 @@
             <div id="resultTableContainer" class="result-table-container">
                 <table class="calc-table">
                     <thead><tr><th style="width:28%;">關數</th><th style="width:36%;">金額</th><th style="width:36%;">獲利</th></tr></thead>
-                    <audio id="audioElement"></audio>
                     <tbody id="resultTableBody"></tbody>
                 </table>
             </div>
@@ -607,7 +614,7 @@
         </div>
     </div>
 
-    <!--載入 YouTube IFrame API -->
+    <!-- 載入 YouTube IFrame API -->
     <script src="https://www.youtube.com/iframe_api"></script>
     <script>
         let globalFullData = [], currentLotCode = '10035', countdownTimer = null, targetEndTimeMs = 0, lastPeriodLoaded = "", currentSplit = 3, currentCodeCount = 3;
@@ -618,7 +625,7 @@
         let currentSignalCode = 3; 
         let currentSignalSub = '宰相';
 
-        // 內建 YouTube 歌曲曲庫（您可以隨時提供 YouTube 網址或 ID 讓我擴充）
+        // 內建 YouTube 歌曲曲庫
         const musicPlaylist = [
             { id: '5qap5aO4i9A', title: 'lofi hip hop radio - beats to relax/study to', artist: 'Lofi Girl' },
             { id: 'jfKfPfyJRdk', title: 'lofi hip hop radio - beats to sleep/chill to', artist: 'Lofi Girl' },
@@ -630,21 +637,21 @@
         let ytPlayer = null;
         let isMusicPlaying = false;
         let currentSongIndex = 0;
+        let isPlayerReady = false;
 
-        // 初始化 YouTube API
         function onYouTubeIframeAPIReady() {
             ytPlayer = new YT.Player('youtubePlayer', {
                 height: '0',
                 width: '0',
-                playerVars: { 'autoplay': 0, 'controls': 0 },
+                playerVars: { 'autoplay': 0, 'controls': 0, 'playsinline': 1 },
                 events: {
+                    'onReady': () => { isPlayerReady = true; },
                     'onStateChange': onPlayerStateChange
                 }
             });
         }
 
         function onPlayerStateChange(event) {
-            // 當歌曲播完 (0)，自動切換下一首
             if (event.data === YT.PlayerState.ENDED) {
                 playRandomSong();
             }
@@ -656,24 +663,21 @@
             const textElem = document.getElementById('marqueeText');
 
             if (!isMusicPlaying) {
-                // 開啟音樂
+                if (!isPlayerReady || !ytPlayer || typeof ytPlayer.playVideo !== 'function') {
+                    showToast("音樂正在初始化，請稍候再點一次...");
+                    return;
+                }
                 isMusicPlaying = true;
                 btn.classList.add('playing');
                 container.style.display = 'block';
                 
-                // 隨機選一首歌
                 currentSongIndex = Math.floor(Math.random() * musicPlaylist.length);
                 let song = musicPlaylist[currentSongIndex];
                 textElem.innerText = `🎶 播放中: ${song.title} - ${song.artist}`;
 
-                if (ytPlayer && typeof ytPlayer.loadVideoById === 'function') {
-                    ytPlayer.loadVideoById(song.id);
-                    ytPlayer.playVideo();
-                } else {
-                    showToast("音樂載入中，請稍候...");
-                }
+                ytPlayer.loadVideoById(song.id);
+                ytPlayer.playVideo();
             } else {
-                // 關閉音樂
                 isMusicPlaying = false;
                 btn.classList.remove('playing');
                 container.style.display = 'none';
