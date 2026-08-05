@@ -1206,6 +1206,16 @@
             };
         }
 
+        // 輔助函式：計算某一行某個名次的牌路顏色（綠或紅）
+        function getCellColor(rowItem, rowIndex, posVal, splitVal) {
+            let pastData = globalFullData.slice(rowIndex + 1);
+            if (pastData.length === 0) return 'blue';
+            let { headList } = getHeadTailForPosition(pastData, posVal, splitVal);
+            let nums = rowItem.number.replace(/\s+/g, '').split(',');
+            let val = parseInt(nums[posVal], 10);
+            return new Set(headList).has(val) ? 'green' : 'red';
+        }
+
         function showPositionModal(pos, title) {
             if (!globalFullData.length || currentMainTab === 'signal') return;
             
@@ -1230,18 +1240,21 @@
                     <div class="text-red">反 : <span id="tailText">${[...tailList].sort((a,b)=>a-b).join(' . ')} 號</span></div>
                 `;
 
-                // 當符合 牌路 + 順/反 + 順五 (currentSplit === 5) 時，額外加上【林林專屬】統計
                 if (currentSystem === 'standard' && currentSplit === 5) {
                     let topItem = globalFullData[0];
                     let topNums = topItem.number.replace(/\s+/g, '').split(',');
                     let targetNum = parseInt(topNums[pos], 10);
 
-                    let pastRows = globalFullData.slice(1, 4); // 往前回溯三期
-                    let colorsResult = [];
+                    // 依序檢查歷史前三期（索引 1, 2, 3）
+                    let pastRows = globalFullData.slice(1, 4); 
+                    let coloredParts = [];
 
-                    pastRows.forEach(row => {
+                    pastRows.forEach((row, rowOffset) => {
+                        let actualRowIdx = rowOffset + 1; // 1, 2, 3
                         let rNums = row.number.replace(/\s+/g, '').split(',');
                         let foundRankIdx = -1;
+
+                        // 在這一期裡面尋找 targetNum 出現在哪個名次
                         for (let r = 0; r < rNums.length; r++) {
                             if (parseInt(rNums[r], 10) === targetNum) {
                                 foundRankIdx = r;
@@ -1250,23 +1263,25 @@
                         }
 
                         if (foundRankIdx !== -1) {
-                            let pastPastData = globalFullData.slice(globalFullData.indexOf(row) + 1);
-                            let { headList: pHead } = getHeadTailForPosition(pastPastData, foundRankIdx, 5);
-                            if (pHead.includes(targetNum)) {
-                                colorsResult.push("綠");
+                            // 顏色取決於「上一期」同一個名次的顏色 (即 actualRowIdx - 1 行)
+                            let prevRowItem = globalFullData[actualRowIdx - 1];
+                            let c = getCellColor(prevRowItem, actualRowIdx - 1, foundRankIdx, currentSplit);
+                            
+                            if (c === 'green') {
+                                coloredParts.push(`<span style="color: #10b981; font-weight: 700;">綠</span>`);
                             } else {
-                                colorsResult.push("紅");
+                                coloredParts.push(`<span style="color: #ef4444; font-weight: 700;">紅</span>`);
                             }
                         } else {
-                            colorsResult.push("無");
+                            coloredParts.push(`<span style="color: #64748b; font-weight: 700;">無</span>`);
                         }
                     });
 
                     baseHtml += `
                         <div style="margin-top:8px; border-top:1px dashed #cbd5e1; padding-top:6px; font-size:11.5px; color:#0f172a;">
-                            <div style="color:#0284c7; font-weight:700; margin-bottom:2px;">【林林專屬】</div>
+                            <div style="color: #0ea5e9; font-weight:700; margin-bottom:2px;">【林林專屬】</div>
                             <div>當前號碼 : ${targetNum}</div>
-                            <div>前三期數據 : ${colorsResult.join('、')}</div>
+                            <div>前三期數據 : ${coloredParts.join('、')}</div>
                         </div>
                     `;
                 }
