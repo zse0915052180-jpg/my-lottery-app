@@ -439,7 +439,7 @@
         .copyable-amount:active { background-color: #e0f2fe !important; }
 
         .modal-overlay { display: none; position: fixed; top: 0; left: 0; width: 100%; height: 100%; background-color: rgba(0, 0, 0, 0.4); z-index: 1000; align-items: center; justify-content: center; }
-        .modal-card { background-color: #ffffff; border: 1px solid #cbd5e1; border-radius: 10px; padding: 12px; width: 85%; max-width: 290px; position: relative; box-shadow: 0 10px 25px rgba(0,0,0,0.1); }
+        .modal-card { background-color: #ffffff; border: 1px solid #cbd5e1; border-radius: 10px; padding: 12px; width: 90%; max-width: 320px; position: relative; box-shadow: 0 10px 25px rgba(0,0,0,0.1); }
         .modal-close { position: absolute; top: 4px; right: 8px; font-size: 16px; color: #64748b; cursor: pointer; }
         .modal-title { color: #0284c7; font-size: 13px; font-weight: 700; text-align: center; margin-bottom: 8px; border-bottom: 1px solid #f1f5f9; padding-bottom: 4px; }
         .modal-content-box { background: #f8fafc; padding: 8px; border-radius: 6px; font-size: 12px; line-height: 1.5; font-weight: 700; border: 1px solid #e2e8f0; }
@@ -450,16 +450,16 @@
         .round-option-item:active { background-color: #0ea5e9; color: #fff; }
         .toast-msg { display: none; position: fixed; bottom: 25px; left: 50%; transform: translateX(-50%); background-color: rgba(14, 165, 233, 0.95); color: #fff; padding: 5px 14px; border-radius: 20px; font-size: 12px; font-weight: 700; z-index: 2000; }
 
-        /* 自訂樣式彈窗內部美化 (符合截圖風格) */
+        /* 自訂樣式彈窗內部美化 (4組配置) */
         .custom-row {
             display: flex;
             align-items: center;
             justify-content: space-between;
             background: #ffffff;
-            padding: 6px 8px;
+            padding: 5px 6px;
             border-radius: 6px;
             border: 1px solid #cbd5e1;
-            margin-bottom: 6px;
+            margin-bottom: 5px;
         }
         .custom-row-col {
             display: flex;
@@ -467,17 +467,17 @@
             gap: 2px;
         }
         .custom-row-title {
-            font-size: 11px;
+            font-size: 10.5px;
             font-weight: 700;
             color: #0284c7;
         }
         .color-selector-group {
             display: flex;
-            gap: 6px;
+            gap: 5px;
         }
         .color-circle {
-            width: 22px;
-            height: 22px;
+            width: 20px;
+            height: 20px;
             border-radius: 50%;
             cursor: pointer;
             border: 2px solid transparent;
@@ -654,15 +654,15 @@
         </div>
     </div>
 
-    <!-- 視覺化自訂規則設定彈窗 (縮減為 3 組) -->
+    <!-- 視覺化自訂規則設定彈窗 (4組配置) -->
     <div id="customModalOverlay" class="modal-overlay" onclick="closeCustomModal()">
-        <div class="modal-card" onclick="event.stopPropagation()" style="max-width: 300px; padding: 14px;">
+        <div class="modal-card" onclick="event.stopPropagation()" style="max-width: 320px; padding: 12px;">
             <span class="modal-close" onclick="closeCustomModal()">&times;</span>
-            <div class="modal-title" style="margin-bottom: 10px;">【自訂號碼顏色設定】</div>
-            <div id="customRulesContainer" style="display: flex; flex-direction: column; gap: 8px;">
-                <!-- 3組自訂設定區塊由 JS 動態產生 -->
+            <div class="modal-title" style="margin-bottom: 8px;">【自訂號碼顏色設定】</div>
+            <div id="customRulesContainer" style="display: flex; flex-direction: column; gap: 6px;">
+                <!-- 4組自訂設定區塊由 JS 動態產生 -->
             </div>
-            <button class="confirm-btn" style="width: 100%; margin-top: 12px; background-color: #10b981; font-size: 13px;" onclick="saveCustomRules()">確認</button>
+            <button class="confirm-btn" style="width: 100%; margin-top: 10px; background-color: #10b981; font-size: 13px;" onclick="saveCustomRules()">確認</button>
         </div>
     </div>
 
@@ -698,11 +698,12 @@
         let currentSignalCode = 3; 
         let currentSignalSub = '宰相';
 
-        // 自訂模式設定（縮減為 3 組規則）
+        // 自訂模式設定（擴增為 4 組規則，支援空格分隔號碼）
         let customRules = [
-            { numbers: "1,2,3", color: "red" },
-            { numbers: "4,5,6", color: "green" },
-            { numbers: "7,8,9,10", color: "blue" }
+            { numbers: "1 4 7", color: "red" },
+            { numbers: "2 5 8", color: "green" },
+            { numbers: "3 6 9", color: "blue" },
+            { numbers: "10", color: "yellow" }
         ];
 
         const musicPlaylist = [
@@ -1080,7 +1081,7 @@
                     <div class="custom-row">
                         <div class="custom-row-col" style="flex: 2;">
                             <span class="custom-row-title">號碼 (群組 ${idx+1})</span>
-                            <input type="text" id="customNums_${idx}" class="white-input" value="${rule.numbers}" placeholder="例如: 1,2,3" style="height: 26px; font-size: 12px; text-align: left; padding-left: 4px;">
+                            <input type="text" id="customNums_${idx}" class="white-input" value="${rule.numbers}" placeholder="例如: 1 4 7" style="height: 26px; font-size: 12px; text-align: left; padding-left: 6px;">
                         </div>
                         <div class="custom-row-col" style="flex: 1; align-items: center;">
                             <span class="custom-row-title">顏色</span>
@@ -1099,7 +1100,7 @@
 
         function selectColor(idx, colorName) {
             customRules[idx].color = colorName;
-            openCustomModal(); // 重新渲染以更新選取狀態
+            openCustomModal(); 
         }
 
         function closeCustomModal() {
@@ -1107,7 +1108,7 @@
         }
 
         function saveCustomRules() {
-            for (let i = 0; i < 3; i++) {
+            for (let i = 0; i < 4; i++) {
                 let nums = document.getElementById(`customNums_${i}`).value;
                 customRules[i].numbers = nums;
             }
@@ -1446,7 +1447,8 @@
                     if (currentSystem === 'custom') {
                         cls = 'blue';
                         for (let rule of customRules) {
-                            let matchNums = rule.numbers.split(',').map(s => parseInt(s.trim(), 10)).filter(n => !isNaN(n));
+                            // 支援用空格或逗號分隔號碼解析
+                            let matchNums = rule.numbers.replace(/[,，]/g, ' ').split(/\s+/).map(s => parseInt(s.trim(), 10)).filter(n => !isNaN(n));
                             if (matchNums.includes(val)) {
                                 cls = rule.color; // red, green, blue, yellow
                                 break;
