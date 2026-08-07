@@ -698,7 +698,7 @@
         let currentSignalCode = 3; 
         let currentSignalSub = '宰相';
 
-        // 自訂模式設定（擴增為 4 組規則，支援空格分隔號碼）
+        // 自訂模式設定（4 組規則，支援空格分隔號碼）
         let customRules = [
             { numbers: "1 4 7", color: "red" },
             { numbers: "2 5 8", color: "green" },
@@ -1047,7 +1047,16 @@
             if (currentMainTab === 'signal') return;
             
             if (sys === 'custom') {
-                openCustomModal();
+                if (currentSystem === 'custom') {
+                    openCustomModal();
+                } else {
+                    currentSystem = 'custom';
+                    document.querySelectorAll('.system-btn').forEach(b => b.classList.remove('active'));
+                    document.getElementById('sysBtnCustom').classList.add('active');
+                    document.getElementById('modeTabsContainer').style.display = 'none';
+                    document.getElementById('fixedTabsContainer').style.display = 'none';
+                    renderTableUI();
+                }
                 return;
             }
 
@@ -1071,6 +1080,15 @@
                 document.getElementById('fixedTabsContainer').style.display = 'none';
             }
             renderTableUI();
+        }
+
+        function syncInputsToRules() {
+            for (let i = 0; i < 4; i++) {
+                let inputElem = document.getElementById(`customNums_${i}`);
+                if (inputElem) {
+                    customRules[i].numbers = inputElem.value;
+                }
+            }
         }
 
         function openCustomModal() {
@@ -1099,6 +1117,7 @@
         }
 
         function selectColor(idx, colorName) {
+            syncInputsToRules(); // 先記錄目前輸入框的字串，避免點顏色時遺失輸入
             customRules[idx].color = colorName;
             openCustomModal(); 
         }
@@ -1108,10 +1127,7 @@
         }
 
         function saveCustomRules() {
-            for (let i = 0; i < 4; i++) {
-                let nums = document.getElementById(`customNums_${i}`).value;
-                customRules[i].numbers = nums;
-            }
+            syncInputsToRules();
             currentSystem = 'custom';
             document.querySelectorAll('.system-btn').forEach(b => b.classList.remove('active'));
             document.getElementById('sysBtnCustom').classList.add('active');
@@ -1447,7 +1463,6 @@
                     if (currentSystem === 'custom') {
                         cls = 'blue';
                         for (let rule of customRules) {
-                            // 支援用空格或逗號分隔號碼解析
                             let matchNums = rule.numbers.replace(/[,，]/g, ' ').split(/\s+/).map(s => parseInt(s.trim(), 10)).filter(n => !isNaN(n));
                             if (matchNums.includes(val)) {
                                 cls = rule.color; // red, green, blue, yellow
