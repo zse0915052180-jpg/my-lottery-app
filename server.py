@@ -12,6 +12,35 @@ CORS(app)
 # 定義北京/台灣時區 (UTC+8)
 CST_TZ = timezone(timedelta(hours=8))
 
+# --- 在線人數統計功能相關變數與路由 ---
+active_ips = {}
+
+@app.before_request
+def track_online_users():
+    # 排除靜態檔案請求，只追蹤網站訪問與 API 互動
+    if request.path.startswith('/static'):
+        return
+    
+    # 取得真實 IP（支援代理伺服器環境）
+    user_ip = request.headers.get('X-Forwarded-For', request.remote_addr)
+    if user_ip:
+        user_ip = user_ip.split(',')[0].strip()
+    else:
+        user_ip = '127.0.0.1'
+        
+    active_ips[user_ip] = time.time()
+
+@app.route('/api/online-count', methods=['GET'])
+def online_count():
+    current_time = time.time()
+    # 自動清理超過 60 秒沒有活動的 IP (視為離線)
+    expired_ips = [ip for ip, t in active_ips.items() if current_time - t > 60]
+    for ip in expired_ips:
+        active_ips.pop(ip, None)
+        
+    return jsonify({"online": len(active_ips) if len(active_ips) > 0 else 1})
+# ----------------------------------------
+
 @app.route('/')
 def home():
     return render_template('index.html')
