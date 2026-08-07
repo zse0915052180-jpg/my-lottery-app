@@ -1104,7 +1104,7 @@
                     <div class="custom-row">
                         <div class="custom-row-col" style="flex: 2;">
                             <span class="custom-row-title">號碼 (群組 ${idx+1})</span>
-                            <input type="text" id="customNums_${idx}" class="white-input" value="${rule.numbers}" placeholder="例如: 1 4 7" style="height: 26px; font-size: 12px; text-align: left; padding-left: 6px;">
+                            <input type="text" id="customNums_${idx}" class="white-input" value="${rule.numbers}" placeholder="例: 1 4 7 或 3 6 9 10" style="height: 26px; font-size: 12px; text-align: left; padding-left: 6px;">
                         </div>
                         <div class="custom-row-col" style="flex: 1; align-items: center;">
                             <span class="custom-row-title">顏色</span>
@@ -1132,7 +1132,7 @@
         }
 
         function saveCustomRules() {
-            syncInputsToRules();
+            syncInputsToRules(); // 確保點擊確認時，所有輸入框的值都被安全同步
             currentSystem = 'custom';
             document.querySelectorAll('.system-btn').forEach(b => b.classList.remove('active'));
             document.getElementById('sysBtnCustom').classList.add('active');
@@ -1468,7 +1468,7 @@
                     if (currentSystem === 'custom') {
                         cls = 'blue';
                         for (let rule of customRules) {
-                            if (!rule.numbers.trim()) continue; // 略過未填寫的群組
+                            if (!rule.numbers.trim()) continue;
                             let matchNums = rule.numbers.replace(/[,，]/g, ' ').split(/\s+/).map(s => parseInt(s.trim(), 10)).filter(n => !isNaN(n));
                             if (matchNums.includes(val)) {
                                 cls = rule.color; // red, green, blue, yellow
