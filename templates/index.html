@@ -145,7 +145,7 @@
             padding-bottom: 6px;
             gap: 8px;
         }
-        .main-nav-group { display: flex; gap: 4px; overflow-x: auto; scrollbar-width: none; }
+        .main-nav-group { display: flex; gap: 3px; overflow-x: auto; scrollbar-width: none; }
         .main-nav-group::-webkit-scrollbar { display: none; }
         
         .main-nav-btn {
@@ -172,8 +172,8 @@
             background-color: #ffffff;
             color: #475569;
             border: 1px solid #cbd5e1;
-            padding: 5px 8px;
-            font-size: 11px;
+            padding: 5px 6px;
+            font-size: 10.5px;
             font-weight: 700;
             border-radius: 6px;
             cursor: pointer;
@@ -449,6 +449,50 @@
         .round-option-item { background-color: #f1f5f9; border: 1px solid #cbd5e1; color: #0284c7; font-size: 14px; font-weight: 700; height: 34px; display: flex; align-items: center; justify-content: center; border-radius: 5px; cursor: pointer; }
         .round-option-item:active { background-color: #0ea5e9; color: #fff; }
         .toast-msg { display: none; position: fixed; bottom: 25px; left: 50%; transform: translateX(-50%); background-color: rgba(14, 165, 233, 0.95); color: #fff; padding: 5px 14px; border-radius: 20px; font-size: 12px; font-weight: 700; z-index: 2000; }
+
+        /* 自訂樣式彈窗內部美化 (符合截圖風格) */
+        .custom-row {
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            background: #ffffff;
+            padding: 6px 8px;
+            border-radius: 6px;
+            border: 1px solid #cbd5e1;
+            margin-bottom: 6px;
+        }
+        .custom-row-col {
+            display: flex;
+            flex-direction: column;
+            gap: 2px;
+        }
+        .custom-row-title {
+            font-size: 11px;
+            font-weight: 700;
+            color: #0284c7;
+        }
+        .color-selector-group {
+            display: flex;
+            gap: 6px;
+        }
+        .color-circle {
+            width: 22px;
+            height: 22px;
+            border-radius: 50%;
+            cursor: pointer;
+            border: 2px solid transparent;
+            opacity: 0.4;
+            transition: all 0.2s;
+        }
+        .color-circle.selected {
+            opacity: 1;
+            border-color: #0f172a;
+            transform: scale(1.1);
+        }
+        .color-circle.red { background-color: #ef4444; }
+        .color-circle.green { background-color: #10b981; }
+        .color-circle.blue { background-color: #3b82f6; }
+        .color-circle.yellow { background-color: #f59e0b; }
     </style>
 </head>
 <body>
@@ -479,6 +523,7 @@
                     <button id="sysBtnFixed" class="system-btn" onclick="switchSystem('fixed')">固定號</button>
                     <button id="sysBtnSize" class="system-btn" onclick="switchSystem('size')">大中小</button>
                     <button id="sysBtnHotCold" class="system-btn" onclick="switchSystem('hotcold')">冷溫熱</button>
+                    <button id="sysBtnCustom" class="system-btn" onclick="switchSystem('custom')">自訂</button>
                 </div>
                 <div class="main-nav-group" style="gap: 6px;">
                     <button id="mainNavRoute" class="main-nav-btn active-route" onclick="switchMainTab('route')">牌路</button>
@@ -608,6 +653,19 @@
             </div>
         </div>
     </div>
+
+    <!-- 視覺化自訂規則設定彈窗 (縮減為 3 組) -->
+    <div id="customModalOverlay" class="modal-overlay" onclick="closeCustomModal()">
+        <div class="modal-card" onclick="event.stopPropagation()" style="max-width: 300px; padding: 14px;">
+            <span class="modal-close" onclick="closeCustomModal()">&times;</span>
+            <div class="modal-title" style="margin-bottom: 10px;">【自訂號碼顏色設定】</div>
+            <div id="customRulesContainer" style="display: flex; flex-direction: column; gap: 8px;">
+                <!-- 3組自訂設定區塊由 JS 動態產生 -->
+            </div>
+            <button class="confirm-btn" style="width: 100%; margin-top: 12px; background-color: #10b981; font-size: 13px;" onclick="saveCustomRules()">確認</button>
+        </div>
+    </div>
+
     <div id="codeCountModalOverlay" class="modal-overlay" onclick="closeCodeCountModal()">
         <div class="modal-card" onclick="event.stopPropagation()">
             <span class="modal-close" onclick="closeCodeCountModal()">&times;</span>
@@ -639,6 +697,13 @@
         let currentFixedGroup = 1;
         let currentSignalCode = 3; 
         let currentSignalSub = '宰相';
+
+        // 自訂模式設定（縮減為 3 組規則）
+        let customRules = [
+            { numbers: "1,2,3", color: "red" },
+            { numbers: "4,5,6", color: "green" },
+            { numbers: "7,8,9,10", color: "blue" }
+        ];
 
         const musicPlaylist = [
             { id: '_LbQyPyup24', title: '狂飆腎上腺素欲罷不能的旋律 ｜ 震碎靈魂的週末炸場專屬', artist: '台灣夜店DJ舞曲' },
@@ -852,6 +917,7 @@
                     <button id="sysBtnFixed" class="system-btn ${currentSystem==='fixed'?'active':''}" onclick="switchSystem('fixed')">固定號</button>
                     <button id="sysBtnSize" class="system-btn ${currentSystem==='size'?'active':''}" onclick="switchSystem('size')">大中小</button>
                     <button id="sysBtnHotCold" class="system-btn ${currentSystem==='hotcold'?'active':''}" onclick="switchSystem('hotcold')">冷溫熱</button>
+                    <button id="sysBtnCustom" class="system-btn ${currentSystem==='custom'?'active':''}" onclick="switchSystem('custom')">自訂</button>
                 `;
                 if (currentSystem === 'standard') {
                     modeTabs.style.display = 'flex';
@@ -978,6 +1044,12 @@
 
         function switchSystem(sys) {
             if (currentMainTab === 'signal') return;
+            
+            if (sys === 'custom') {
+                openCustomModal();
+                return;
+            }
+
             currentSystem = sys;
             document.querySelectorAll('.system-btn').forEach(b => b.classList.remove('active'));
             if (sys === 'standard') {
@@ -998,6 +1070,56 @@
                 document.getElementById('fixedTabsContainer').style.display = 'none';
             }
             renderTableUI();
+        }
+
+        function openCustomModal() {
+            const container = document.getElementById('customRulesContainer');
+            container.innerHTML = "";
+            customRules.forEach((rule, idx) => {
+                container.innerHTML += `
+                    <div class="custom-row">
+                        <div class="custom-row-col" style="flex: 2;">
+                            <span class="custom-row-title">號碼 (群組 ${idx+1})</span>
+                            <input type="text" id="customNums_${idx}" class="white-input" value="${rule.numbers}" placeholder="例如: 1,2,3" style="height: 26px; font-size: 12px; text-align: left; padding-left: 4px;">
+                        </div>
+                        <div class="custom-row-col" style="flex: 1; align-items: center;">
+                            <span class="custom-row-title">顏色</span>
+                            <div class="color-selector-group">
+                                <div class="color-circle red ${rule.color==='red'?'selected':''}" onclick="selectColor(${idx}, 'red')"></div>
+                                <div class="color-circle green ${rule.color==='green'?'selected':''}" onclick="selectColor(${idx}, 'green')"></div>
+                                <div class="color-circle blue ${rule.color==='blue'?'selected':''}" onclick="selectColor(${idx}, 'blue')"></div>
+                                <div class="color-circle yellow ${rule.color==='yellow'?'selected':''}" onclick="selectColor(${idx}, 'yellow')"></div>
+                            </div>
+                        </div>
+                    </div>
+                `;
+            });
+            document.getElementById('customModalOverlay').style.display = 'flex';
+        }
+
+        function selectColor(idx, colorName) {
+            customRules[idx].color = colorName;
+            openCustomModal(); // 重新渲染以更新選取狀態
+        }
+
+        function closeCustomModal() {
+            document.getElementById('customModalOverlay').style.display = 'none';
+        }
+
+        function saveCustomRules() {
+            for (let i = 0; i < 3; i++) {
+                let nums = document.getElementById(`customNums_${i}`).value;
+                customRules[i].numbers = nums;
+            }
+            currentSystem = 'custom';
+            document.querySelectorAll('.system-btn').forEach(b => b.classList.remove('active'));
+            document.getElementById('sysBtnCustom').classList.add('active');
+            document.getElementById('modeTabsContainer').style.display = 'none';
+            document.getElementById('fixedTabsContainer').style.display = 'none';
+            
+            closeCustomModal();
+            renderTableUI();
+            showToast("自訂顏色規則已套用！");
         }
 
         function switchFixed(groupNum) {
@@ -1206,7 +1328,6 @@
             };
         }
 
-        // 輔助函式：計算某一行某個名次的牌路顏色（綠或紅）
         function getCellColor(rowItem, rowIndex, posVal, splitVal) {
             let pastData = globalFullData.slice(rowIndex + 1);
             if (pastData.length === 0) return 'blue';
@@ -1229,6 +1350,9 @@
                     <div style="color:#d97706; margin-bottom:4px;">🟡 溫號 (中4) : ${warm.join(' . ')} 號</div>
                     <div style="color:#2563eb;">🔵 冷號 (後3) : ${cold.join(' . ')} 號</div>
                 `;
+            } else if (currentSystem === 'custom') {
+                document.getElementById('modalTitle').innerText = `【${title}】自訂模式設定中`;
+                modalBox.innerHTML = `<div style="color:#0284c7; text-align:center;">目前為自訂顏色顯示模式，點擊上方【自訂】按鈕可隨時修改規則。</div>`;
             } else if (currentSystem === 'fixed' || currentSystem === 'size') {
                 return;
             } else {
@@ -1245,16 +1369,14 @@
                     let topNums = topItem.number.replace(/\s+/g, '').split(',');
                     let targetNum = parseInt(topNums[pos], 10);
 
-                    // 依序檢查歷史前三期（索引 1, 2, 3）
                     let pastRows = globalFullData.slice(1, 4); 
                     let coloredParts = [];
 
                     pastRows.forEach((row, rowOffset) => {
-                        let actualRowIdx = rowOffset + 1; // 1, 2, 3
+                        let actualRowIdx = rowOffset + 1; 
                         let rNums = row.number.replace(/\s+/g, '').split(',');
                         let foundRankIdx = -1;
 
-                        // 在這一期裡面尋找 targetNum 出現在哪個名次
                         for (let r = 0; r < rNums.length; r++) {
                             if (parseInt(rNums[r], 10) === targetNum) {
                                 foundRankIdx = r;
@@ -1263,7 +1385,6 @@
                         }
 
                         if (foundRankIdx !== -1) {
-                            // 顏色取決於「上一期」同一個名次的顏色 (即 actualRowIdx - 1 行)
                             let prevRowItem = globalFullData[actualRowIdx - 1];
                             let c = getCellColor(prevRowItem, actualRowIdx - 1, foundRankIdx, currentSplit);
                             
@@ -1322,7 +1443,16 @@
                 const boxes = nums.map((n, p) => {
                     const val = parseInt(n, 10); let cls = 'blue'; let textColorClass = '';
                     
-                    if (currentSystem === 'fixed') {
+                    if (currentSystem === 'custom') {
+                        cls = 'blue';
+                        for (let rule of customRules) {
+                            let matchNums = rule.numbers.split(',').map(s => parseInt(s.trim(), 10)).filter(n => !isNaN(n));
+                            if (matchNums.includes(val)) {
+                                cls = rule.color; // red, green, blue, yellow
+                                break;
+                            }
+                        }
+                    } else if (currentSystem === 'fixed') {
                         if (currentFixedGroup === 1 && (val === 8 || val === 9 || val === 10)) cls = 'red';
                         else if (currentFixedGroup === 2 && (val === 1 || val === 9 || val === 10)) cls = 'red';
                         else if (currentFixedGroup === 3 && (val === 1 || val === 2 || val === 10)) cls = 'red';
