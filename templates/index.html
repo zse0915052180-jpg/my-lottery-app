@@ -407,6 +407,11 @@
             text-align: center;
             outline: none;
         }
+        .white-input::placeholder {
+            color: #94a3b8;
+            font-weight: 400;
+            font-size: 11px;
+        }
         .clickable-box { cursor: pointer; user-select: none; display: flex; align-items: center; justify-content: center; }
         .confirm-btn {
             height: 32px;
@@ -698,12 +703,12 @@
         let currentSignalCode = 3; 
         let currentSignalSub = '宰相';
 
-        // 自訂模式設定（4 組規則，支援空格分隔號碼）
+        // 自訂模式設定（初始狀態全部清空，改由 placeholder 提示）
         let customRules = [
-            { numbers: "1 4 7", color: "red" },
-            { numbers: "2 5 8", color: "green" },
-            { numbers: "3 6 9", color: "blue" },
-            { numbers: "10", color: "yellow" }
+            { numbers: "", color: "red" },
+            { numbers: "", color: "green" },
+            { numbers: "", color: "blue" },
+            { numbers: "", color: "yellow" }
         ];
 
         const musicPlaylist = [
@@ -1117,7 +1122,7 @@
         }
 
         function selectColor(idx, colorName) {
-            syncInputsToRules(); // 先記錄目前輸入框的字串，避免點顏色時遺失輸入
+            syncInputsToRules();
             customRules[idx].color = colorName;
             openCustomModal(); 
         }
@@ -1463,6 +1468,7 @@
                     if (currentSystem === 'custom') {
                         cls = 'blue';
                         for (let rule of customRules) {
+                            if (!rule.numbers.trim()) continue; // 略過未填寫的群組
                             let matchNums = rule.numbers.replace(/[,，]/g, ' ').split(/\s+/).map(s => parseInt(s.trim(), 10)).filter(n => !isNaN(n));
                             if (matchNums.includes(val)) {
                                 cls = rule.color; // red, green, blue, yellow
