@@ -40,7 +40,6 @@
         }
         h2 { color: #0f172a; font-size: 13.5px; font-weight: 700; white-space: nowrap; }
         
-        /* 音樂控制區（精緻小巧，展開時不會過長） */
         .music-control-area {
             position: relative;
             display: flex;
@@ -106,7 +105,6 @@
             100% { transform: translate(-100%, 0); }
         }
 
-        /* 標題右側群組（包含在線人數與右側彩票切換按鈕） */
         .title-right-group {
             display: flex;
             align-items: center;
@@ -114,7 +112,6 @@
             flex-shrink: 0;
         }
 
-        /* 在線人數完美緊鄰在右側極速飛艇按鈕旁邊 */
         .online-badge {
             background: #f8fafc;
             border: 1px solid #cbd5e1;
@@ -472,6 +469,111 @@
         .copyable-amount { cursor: pointer; }
         .copyable-amount:active { background-color: #e0f2fe !important; }
 
+        /* 模擬操作面板專屬美化風格 */
+        .simulation-panel {
+            background-color: #0f172a;
+            border-radius: 8px;
+            padding: 10px;
+            border: 1px solid #334155;
+            display: flex;
+            flex-direction: column;
+            gap: 8px;
+        }
+        .sim-rank-row {
+            display: flex;
+            gap: 3px;
+            justify-content: space-between;
+        }
+        .sim-rank-btn {
+            flex: 1;
+            background-color: #1e293b;
+            color: #94a3b8;
+            border: 1px solid #475569;
+            font-size: 11px;
+            font-weight: 700;
+            padding: 5px 0;
+            text-align: center;
+            border-radius: 4px;
+            cursor: pointer;
+            transition: all 0.2s;
+        }
+        .sim-rank-btn.active {
+            background-color: #0ea5e9;
+            color: #ffffff;
+            border-color: #38bdf8;
+            box-shadow: 0 0 8px rgba(14, 165, 233, 0.4);
+        }
+
+        .sim-balls-grid {
+            display: grid;
+            grid-template-columns: repeat(5, 1fr);
+            gap: 6px;
+            padding: 4px 0;
+        }
+        .sim-ball-item {
+            aspect-ratio: 1;
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 14px;
+            font-weight: 800;
+            color: #ffffff;
+            cursor: pointer;
+            box-shadow: inset 0 2px 4px rgba(255,255,255,0.3), 0 3px 6px rgba(0,0,0,0.3);
+            border: 2px solid transparent;
+            transition: transform 0.1s, box-shadow 0.2s;
+        }
+        .sim-ball-item:active {
+            transform: scale(0.92);
+        }
+        .sim-ball-item.selected {
+            border-color: #facc15;
+            box-shadow: 0 0 10px #facc15, inset 0 2px 4px rgba(255,255,255,0.4);
+            transform: scale(1.05);
+        }
+        /* 模擬球彩球顏色風格 */
+        .sim-ball-1 { background: linear-gradient(135deg, #3b82f6, #1d4ed8); }
+        .sim-ball-2 { background: linear-gradient(135deg, #3b82f6, #1d4ed8); }
+        .sim-ball-3 { background: linear-gradient(135deg, #3b82f6, #1d4ed8); }
+        .sim-ball-4 { background: linear-gradient(135deg, #f59e0b, #d97706); }
+        .sim-ball-5 { background: linear-gradient(135deg, #f59e0b, #d97706); }
+        .sim-ball-6 { background: linear-gradient(135deg, #f59e0b, #d97706); }
+        .sim-ball-7 { background: linear-gradient(135deg, #f59e0b, #d97706); }
+        .sim-ball-8 { background: linear-gradient(135deg, #ef4444, #b91c1c); }
+        .sim-ball-9 { background: linear-gradient(135deg, #ef4444, #b91c1c); }
+        .sim-ball-10 { background: linear-gradient(135deg, #ef4444, #b91c1c); }
+
+        .sim-action-row {
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            gap: 8px;
+            margin-top: 2px;
+        }
+        .sim-clear-btn {
+            background-color: #ef4444;
+            color: #ffffff;
+            border: 1px solid #dc2626;
+            padding: 6px 14px;
+            font-size: 12px;
+            font-weight: 700;
+            border-radius: 5px;
+            cursor: pointer;
+            box-shadow: 0 2px 4px rgba(239, 68, 68, 0.3);
+        }
+        .sim-submit-btn {
+            background-color: #10b981;
+            color: #ffffff;
+            border: 1px solid #059669;
+            padding: 6px 16px;
+            font-size: 12px;
+            font-weight: 700;
+            border-radius: 5px;
+            cursor: pointer;
+            box-shadow: 0 2px 4px rgba(16, 185, 129, 0.3);
+        }
+
         .modal-overlay { display: none; position: fixed; top: 0; left: 0; width: 100%; height: 100%; background-color: rgba(0, 0, 0, 0.4); z-index: 1000; align-items: center; justify-content: center; }
         .modal-card { background-color: #ffffff; border: 1px solid #cbd5e1; border-radius: 10px; padding: 12px; width: 90%; max-width: 320px; position: relative; box-shadow: 0 10px 25px rgba(0,0,0,0.1); }
         .modal-close { position: absolute; top: 4px; right: 8px; font-size: 16px; color: #64748b; cursor: pointer; }
@@ -531,7 +633,6 @@
 <body>
     <div class="container">
         <div class="header-area">
-            <!-- 左側：標題與音符播放器 -->
             <div class="title-left-group">
                 <h2>📊 <span id="lotteryTitle">極速飛艇</span></h2>
                 <div id="musicControlArea" class="music-control-area">
@@ -542,7 +643,6 @@
                 </div>
             </div>
 
-            <!-- 右側：在線人數緊鄰在彩票切換按鈕旁邊 -->
             <div class="title-right-group">
                 <div class="online-badge">
                     在線 <span id="onlineCountVal">--</span>
@@ -554,7 +654,6 @@
             </div>
         </div>
 
-        <!-- 隱藏的 YouTube 音訊播放器容器 -->
         <div id="youtubePlayer" style="display:none;"></div>
 
         <div class="info-bar">
@@ -595,7 +694,6 @@
         </div>
 
         <div class="table-wrapper">
-            <!-- 牌路模式表格 -->
             <div id="routeTableArea">
                 <table id="routeHeaderTable" class="lottery-table">
                     <thead>
@@ -623,7 +721,6 @@
                 </div>
             </div>
 
-            <!-- 報牌模式區塊 -->
             <div id="signalButtonArea" style="display: none;">
                 <div class="signal-btn-container">
                     <button class="signal-sub-btn active" id="subBtn_宰相" onclick="switchSignalSub('宰相')">宰相</button>
@@ -651,9 +748,11 @@
         <div class="strategy-area">
             <button id="stratBtnBet" class="strategy-btn active" onclick="switchStrategy('bet')">倍投</button>
             <button id="stratBtnCompound" class="strategy-btn" onclick="switchStrategy('compound')">複利計算</button>
+            <button id="stratBtnSim" class="strategy-btn" onclick="switchStrategy('sim')">模擬操作</button>
         </div>
 
         <div class="calculator-area">
+            <!-- 倍投區塊 -->
             <div id="betCalcInputs" class="calc-input-row">
                 <div class="input-group"><span class="input-label">本金</span><input type="number" id="inputAmount" class="white-input"></div>
                 <div class="input-group"><span class="input-label">碼數</span><div id="inputCodeCountDisplay" class="white-input clickable-box" onclick="openCodeCountModal()">3</div></div>
@@ -661,11 +760,44 @@
                 <button class="confirm-btn" onclick="onConfirmClick()">計算</button>
             </div>
 
+            <!-- 複利計算區塊 -->
             <div id="compoundCalcInputs" class="calc-input-row" style="display: none;">
                 <div class="input-group"><span class="input-label">本金</span><input type="number" id="compoundPrincipal" class="white-input" value="10000"></div>
                 <div class="input-group"><span class="input-label">操作次數</span><input type="number" id="compoundTimes" class="white-input" value="10"></div>
                 <div class="input-group"><span class="input-label">獲利%</span><input type="number" id="compoundRate" class="white-input" value="3.2"></div>
                 <button class="confirm-btn" onclick="onCompoundConfirmClick()">計算</button>
+            </div>
+
+            <!-- 模擬操作面板區塊 -->
+            <div id="simOperationPanel" class="simulation-panel" style="display: none;">
+                <!-- 名次按鈕列 -->
+                <div class="sim-rank-row" id="simRankRow">
+                    <div class="sim-rank-btn active" onclick="selectSimRank(0, this)">冠</div>
+                    <div class="sim-rank-btn" onclick="selectSimRank(1, this)">亞</div>
+                    <div class="sim-rank-btn" onclick="selectSimRank(2, this)">三</div>
+                    <div class="sim-rank-btn" onclick="selectSimRank(3, this)">四</div>
+                    <div class="sim-rank-btn" onclick="selectSimRank(4, this)">五</div>
+                    <div class="sim-rank-btn" onclick="selectSimRank(5, this)">六</div>
+                    <div class="sim-rank-btn" onclick="selectSimRank(6, this)">七</div>
+                    <div class="sim-rank-btn" onclick="selectSimRank(7, this)">八</div>
+                    <div class="sim-rank-btn" onclick="selectSimRank(8, this)">九</div>
+                    <div class="sim-rank-btn" onclick="selectSimRank(9, this)">十</div>
+                </div>
+
+                <!-- 1~10 號碼球網格 -->
+                <div class="sim-balls-grid" id="simBallsGrid">
+                    <!-- 由 JS 動態產生 1~10 號球 -->
+                </div>
+
+                <!-- 金額與確認列 -->
+                <div class="sim-action-row">
+                    <div class="input-group" style="flex: 2;">
+                        <span class="input-label">金額</span>
+                        <input type="number" id="simAmountInput" class="white-input" placeholder="輸入金額">
+                    </div>
+                    <button class="sim-clear-btn" onclick="clearSimInput()">清除</button>
+                    <button class="sim-submit-btn" onclick="submitSimOrder()">確認下注</button>
+                </div>
             </div>
 
             <div id="resultTableContainer" class="result-table-container">
@@ -695,7 +827,6 @@
         </div>
     </div>
 
-    <!-- 視覺化自訂規則設定彈窗 (4組配置) -->
     <div id="customModalOverlay" class="modal-overlay" onclick="closeCustomModal()">
         <div class="modal-card" onclick="event.stopPropagation()" style="max-width: 320px; padding: 12px;">
             <span class="modal-close" onclick="closeCustomModal()">&times;</span>
@@ -726,7 +857,6 @@
         </div>
     </div>
 
-    <!-- 載入 YouTube IFrame API -->
     <script src="https://www.youtube.com/iframe_api"></script>
     <script>
         let globalFullData = [], currentLotCode = '10035', countdownTimer = null, targetEndTimeMs = 0, lastPeriodLoaded = "", currentSplit = 5, currentCodeCount = 3;
@@ -736,6 +866,10 @@
         let currentFixedGroup = 1;
         let currentSignalCode = 3; 
         let currentSignalSub = '宰相';
+
+        // 模擬操作狀態變數
+        let selectedSimRank = 0;
+        let selectedSimBalls = [];
 
         let customRules = [
             { numbers: "", color: "red" },
@@ -799,13 +933,10 @@
             }
         }
         
-        const rankNames = ['冠軍', '亞軍', '三名', '四名', '五名', '六名', '七名', '八名', '九名', '十名'];
         const rankShortNames = ['冠軍', '亞軍', '三名', '四名', '五名', '六名', '七名', '八名', '九名', '十名'];
         const chineseRounds = ["第一關", "第二關", "第三關", "第四關", "第五關", "第六關", "第七關", "第八關", "第九關"];
         
         const fixedPools3 = [[1,2,3], [1,2,10], [1,9,10], [8,9,10]];
-        const fixedPools4 = [[4,5,6,7]];
-        const fixedPools6 = [[1,2,3,8,9,10]];
         const fixedPools7 = [
             [1,2,3,4,5,6,7],
             [2,3,4,5,6,7,8],
@@ -824,82 +955,82 @@
         const codeMultipliers = { 3: 1.44, 4: 1.71, 5: 2.06, 6: 2.62, 7: 3.59 };
         const profitMultipliers = { 3: 6.7, 4: 5.7, 5: 4.7, 6: 3.7, 7: 2.7 };
 
-        function getDeterministicPrediction(periodStr, pastData, subName, codeVal) {
-            let seedStr = `${currentLotCode}_${codeVal}_${subName}_${periodStr}`;
-            let hash = 0;
-            for (let i = 0; i < seedStr.length; i++) {
-                hash = ((hash << 5) - hash) + seedStr.charCodeAt(i);
-                hash |= 0;
+        // 初始化模擬操作面板的 1~10 號球
+        function initSimBalls() {
+            const grid = document.getElementById('simBallsGrid');
+            if (!grid) return;
+            grid.innerHTML = "";
+            for (let i = 1; i <= 10; i++) {
+                grid.innerHTML += `<div class="sim-ball-item sim-ball-${i}" id="simBall_${i}" onclick="toggleSimBall(${i})">${i}</div>`;
             }
-            let positiveHash = Math.abs(hash);
+        }
 
-            let randPos = positiveHash % 10;
-            let randLogic = Math.floor(positiveHash / 10) % 3;
-            let chosenNums = [];
+        function selectSimRank(rankIdx, btnElem) {
+            selectedSimRank = rankIdx;
+            document.querySelectorAll('.sim-rank-btn').forEach(b => b.classList.remove('active'));
+            btnElem.classList.add('active');
+        }
 
-            if (codeVal === 3) {
-                if (randLogic === 0 && pastData.length > 0) {
-                    let { headList } = getHeadTailForPosition(pastData, randPos, 3);
-                    chosenNums = headList.slice(0, 3);
-                } else if (randLogic === 1 && pastData.length > 0) {
-                    let { tailList } = getHeadTailForPosition(pastData, randPos, 3);
-                    chosenNums = tailList.slice(0, 3);
-                } else {
-                    let poolIdx = Math.floor(positiveHash / 100) % fixedPools3.length;
-                    chosenNums = fixedPools3[poolIdx].slice(0, 3);
-                }
-                if (chosenNums.length === 0) chosenNums = [1, 2, 3];
-            } else if (codeVal === 4) {
-                if (randLogic === 0 && pastData.length > 0) {
-                    let { headList } = getHeadTailForPosition(pastData, randPos, 4);
-                    chosenNums = headList.slice(0, 4);
-                } else if (randLogic === 1 && pastData.length > 0) {
-                    let { tailList } = getHeadTailForPosition(pastData, randPos, 6);
-                    chosenNums = tailList.slice(0, 4);
-                } else {
-                    chosenNums = [4, 5, 6, 7];
-                }
-                if (chosenNums.length === 0) chosenNums = [4, 5, 6, 7];
-            } else if (codeVal === 5) {
-                if (randLogic % 2 === 0 && pastData.length > 0) {
-                    let { headList } = getHeadTailForPosition(pastData, randPos, 5);
-                    chosenNums = headList.slice(0, 5);
-                } else if (pastData.length > 0) {
-                    let { tailList } = getHeadTailForPosition(pastData, randPos, 5);
-                    chosenNums = tailList.slice(0, 5);
-                } else {
-                    chosenNums = [1, 2, 3, 4, 5];
-                }
-                if (chosenNums.length === 0) chosenNums = [1, 2, 3, 4, 5];
-            } else if (codeVal === 6) {
-                if (randLogic === 0 && pastData.length > 0) {
-                    let { tailList } = getHeadTailForPosition(pastData, randPos, 4);
-                    chosenNums = tailList.slice(0, 6);
-                } else if (randLogic === 1 && pastData.length > 0) {
-                    let { headList } = getHeadTailForPosition(pastData, randPos, 6);
-                    chosenNums = headList.slice(0, 6);
-                } else {
-                    chosenNums = [1, 2, 3, 8, 9, 10];
-                }
-                if (chosenNums.length === 0) chosenNums = [1, 2, 3, 8, 9, 10];
-            } else if (codeVal === 7) {
-                if (randLogic === 0 && pastData.length > 0) {
-                    let { tailList } = getHeadTailForPosition(pastData, randPos, 3);
-                    chosenNums = tailList.slice(0, 7);
-                } else if (randLogic === 1 && pastData.length > 0) {
-                    let { headList } = getHeadTailForPosition(pastData, randPos, 7);
-                    chosenNums = headList.slice(0, 7);
-                } else {
-                    let poolIdx = Math.floor(positiveHash / 100) % fixedPools7.length;
-                    chosenNums = fixedPools7[poolIdx];
-                }
-                if (chosenNums.length === 0) chosenNums = [1, 2, 3, 4, 5, 6, 7];
+        function toggleSimBall(num) {
+            const idx = selectedSimBalls.indexOf(num);
+            const ballElem = document.getElementById(`simBall_${num}`);
+            if (idx > -1) {
+                selectedSimBalls.splice(idx, 1);
+                ballElem.classList.remove('selected');
             } else {
-                chosenNums = [1, 2, 3];
+                selectedSimBalls.push(num);
+                ballElem.classList.add('selected');
             }
+        }
 
-            chosenNums.sort((a, b) => a - b);
-            return { rank: rankShortNames[randPos], nums: chosenNums };
+        function clearSimInput() {
+            selectedSimBalls = [];
+            document.querySelectorAll('.sim-ball-item').forEach(b => b.classList.remove('selected'));
+            document.getElementById('simAmountInput').value = "";
+            showToast("已清除模擬選號");
+        }
+
+        function submitSimOrder() {
+            const amt = document.getElementById('simAmountInput').value;
+            if (selectedSimBalls.length === 0) {
+                alert("請至少選擇一個號碼！");
+                return;
+            }
+            if (!amt || parseFloat(amt) <= 0) {
+                alert("請填寫有效的下注金額！");
+                return;
+            }
+            const rankName = rankShortNames[selectedSimRank];
+            const sortedNums = [...selectedSimBalls].sort((a, b) => a - b).join(', ');
+            showToast(`【模擬下注成功】${rankName} [ ${sortedNums} ] 金額: ${amt}`);
+        }
+
+        function switchStrategy(type) {
+            currentStrategy = type;
+            document.querySelectorAll('.strategy-btn').forEach(b => b.classList.remove('active'));
+            
+            document.getElementById('betCalcInputs').style.display = 'none';
+            document.getElementById('compoundCalcInputs').style.display = 'none';
+            document.getElementById('simOperationPanel').style.display = 'none';
+            document.getElementById('resultTableContainer').style.display = 'none';
+            document.getElementById('compoundTableContainer').style.display = 'none';
+
+            if (type === 'bet') {
+                document.getElementById('stratBtnBet').classList.add('active');
+                document.getElementById('betCalcInputs').style.display = 'flex';
+                if (document.getElementById('resultTableBody').children.length > 0) {
+                    document.getElementById('resultTableContainer').style.display = 'block';
+                }
+            } else if (type === 'compound') {
+                document.getElementById('stratBtnCompound').classList.add('active');
+                document.getElementById('compoundCalcInputs').style.display = 'flex';
+                if (document.getElementById('compoundTableBody').children.length > 0) {
+                    document.getElementById('compoundTableContainer').style.display = 'block';
+                }
+            } else if (type === 'sim') {
+                document.getElementById('stratBtnSim').classList.add('active');
+                document.getElementById('simOperationPanel').style.display = 'flex';
+            }
         }
 
         function switchMainTab(tab) {
@@ -994,6 +1125,84 @@
                     btn.innerText = `${subName} ${winRate}%`;
                 }
             });
+        }
+
+        function getDeterministicPrediction(periodStr, pastData, subName, codeVal) {
+            let seedStr = `${currentLotCode}_${codeVal}_${subName}_${periodStr}`;
+            let hash = 0;
+            for (let i = 0; i < seedStr.length; i++) {
+                hash = ((hash << 5) - hash) + seedStr.charCodeAt(i);
+                hash |= 0;
+            }
+            let positiveHash = Math.abs(hash);
+
+            let randPos = positiveHash % 10;
+            let randLogic = Math.floor(positiveHash / 10) % 3;
+            let chosenNums = [];
+
+            if (codeVal === 3) {
+                if (randLogic === 0 && pastData.length > 0) {
+                    let { headList } = getHeadTailForPosition(pastData, randPos, 3);
+                    chosenNums = headList.slice(0, 3);
+                } else if (randLogic === 1 && pastData.length > 0) {
+                    let { tailList } = getHeadTailForPosition(pastData, randPos, 3);
+                    chosenNums = tailList.slice(0, 3);
+                } else {
+                    let poolIdx = Math.floor(positiveHash / 100) % fixedPools3.length;
+                    chosenNums = fixedPools3[poolIdx].slice(0, 3);
+                }
+                if (chosenNums.length === 0) chosenNums = [1, 2, 3];
+            } else if (codeVal === 4) {
+                if (randLogic === 0 && pastData.length > 0) {
+                    let { headList } = getHeadTailForPosition(pastData, randPos, 4);
+                    chosenNums = headList.slice(0, 4);
+                } else if (randLogic === 1 && pastData.length > 0) {
+                    let { tailList } = getHeadTailForPosition(pastData, randPos, 6);
+                    chosenNums = tailList.slice(0, 4);
+                } else {
+                    chosenNums = [4, 5, 6, 7];
+                }
+                if (chosenNums.length === 0) chosenNums = [4, 5, 6, 7];
+            } else if (codeVal === 5) {
+                if (randLogic % 2 === 0 && pastData.length > 0) {
+                    let { headList } = getHeadTailForPosition(pastData, randPos, 5);
+                    chosenNums = headList.slice(0, 5);
+                } else if (pastData.length > 0) {
+                    let { tailList } = getHeadTailForPosition(pastData, randPos, 5);
+                    chosenNums = tailList.slice(0, 5);
+                } else {
+                    chosenNums = [1, 2, 3, 4, 5];
+                }
+                if (chosenNums.length === 0) chosenNums = [1, 2, 3, 4, 5];
+            } else if (codeVal === 6) {
+                if (randLogic === 0 && pastData.length > 0) {
+                    let { tailList } = getHeadTailForPosition(pastData, randPos, 4);
+                    chosenNums = tailList.slice(0, 6);
+                } else if (randLogic === 1 && pastData.length > 0) {
+                    let { headList } = getHeadTailForPosition(pastData, randPos, 6);
+                    chosenNums = headList.slice(0, 6);
+                } else {
+                    chosenNums = [1, 2, 3, 8, 9, 10];
+                }
+                if (chosenNums.length === 0) chosenNums = [1, 2, 3, 8, 9, 10];
+            } else if (codeVal === 7) {
+                if (randLogic === 0 && pastData.length > 0) {
+                    let { tailList } = getHeadTailForPosition(pastData, randPos, 3);
+                    chosenNums = tailList.slice(0, 7);
+                } else if (randLogic === 1 && pastData.length > 0) {
+                    let { headList } = getHeadTailForPosition(pastData, randPos, 7);
+                    chosenNums = tailList.slice(0, 7);
+                } else {
+                    let poolIdx = Math.floor(positiveHash / 100) % fixedPools7.length;
+                    chosenNums = fixedPools7[poolIdx];
+                }
+                if (chosenNums.length === 0) chosenNums = [1, 2, 3, 4, 5, 6, 7];
+            } else {
+                chosenNums = [1, 2, 3];
+            }
+
+            chosenNums.sort((a, b) => a - b);
+            return { rank: rankShortNames[randPos], nums: chosenNums };
         }
 
         function renderSignalTable() {
@@ -1154,28 +1363,6 @@
             document.querySelectorAll('.fixed-btn').forEach(b => b.classList.remove('active'));
             document.getElementById(`fixedBtn${groupNum}`).classList.add('active');
             renderTableUI();
-        }
-
-        function switchStrategy(type) {
-            currentStrategy = type;
-            document.querySelectorAll('.strategy-btn').forEach(b => b.classList.remove('active'));
-            if (type === 'bet') {
-                document.getElementById('stratBtnBet').classList.add('active');
-                document.getElementById('betCalcInputs').style.display = 'flex';
-                document.getElementById('compoundCalcInputs').style.display = 'none';
-                document.getElementById('compoundTableContainer').style.display = 'none';
-                if (document.getElementById('resultTableBody').children.length > 0) {
-                    document.getElementById('resultTableContainer').style.display = 'block';
-                }
-            } else {
-                document.getElementById('stratBtnCompound').classList.add('active');
-                document.getElementById('betCalcInputs').style.display = 'none';
-                document.getElementById('compoundCalcInputs').style.display = 'flex';
-                document.getElementById('resultTableContainer').style.display = 'none';
-                if (document.getElementById('compoundTableBody').children.length > 0) {
-                    document.getElementById('compoundTableContainer').style.display = 'block';
-                }
-            }
         }
 
         function onCompoundConfirmClick() {
@@ -1528,6 +1715,7 @@
             } catch (e) { console.error(e); }
         }
 
+        initSimBalls();
         fetchData(); 
         fetchOnlineCount();
         setInterval(fetchData, 10000);
