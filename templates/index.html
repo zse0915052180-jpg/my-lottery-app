@@ -493,6 +493,14 @@
             background-color: #059669;
             box-shadow: inset 0 2px 4px rgba(0, 0, 0, 0.2);
         }
+        /* 封盤或下注後鎖定的半透明與鎖頭樣式 */
+        .confirm-btn.locked {
+            background-color: #059669 !important;
+            opacity: 0.45;
+            cursor: not-allowed;
+            box-shadow: none;
+        }
+
         .result-table-container { display: none; margin-top: 4px; border-radius: 6px; overflow: hidden; border: 1px solid #cbd5e1; }
         .calc-table { width: 100%; border-collapse: collapse; text-align: center; font-size: 12px; }
         .calc-table th { background-color: #f1f5f9; color: #0284c7; font-weight: 700; padding: 5px; border-bottom: 1px solid #cbd5e1; border-right: 1px solid #cbd5e1; }
@@ -794,7 +802,6 @@
                 <button id="stratBtnCompound" class="strategy-btn" onclick="switchStrategy('compound')">複利計算</button>
                 <button id="stratBtnSim" class="strategy-btn" onclick="switchStrategy('sim')">模擬操作</button>
             </div>
-            <!-- 切換模擬操作時右側自動出現的本金輸入框 -->
             <div id="simPrincipalBox" class="strategy-principal-box">
                 <span class="strategy-principal-label">$</span>
                 <input type="number" id="simPrincipalInput" class="strategy-principal-input" value="10000" placeholder="本金">
@@ -844,7 +851,7 @@
                         <input type="number" id="simAmountInput" class="white-input" placeholder="輸入金額">
                     </div>
                     <button class="sim-clear-btn" onclick="clearSimInput()">清除</button>
-                    <button class="sim-submit-btn" onclick="submitSimOrder()">確認下注</button>
+                    <button id="simSubmitBtn" class="sim-submit-btn" onclick="submitSimOrder()">確認下注</button>
                 </div>
             </div>
 
@@ -917,6 +924,9 @@
 
         let selectedSimRank = 0;
         let selectedSimBalls = [];
+        let isDrawState = false;       // 是否為開獎中狀態
+        let hasSubmittedOrder = false; // 是否已確認下注
+        let lastBetTotalCost = 0;      // 記錄上一次下注總金額以便清除時返還
 
         let customRules = [
             { numbers: "", color: "red" },
@@ -1037,15 +1047,50 @@
             }
         }
 
+        // 更新確認下注按鈕的鎖定外觀與提示
+        function updateSubmitButtonState() {
+            const btn = document.getElementById('simSubmitBtn');
+            if (!btn) return;
+            if (isDrawState || hasSubmittedOrder) {
+                btn.classList.add('locked');
+                btn.innerHTML = '確認下注 🔒';
+            } else {
+                btn.classList.remove('locked');
+                btn.innerHTML = '確認下注';
+            }
+        }
+
         function clearSimInput() {
+            // 如果剛好有已下注紀錄且本金扣款過，清除時返還本金
+            if (lastBetTotalCost > 0) {
+                const principalInputElem = document.getElementById('simPrincipalInput');
+                let currentPrincipal = parseFloat(principalInputElem.value) || 0;
+                currentPrincipal += lastBetTotalCost;
+                principalInputElem.value = currentPrincipal;
+                showToast(`已清除，上期下注金額 $${lastBetTotalCost} 已返還本金`);
+                lastBetTotalCost = 0;
+            } else {
+                showToast("已清除，所有號碼恢復全亮");
+            }
+
             selectedSimBalls = [];
+            hasSubmittedOrder = false;
             document.querySelectorAll('.sim-ball-item').forEach(b => b.classList.remove('selected'));
             document.getElementById('simOperationPanel').classList.remove('has-selection');
             document.getElementById('simAmountInput').value = "";
-            showToast("已清除，所有號碼恢復全亮");
+            updateSubmitButtonState();
         }
 
         function submitSimOrder() {
+            if (isDrawState) {
+                alert("目前為「距開獎」狀態，已停止下注！");
+                return;
+            }
+            if (hasSubmittedOrder) {
+                alert("本期已經確認下注過了！");
+                return;
+            }
+
             const amtStr = document.getElementById('simAmountInput').value;
             const principalInputElem = document.getElementById('simPrincipalInput');
             
@@ -1068,12 +1113,14 @@
                 return;
             }
 
-            // 自動扣款
+            // 扣款並記錄
             currentPrincipal -= totalCost;
             principalInputElem.value = currentPrincipal;
+            lastBetTotalCost = totalCost;
+            hasSubmittedOrder = true;
+            updateSubmitButtonState();
 
             const rankName = rankShortNames[selectedSimRank];
-            const sortedNums = [...selectedSimBalls].sort((a, b) => a - b).join(', ');
             showToast(`【下注成功】扣除 ${totalCost}，剩餘本金: ${currentPrincipal}`);
         }
 
@@ -1692,16 +1739,23 @@
             countdownTimer = setInterval(() => {
                 const rem = Math.floor((targetEndTimeMs - Date.now()) / 1000), el = document.getElementById('timerText');
                 const threshold = (currentLotCode === '10035') ? 15 : 80;
+                
                 if (rem > threshold) {
                     const c = rem - threshold;
+                    isDrawState = false;
                     el.className = "timer-highlight";
                     el.innerText = `⏳ 距封盤: ${String(Math.floor(c/60)).padStart(2,'0')} : ${String(c%60).padStart(2,'0')}`;
                 } else if (rem > 0) {
+                    isDrawState = true;
                     el.className = "timer-highlight red";
                     el.innerText = `🎲 距開獎: ${String(Math.floor(rem/60)).padStart(2,'0')} : ${String(rem%60).padStart(2,'0')}`;
                 } else {
-                    el.className = "timer-highlight red"; el.innerText = `🎰 開獎中...`; fetchData();
+                    isDrawState = true;
+                    el.className = "timer-highlight red"; 
+                    el.innerText = `🎰 開獎中...`; 
+                    fetchData();
                 }
+                updateSubmitButtonState();
             }, 1000);
         }
 
