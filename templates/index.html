@@ -469,7 +469,7 @@
         .copyable-amount { cursor: pointer; }
         .copyable-amount:active { background-color: #e0f2fe !important; }
 
-        /* 模擬操作面板（清爽白底風格、適中圓球與清晰數字） */
+        /* 模擬操作面板（白底風格、適中圓球與動態明暗效果） */
         .simulation-panel {
             background-color: #ffffff;
             border-radius: 8px;
@@ -524,20 +524,31 @@
             cursor: pointer;
             box-shadow: 0 2px 4px rgba(0,0,0,0.15);
             border: 2px solid transparent;
-            transition: transform 0.1s, box-shadow 0.2s;
+            transition: all 0.2s ease;
         }
         .sim-ball-item:active {
             transform: scale(0.92);
         }
-        .sim-ball-item.selected {
-            border-color: #0f172a;
-            box-shadow: 0 0 6px rgba(15, 23, 42, 0.4);
-            transform: scale(1.08);
-        }
+        
         /* 號球顏色風格 */
         .sim-ball-1, .sim-ball-2, .sim-ball-3 { background-color: #3b82f6; }
         .sim-ball-4, .sim-ball-5, .sim-ball-6, .sim-ball-7 { background-color: #f59e0b; }
         .sim-ball-8, .sim-ball-9, .sim-ball-10 { background-color: #ef4444; }
+
+        /* 點選後的燈光效果樣式 */
+        /* 當有號碼被選取時，未被選取的球會變暗（半透明、無陰影） */
+        .simulation-panel.has-selection .sim-ball-item:not(.selected) {
+            opacity: 0.25;
+            box-shadow: none;
+            filter: grayscale(40%);
+        }
+        /* 被選取的球會加上精緻的外環光暈與高亮放大 */
+        .sim-ball-item.selected {
+            border-color: #0ea5e9;
+            box-shadow: 0 0 8px rgba(14, 165, 233, 0.8), 0 2px 4px rgba(0,0,0,0.2);
+            transform: scale(1.08);
+            opacity: 1 !important;
+        }
 
         .sim-action-row {
             display: flex;
@@ -767,7 +778,7 @@
                 <button class="confirm-btn" onclick="onCompoundConfirmClick()">計算</button>
             </div>
 
-            <!-- 模擬操作面板區塊 (白底風格、適中圓球) -->
+            <!-- 模擬操作面板區塊 (具備點選後其他球變暗的動態效果) -->
             <div id="simOperationPanel" class="simulation-panel" style="display: none;">
                 <!-- 名次按鈕列 -->
                 <div class="sim-rank-row" id="simRankRow">
@@ -783,7 +794,7 @@
                     <div class="sim-rank-btn" onclick="selectSimRank(9, this)">十</div>
                 </div>
 
-                <!-- 1~10 號碼球網格 (每行5個，大小適中) -->
+                <!-- 1~10 號碼球網格 -->
                 <div class="sim-balls-grid" id="simBallsGrid"></div>
 
                 <!-- 金額與確認列 -->
@@ -969,6 +980,8 @@
         function toggleSimBall(num) {
             const idx = selectedSimBalls.indexOf(num);
             const ballElem = document.getElementById(`simBall_${num}`);
+            const panel = document.getElementById('simOperationPanel');
+
             if (idx > -1) {
                 selectedSimBalls.splice(idx, 1);
                 ballElem.classList.remove('selected');
@@ -976,13 +989,21 @@
                 selectedSimBalls.push(num);
                 ballElem.classList.add('selected');
             }
+
+            // 如果有選號碼，面板加上 has-selection 類別，使未選中的球變暗；若無則全亮
+            if (selectedSimBalls.length > 0) {
+                panel.classList.add('has-selection');
+            } else {
+                panel.classList.remove('has-selection');
+            }
         }
 
         function clearSimInput() {
             selectedSimBalls = [];
             document.querySelectorAll('.sim-ball-item').forEach(b => b.classList.remove('selected'));
+            document.getElementById('simOperationPanel').classList.remove('has-selection');
             document.getElementById('simAmountInput').value = "";
-            showToast("已清除模擬選號");
+            showToast("已清除，所有號碼恢復全亮");
         }
 
         function submitSimOrder() {
