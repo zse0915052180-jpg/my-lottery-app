@@ -493,7 +493,8 @@
             background-color: #059669;
             box-shadow: inset 0 2px 4px rgba(0, 0, 0, 0.2);
         }
-        /* 封盤或下注後鎖定的半透明與鎖頭樣式 */
+        
+        /* 鎖定/半透明樣式 */
         .confirm-btn.locked {
             background-color: #059669 !important;
             opacity: 0.45;
@@ -924,7 +925,7 @@
 
         let selectedSimRank = 0;
         let selectedSimBalls = [];
-        let isDrawState = false;       // 是否為開獎中狀態
+        let isDrawState = false;       // 是否為距開獎狀態
         let hasSubmittedOrder = false; // 是否已確認下注
         let lastBetTotalCost = 0;      // 記錄上一次下注總金額以便清除時返還
 
@@ -1047,13 +1048,17 @@
             }
         }
 
-        // 更新確認下注按鈕的鎖定外觀與提示
+        // 動態更新確認下注按鈕的狀態與文字
         function updateSubmitButtonState() {
             const btn = document.getElementById('simSubmitBtn');
             if (!btn) return;
-            if (isDrawState || hasSubmittedOrder) {
+            
+            if (isDrawState) {
                 btn.classList.add('locked');
-                btn.innerHTML = '確認下注 🔒';
+                btn.innerHTML = '封盤鎖定 🔒';
+            } else if (hasSubmittedOrder) {
+                btn.classList.add('locked');
+                btn.innerHTML = '已鎖定 🔒';
             } else {
                 btn.classList.remove('locked');
                 btn.innerHTML = '確認下注';
@@ -1061,7 +1066,10 @@
         }
 
         function clearSimInput() {
-            // 如果剛好有已下注紀錄且本金扣款過，清除時返還本金
+            // 進入距開獎狀態後，清除按鈕無法使用
+            if (isDrawState) return;
+
+            // 清除時若有下注成功過，返還本金
             if (lastBetTotalCost > 0) {
                 const principalInputElem = document.getElementById('simPrincipalInput');
                 let currentPrincipal = parseFloat(principalInputElem.value) || 0;
@@ -1082,25 +1090,14 @@
         }
 
         function submitSimOrder() {
-            if (isDrawState) {
-                alert("目前為「距開獎」狀態，已停止下注！");
-                return;
-            }
-            if (hasSubmittedOrder) {
-                alert("本期已經確認下注過了！");
-                return;
-            }
+            // 距開獎狀態下或已經下注過，直接阻擋不動作
+            if (isDrawState || hasSubmittedOrder) return;
 
             const amtStr = document.getElementById('simAmountInput').value;
             const principalInputElem = document.getElementById('simPrincipalInput');
             
-            if (selectedSimBalls.length === 0) {
-                alert("請至少選擇一個號碼！");
-                return;
-            }
-            if (!amtStr || parseFloat(amtStr) <= 0) {
-                alert("請填寫有效的下注金額！");
-                return;
+            if (selectedSimBalls.length === 0 || !amtStr || parseFloat(amtStr) <= 0) {
+                return; // 靜默不動作，不跳出彈窗警告
             }
 
             const singleAmt = parseFloat(amtStr);
@@ -1109,18 +1106,16 @@
 
             let currentPrincipal = parseFloat(principalInputElem.value) || 0;
             if (currentPrincipal < totalCost) {
-                alert(`本金不足！當前本金: ${currentPrincipal}，所需總金額: ${totalCost}`);
-                return;
+                return; // 本金不足時靜默不動作
             }
 
-            // 扣款並記錄
+            // 扣款並鎖定
             currentPrincipal -= totalCost;
             principalInputElem.value = currentPrincipal;
             lastBetTotalCost = totalCost;
             hasSubmittedOrder = true;
             updateSubmitButtonState();
 
-            const rankName = rankShortNames[selectedSimRank];
             showToast(`【下注成功】扣除 ${totalCost}，剩餘本金: ${currentPrincipal}`);
         }
 
@@ -1491,9 +1486,9 @@
             const timesInput = parseInt(document.getElementById('compoundTimes').value, 10);
             const rateInput = parseFloat(document.getElementById('compoundRate').value);
 
-            if (isNaN(principalInput) || principalInput <= 0) { alert("請填寫有效的本金！"); return; }
-            if (isNaN(timesInput) || timesInput <= 0) { alert("請填寫有效的操作次數！"); return; }
-            if (isNaN(rateInput)) { alert("請填寫有效的獲利比例！"); return; }
+            if (isNaN(principalInput) || principalInput <= 0) { return; }
+            if (isNaN(timesInput) || timesInput <= 0) { return; }
+            if (isNaN(rateInput)) { return; }
 
             let currentTotal = principalInput;
             const r = rateInput / 100;
@@ -1559,8 +1554,8 @@
             const rndInput = document.getElementById('inputRoundDisplay').innerText;
             const codeCount = currentCodeCount;
 
-            if (isNaN(amtInput) || amtInput <= 0) { alert("請填寫有效的本金！"); return; }
-            if (!rndInput) { alert("請選擇關數！"); return; }
+            if (isNaN(amtInput) || amtInput <= 0) { return; }
+            if (!rndInput) { return; }
             const r = parseInt(rndInput, 10);
             
             const mult = codeMultipliers[codeCount] || 1.44;
