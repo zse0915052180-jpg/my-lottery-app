@@ -924,8 +924,6 @@
         let isDrawState = false;       
         let hasSubmittedOrder = false; 
         let lastBetTotalCost = 0;      
-        
-        // 記錄當前下注訂單詳細資訊供開獎派彩比對
         let activeBetOrder = null;     
 
         let customRules = [
@@ -1110,32 +1108,31 @@
             lastBetTotalCost = totalCost;
             hasSubmittedOrder = true;
 
-            // 記錄下注訂單詳情供開獎對比
+            // 記錄下注訂單詳情（包含單顆金額 singleAmt）供開獎對比
             const topItem = globalFullData[0];
             const nextPeriod = topItem ? (BigInt(topItem.period) + 1n).toString() : "";
             activeBetOrder = {
                 period: nextPeriod,
                 rankIdx: selectedSimRank,
                 numbers: [...selectedSimBalls],
-                totalCost: totalCost
+                singleAmt: singleAmt
             };
 
             updateSubmitButtonState();
             showToast(`【下注成功】扣除 ${totalCost}，剩餘本金: ${currentPrincipal}`);
         }
 
-        // 檢查開獎結果並自動派彩
+        // 檢查開獎結果並自動派彩（以單顆金額 * 9.7 計算）
         function checkDrawAndPayout(newTopItem) {
             if (!activeBetOrder || !newTopItem) return;
             
-            // 比對是否為剛下注的那一期開獎
             if (newTopItem.period === activeBetOrder.period) {
                 const nums = newTopItem.number.replace(/\s+/g, '').split(',');
                 const actualVal = parseInt(nums[activeBetOrder.rankIdx], 10);
 
                 if (activeBetOrder.numbers.includes(actualVal)) {
-                    // 中獎：下注總金額 * 9.7
-                    const payout = activeBetOrder.totalCost * 9.7;
+                    // 中獎：單顆金額 * 9.7
+                    const payout = activeBetOrder.singleAmt * 9.7;
                     const principalInputElem = document.getElementById('simPrincipalInput');
                     let currentPrincipal = parseFloat(principalInputElem.value) || 0;
                     currentPrincipal += payout;
@@ -1146,7 +1143,6 @@
                     showToast(`😢 未中獎，再接再厲！`);
                 }
 
-                // 結算後重置本期下注狀態，準備下一期
                 activeBetOrder = null;
                 lastBetTotalCost = 0;
                 hasSubmittedOrder = false;
@@ -1867,7 +1863,6 @@
                 if (data && data.result && data.result.data && data.result.data.length > 0) {
                     const newTopItem = data.result.data[0];
                     
-                    // 檢查開獎派彩
                     if (globalFullData.length > 0 && newTopItem.period !== globalFullData[0].period) {
                         checkDrawAndPayout(newTopItem);
                     }
