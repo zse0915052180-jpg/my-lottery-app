@@ -494,7 +494,6 @@
             box-shadow: inset 0 2px 4px rgba(0, 0, 0, 0.2);
         }
         
-        /* 鎖定/半透明樣式 */
         .confirm-btn.locked {
             background-color: #059669 !important;
             opacity: 0.45;
@@ -513,7 +512,6 @@
         .copyable-amount { cursor: pointer; }
         .copyable-amount:active { background-color: #e0f2fe !important; }
 
-        /* 模擬操作面板（白底風格、適中圓球與動態明暗效果） */
         .simulation-panel {
             background-color: #ffffff;
             border-radius: 8px;
@@ -574,12 +572,10 @@
             transform: scale(0.92);
         }
         
-        /* 號球顏色風格 */
         .sim-ball-1, .sim-ball-2, .sim-ball-3 { background-color: #3b82f6; }
         .sim-ball-4, .sim-ball-5, .sim-ball-6, .sim-ball-7 { background-color: #f59e0b; }
         .sim-ball-8, .sim-ball-9, .sim-ball-10 { background-color: #ef4444; }
 
-        /* 點選後的燈光效果樣式 */
         .simulation-panel.has-selection .sim-ball-item:not(.selected) {
             opacity: 0.25;
             box-shadow: none;
@@ -925,9 +921,12 @@
 
         let selectedSimRank = 0;
         let selectedSimBalls = [];
-        let isDrawState = false;       // 是否為距開獎狀態
-        let hasSubmittedOrder = false; // 是否已確認下注
-        let lastBetTotalCost = 0;      // 記錄上一次下注總金額以便清除時返還
+        let isDrawState = false;       
+        let hasSubmittedOrder = false; 
+        let lastBetTotalCost = 0;      
+        
+        // 記錄當前下注訂單詳細資訊供開獎派彩比對
+        let activeBetOrder = null;     
 
         let customRules = [
             { numbers: "", color: "red" },
@@ -1048,7 +1047,6 @@
             }
         }
 
-        // 動態更新確認下注按鈕的狀態與文字
         function updateSubmitButtonState() {
             const btn = document.getElementById('simSubmitBtn');
             if (!btn) return;
@@ -1066,17 +1064,16 @@
         }
 
         function clearSimInput() {
-            // 進入距開獎狀態後，清除按鈕無法使用
             if (isDrawState) return;
 
-            // 清除時若有下注成功過，返還本金
-            if (lastBetTotalCost > 0) {
+            if (lastBetTotalCost > 0 && activeBetOrder) {
                 const principalInputElem = document.getElementById('simPrincipalInput');
                 let currentPrincipal = parseFloat(principalInputElem.value) || 0;
                 currentPrincipal += lastBetTotalCost;
                 principalInputElem.value = currentPrincipal;
                 showToast(`已清除，上期下注金額 $${lastBetTotalCost} 已返還本金`);
                 lastBetTotalCost = 0;
+                activeBetOrder = null;
             } else {
                 showToast("已清除，所有號碼恢復全亮");
             }
@@ -1090,14 +1087,13 @@
         }
 
         function submitSimOrder() {
-            // 距開獎狀態下或已經下注過，直接阻擋不動作
             if (isDrawState || hasSubmittedOrder) return;
 
             const amtStr = document.getElementById('simAmountInput').value;
             const principalInputElem = document.getElementById('simPrincipalInput');
             
             if (selectedSimBalls.length === 0 || !amtStr || parseFloat(amtStr) <= 0) {
-                return; // 靜默不動作，不跳出彈窗警告
+                return; 
             }
 
             const singleAmt = parseFloat(amtStr);
@@ -1106,17 +1102,60 @@
 
             let currentPrincipal = parseFloat(principalInputElem.value) || 0;
             if (currentPrincipal < totalCost) {
-                return; // 本金不足時靜默不動作
+                return; 
             }
 
-            // 扣款並鎖定
             currentPrincipal -= totalCost;
             principalInputElem.value = currentPrincipal;
             lastBetTotalCost = totalCost;
             hasSubmittedOrder = true;
-            updateSubmitButtonState();
 
+            // 記錄下注訂單詳情供開獎對比
+            const topItem = globalFullData[0];
+            const nextPeriod = topItem ? (BigInt(topItem.period) + 1n).toString() : "";
+            activeBetOrder = {
+                period: nextPeriod,
+                rankIdx: selectedSimRank,
+                numbers: [...selectedSimBalls],
+                totalCost: totalCost
+            };
+
+            updateSubmitButtonState();
             showToast(`【下注成功】扣除 ${totalCost}，剩餘本金: ${currentPrincipal}`);
+        }
+
+        // 檢查開獎結果並自動派彩
+        function checkDrawAndPayout(newTopItem) {
+            if (!activeBetOrder || !newTopItem) return;
+            
+            // 比對是否為剛下注的那一期開獎
+            if (newTopItem.period === activeBetOrder.period) {
+                const nums = newTopItem.number.replace(/\s+/g, '').split(',');
+                const actualVal = parseInt(nums[activeBetOrder.rankIdx], 10);
+
+                if (activeBetOrder.numbers.includes(actualVal)) {
+                    // 中獎：下注總金額 * 9.7
+                    const payout = activeBetOrder.totalCost * 9.7;
+                    const principalInputElem = document.getElementById('simPrincipalInput');
+                    let currentPrincipal = parseFloat(principalInputElem.value) || 0;
+                    currentPrincipal += payout;
+                    principalInputElem.value = currentPrincipal;
+
+                    showToast(`🎉 中獎！恭喜獲得派彩 $${payout.toFixed(1)}，已返還本金`);
+                } else {
+                    showToast(`😢 未中獎，再接再厲！`);
+                }
+
+                // 結算後重置本期下注狀態，準備下一期
+                activeBetOrder = null;
+                lastBetTotalCost = 0;
+                hasSubmittedOrder = false;
+                selectedSimBalls = [];
+                document.querySelectorAll('.sim-ball-item').forEach(b => b.classList.remove('selected'));
+                document.getElementById('simOperationPanel').classList.remove('has-selection');
+                document.getElementById('simAmountInput').value = "";
+                updateSubmitButtonState();
+            }
         }
 
         function switchStrategy(type) {
@@ -1617,6 +1656,7 @@
             document.getElementById(`btn${code}`).classList.add('active');
             if (countdownTimer) clearInterval(countdownTimer);
             targetEndTimeMs = 0; lastPeriodLoaded = ""; document.getElementById('timerText').innerText = '同步中...';
+            activeBetOrder = null;
             fetchData();
         }
 
@@ -1825,6 +1865,13 @@
             try {
                 const res = await fetch(`/api/get-lottery?lotCode=${currentLotCode}`), data = await res.json();
                 if (data && data.result && data.result.data && data.result.data.length > 0) {
+                    const newTopItem = data.result.data[0];
+                    
+                    // 檢查開獎派彩
+                    if (globalFullData.length > 0 && newTopItem.period !== globalFullData[0].period) {
+                        checkDrawAndPayout(newTopItem);
+                    }
+
                     globalFullData = data.result.data;
                     const top = globalFullData[0].period, next = (BigInt(top) + 1n).toString();
                     document.getElementById('nextPeriodText').innerText = `下期: ${next.length > 7 ? next.slice(-6) : next}`;
