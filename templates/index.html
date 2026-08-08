@@ -469,29 +469,29 @@
         .copyable-amount { cursor: pointer; }
         .copyable-amount:active { background-color: #e0f2fe !important; }
 
-        /* 模擬操作面板專屬美化風格 */
+        /* 模擬操作面板（清爽白底風格、適中圓球與清晰數字） */
         .simulation-panel {
-            background-color: #0f172a;
+            background-color: #ffffff;
             border-radius: 8px;
-            padding: 10px;
-            border: 1px solid #334155;
+            padding: 8px;
+            border: 1px solid #cbd5e1;
             display: flex;
             flex-direction: column;
-            gap: 8px;
+            gap: 6px;
         }
         .sim-rank-row {
             display: flex;
-            gap: 3px;
+            gap: 2px;
             justify-content: space-between;
         }
         .sim-rank-btn {
             flex: 1;
-            background-color: #1e293b;
-            color: #94a3b8;
-            border: 1px solid #475569;
+            background-color: #f8fafc;
+            color: #64748b;
+            border: 1px solid #cbd5e1;
             font-size: 11px;
             font-weight: 700;
-            padding: 5px 0;
+            padding: 4px 0;
             text-align: center;
             border-radius: 4px;
             cursor: pointer;
@@ -500,27 +500,29 @@
         .sim-rank-btn.active {
             background-color: #0ea5e9;
             color: #ffffff;
-            border-color: #38bdf8;
-            box-shadow: 0 0 8px rgba(14, 165, 233, 0.4);
+            border-color: #0284c7;
+            box-shadow: 0 2px 4px rgba(14, 165, 233, 0.3);
         }
 
         .sim-balls-grid {
             display: grid;
             grid-template-columns: repeat(5, 1fr);
             gap: 6px;
-            padding: 4px 0;
+            padding: 2px 4px;
+            justify-items: center;
         }
         .sim-ball-item {
-            aspect-ratio: 1;
+            width: 36px;
+            height: 36px;
             border-radius: 50%;
             display: flex;
             align-items: center;
             justify-content: center;
-            font-size: 14px;
+            font-size: 13px;
             font-weight: 800;
             color: #ffffff;
             cursor: pointer;
-            box-shadow: inset 0 2px 4px rgba(255,255,255,0.3), 0 3px 6px rgba(0,0,0,0.3);
+            box-shadow: 0 2px 4px rgba(0,0,0,0.15);
             border: 2px solid transparent;
             transition: transform 0.1s, box-shadow 0.2s;
         }
@@ -528,50 +530,47 @@
             transform: scale(0.92);
         }
         .sim-ball-item.selected {
-            border-color: #facc15;
-            box-shadow: 0 0 10px #facc15, inset 0 2px 4px rgba(255,255,255,0.4);
-            transform: scale(1.05);
+            border-color: #0f172a;
+            box-shadow: 0 0 6px rgba(15, 23, 42, 0.4);
+            transform: scale(1.08);
         }
-        /* 模擬球彩球顏色風格 */
-        .sim-ball-1 { background: linear-gradient(135deg, #3b82f6, #1d4ed8); }
-        .sim-ball-2 { background: linear-gradient(135deg, #3b82f6, #1d4ed8); }
-        .sim-ball-3 { background: linear-gradient(135deg, #3b82f6, #1d4ed8); }
-        .sim-ball-4 { background: linear-gradient(135deg, #f59e0b, #d97706); }
-        .sim-ball-5 { background: linear-gradient(135deg, #f59e0b, #d97706); }
-        .sim-ball-6 { background: linear-gradient(135deg, #f59e0b, #d97706); }
-        .sim-ball-7 { background: linear-gradient(135deg, #f59e0b, #d97706); }
-        .sim-ball-8 { background: linear-gradient(135deg, #ef4444, #b91c1c); }
-        .sim-ball-9 { background: linear-gradient(135deg, #ef4444, #b91c1c); }
-        .sim-ball-10 { background: linear-gradient(135deg, #ef4444, #b91c1c); }
+        /* 號球顏色風格 */
+        .sim-ball-1, .sim-ball-2, .sim-ball-3 { background-color: #3b82f6; }
+        .sim-ball-4, .sim-ball-5, .sim-ball-6, .sim-ball-7 { background-color: #f59e0b; }
+        .sim-ball-8, .sim-ball-9, .sim-ball-10 { background-color: #ef4444; }
 
         .sim-action-row {
             display: flex;
             align-items: center;
             justify-content: space-between;
-            gap: 8px;
+            gap: 6px;
             margin-top: 2px;
         }
         .sim-clear-btn {
             background-color: #ef4444;
             color: #ffffff;
             border: 1px solid #dc2626;
-            padding: 6px 14px;
-            font-size: 12px;
+            padding: 0 12px;
+            height: 32px;
+            font-size: 11.5px;
             font-weight: 700;
             border-radius: 5px;
             cursor: pointer;
             box-shadow: 0 2px 4px rgba(239, 68, 68, 0.3);
+            white-space: nowrap;
         }
         .sim-submit-btn {
             background-color: #10b981;
             color: #ffffff;
             border: 1px solid #059669;
-            padding: 6px 16px;
-            font-size: 12px;
+            padding: 0 14px;
+            height: 32px;
+            font-size: 11.5px;
             font-weight: 700;
             border-radius: 5px;
             cursor: pointer;
             box-shadow: 0 2px 4px rgba(16, 185, 129, 0.3);
+            white-space: nowrap;
         }
 
         .modal-overlay { display: none; position: fixed; top: 0; left: 0; width: 100%; height: 100%; background-color: rgba(0, 0, 0, 0.4); z-index: 1000; align-items: center; justify-content: center; }
@@ -768,7 +767,7 @@
                 <button class="confirm-btn" onclick="onCompoundConfirmClick()">計算</button>
             </div>
 
-            <!-- 模擬操作面板區塊 -->
+            <!-- 模擬操作面板區塊 (白底風格、適中圓球) -->
             <div id="simOperationPanel" class="simulation-panel" style="display: none;">
                 <!-- 名次按鈕列 -->
                 <div class="sim-rank-row" id="simRankRow">
@@ -784,10 +783,8 @@
                     <div class="sim-rank-btn" onclick="selectSimRank(9, this)">十</div>
                 </div>
 
-                <!-- 1~10 號碼球網格 -->
-                <div class="sim-balls-grid" id="simBallsGrid">
-                    <!-- 由 JS 動態產生 1~10 號球 -->
-                </div>
+                <!-- 1~10 號碼球網格 (每行5個，大小適中) -->
+                <div class="sim-balls-grid" id="simBallsGrid"></div>
 
                 <!-- 金額與確認列 -->
                 <div class="sim-action-row">
@@ -867,7 +864,6 @@
         let currentSignalCode = 3; 
         let currentSignalSub = '宰相';
 
-        // 模擬操作狀態變數
         let selectedSimRank = 0;
         let selectedSimBalls = [];
 
@@ -955,7 +951,6 @@
         const codeMultipliers = { 3: 1.44, 4: 1.71, 5: 2.06, 6: 2.62, 7: 3.59 };
         const profitMultipliers = { 3: 6.7, 4: 5.7, 5: 4.7, 6: 3.7, 7: 2.7 };
 
-        // 初始化模擬操作面板的 1~10 號球
         function initSimBalls() {
             const grid = document.getElementById('simBallsGrid');
             if (!grid) return;
@@ -1191,7 +1186,7 @@
                     chosenNums = tailList.slice(0, 7);
                 } else if (randLogic === 1 && pastData.length > 0) {
                     let { headList } = getHeadTailForPosition(pastData, randPos, 7);
-                    chosenNums = tailList.slice(0, 7);
+                    chosenNums = headList.slice(0, 7);
                 } else {
                     let poolIdx = Math.floor(positiveHash / 100) % fixedPools7.length;
                     chosenNums = fixedPools7[poolIdx];
