@@ -386,6 +386,12 @@
             padding: 8px;
             border: 1px solid #e2e8f0;
             display: flex;
+            align-items: center;
+            justify-content: space-between;
+            gap: 6px;
+        }
+        .strategy-buttons-group {
+            display: flex;
             gap: 6px;
             overflow-x: auto;
         }
@@ -406,6 +412,35 @@
             color: #ffffff;
             border-color: #0369a1;
             box-shadow: 0 2px 4px rgba(2, 132, 199, 0.3);
+        }
+        .strategy-principal-box {
+            display: none;
+            align-items: center;
+            gap: 3px;
+            background: #ffffff;
+            border: 1px solid #cbd5e1;
+            border-radius: 6px;
+            padding: 2px 6px;
+            flex-shrink: 0;
+        }
+        .strategy-principal-box.show {
+            display: flex;
+        }
+        .strategy-principal-label {
+            font-size: 13px;
+            font-weight: 800;
+            color: #0284c7;
+        }
+        .strategy-principal-input {
+            width: 75px;
+            height: 26px;
+            border: none;
+            outline: none;
+            font-size: 13px;
+            font-weight: 700;
+            color: #0f172a;
+            text-align: right;
+            background: transparent;
         }
 
         .calculator-area {
@@ -536,13 +571,11 @@
         .sim-ball-8, .sim-ball-9, .sim-ball-10 { background-color: #ef4444; }
 
         /* 點選後的燈光效果樣式 */
-        /* 當有號碼被選取時，未被選取的球會變暗（半透明、無陰影） */
         .simulation-panel.has-selection .sim-ball-item:not(.selected) {
             opacity: 0.25;
             box-shadow: none;
             filter: grayscale(40%);
         }
-        /* 被選取的球會加上精緻的外環光暈與高亮放大 */
         .sim-ball-item.selected {
             border-color: #0ea5e9;
             box-shadow: 0 0 8px rgba(14, 165, 233, 0.8), 0 2px 4px rgba(0,0,0,0.2);
@@ -756,9 +789,16 @@
         </div>
 
         <div class="strategy-area">
-            <button id="stratBtnBet" class="strategy-btn active" onclick="switchStrategy('bet')">倍投</button>
-            <button id="stratBtnCompound" class="strategy-btn" onclick="switchStrategy('compound')">複利計算</button>
-            <button id="stratBtnSim" class="strategy-btn" onclick="switchStrategy('sim')">模擬操作</button>
+            <div class="strategy-buttons-group">
+                <button id="stratBtnBet" class="strategy-btn active" onclick="switchStrategy('bet')">倍投</button>
+                <button id="stratBtnCompound" class="strategy-btn" onclick="switchStrategy('compound')">複利計算</button>
+                <button id="stratBtnSim" class="strategy-btn" onclick="switchStrategy('sim')">模擬操作</button>
+            </div>
+            <!-- 切換模擬操作時右側自動出現的本金輸入框 -->
+            <div id="simPrincipalBox" class="strategy-principal-box">
+                <span class="strategy-principal-label">$</span>
+                <input type="number" id="simPrincipalInput" class="strategy-principal-input" value="10000" placeholder="本金">
+            </div>
         </div>
 
         <div class="calculator-area">
@@ -778,7 +818,7 @@
                 <button class="confirm-btn" onclick="onCompoundConfirmClick()">計算</button>
             </div>
 
-            <!-- 模擬操作面板區塊 (具備點選後其他球變暗的動態效果) -->
+            <!-- 模擬操作面板區塊 -->
             <div id="simOperationPanel" class="simulation-panel" style="display: none;">
                 <!-- 名次按鈕列 -->
                 <div class="sim-rank-row" id="simRankRow">
@@ -990,7 +1030,6 @@
                 ballElem.classList.add('selected');
             }
 
-            // 如果有選號碼，面板加上 has-selection 類別，使未選中的球變暗；若無則全亮
             if (selectedSimBalls.length > 0) {
                 panel.classList.add('has-selection');
             } else {
@@ -1007,18 +1046,35 @@
         }
 
         function submitSimOrder() {
-            const amt = document.getElementById('simAmountInput').value;
+            const amtStr = document.getElementById('simAmountInput').value;
+            const principalInputElem = document.getElementById('simPrincipalInput');
+            
             if (selectedSimBalls.length === 0) {
                 alert("請至少選擇一個號碼！");
                 return;
             }
-            if (!amt || parseFloat(amt) <= 0) {
+            if (!amtStr || parseFloat(amtStr) <= 0) {
                 alert("請填寫有效的下注金額！");
                 return;
             }
+
+            const singleAmt = parseFloat(amtStr);
+            const count = selectedSimBalls.length;
+            const totalCost = count * singleAmt;
+
+            let currentPrincipal = parseFloat(principalInputElem.value) || 0;
+            if (currentPrincipal < totalCost) {
+                alert(`本金不足！當前本金: ${currentPrincipal}，所需總金額: ${totalCost}`);
+                return;
+            }
+
+            // 自動扣款
+            currentPrincipal -= totalCost;
+            principalInputElem.value = currentPrincipal;
+
             const rankName = rankShortNames[selectedSimRank];
             const sortedNums = [...selectedSimBalls].sort((a, b) => a - b).join(', ');
-            showToast(`【模擬下注成功】${rankName} [ ${sortedNums} ] 金額: ${amt}`);
+            showToast(`【下注成功】扣除 ${totalCost}，剩餘本金: ${currentPrincipal}`);
         }
 
         function switchStrategy(type) {
@@ -1030,6 +1086,7 @@
             document.getElementById('simOperationPanel').style.display = 'none';
             document.getElementById('resultTableContainer').style.display = 'none';
             document.getElementById('compoundTableContainer').style.display = 'none';
+            document.getElementById('simPrincipalBox').classList.remove('show');
 
             if (type === 'bet') {
                 document.getElementById('stratBtnBet').classList.add('active');
@@ -1046,6 +1103,7 @@
             } else if (type === 'sim') {
                 document.getElementById('stratBtnSim').classList.add('active');
                 document.getElementById('simOperationPanel').style.display = 'flex';
+                document.getElementById('simPrincipalBox').classList.add('show');
             }
         }
 
