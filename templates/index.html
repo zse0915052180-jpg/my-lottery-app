@@ -512,6 +512,39 @@
         .copyable-amount { cursor: pointer; }
         .copyable-amount:active { background-color: #e0f2fe !important; }
 
+        /* 複利快捷按鈕樣式 */
+        .compound-shortcut-bar {
+            display: none;
+            justify-content: flex-start;
+            margin-bottom: 4px;
+        }
+        .compound-shortcut-bar.show {
+            display: flex;
+        }
+        .compound-pill-btn {
+            background-color: #e0f2fe;
+            color: #0284c7;
+            border: 1px solid #bae6fd;
+            padding: 3px 10px;
+            font-size: 11px;
+            font-weight: 700;
+            border-radius: 12px;
+            cursor: pointer;
+            transition: all 0.2s;
+            opacity: 0.4;
+            pointer-events: none;
+        }
+        .compound-pill-btn.active {
+            opacity: 1;
+            pointer-events: auto;
+            background-color: #bae6fd;
+            border-color: #7dd3fc;
+            box-shadow: 0 1px 3px rgba(2, 132, 199, 0.2);
+        }
+        .compound-pill-btn:active {
+            transform: scale(0.95);
+        }
+
         .simulation-panel {
             background-color: #ffffff;
             border-radius: 8px;
@@ -805,7 +838,7 @@
         <div class="calculator-area">
             <!-- 倍投區塊 -->
             <div id="betCalcInputs" class="calc-input-row">
-                <div class="input-group"><span class="input-label">本金</span><input type="number" id="inputAmount" class="white-input" oninput="formatInputFloor1(this)"></div>
+                <div class="input-group"><span class="input-label">本金</span><input type="number" id="inputAmount" class="white-input" oninput="onInputAmountChange()"></div>
                 <div class="input-group"><span class="input-label">碼數</span><div id="inputCodeCountDisplay" class="white-input clickable-box" onclick="openCodeCountModal()">3</div></div>
                 <div class="input-group"><span class="input-label">關數</span><div id="inputRoundDisplay" class="white-input clickable-box" onclick="openRoundModal()">4</div></div>
                 <button class="confirm-btn" onclick="onConfirmClick()">計算</button>
@@ -847,6 +880,11 @@
                     <button class="sim-clear-btn" onclick="clearSimInput()">清除</button>
                     <button id="simSubmitBtn" class="sim-submit-btn" onclick="submitSimOrder()">確認下注</button>
                 </div>
+            </div>
+
+            <!-- 倍投計算表上方的複利快捷按鈕區 -->
+            <div id="compoundShortcutBar" class="compound-shortcut-bar">
+                <button id="compoundPillBtn" class="compound-pill-btn" onclick="onCompoundPillClick()">複利</button>
             </div>
 
             <div id="resultTableContainer" class="result-table-container">
@@ -923,6 +961,11 @@
         let lastBetTotalCost = 0;      
         let activeBetOrder = null;     
 
+        // 複利按鈕狀態變數
+        let compoundClickCount = 0;
+        let lastCalculatedProfit = 0;
+        let isTableCalculated = false;
+
         let customRules = [
             { numbers: "", color: "red" },
             { numbers: "", color: "green" },
@@ -973,6 +1016,41 @@
 
         function formatPrincipalInput(inputElem) {
             formatInputFloor1(inputElem);
+        }
+
+        function onInputAmountChange() {
+            formatInputFloor1(document.getElementById('inputAmount'));
+            resetCompoundState();
+        }
+
+        function resetCompoundState() {
+            isTableCalculated = false;
+            compoundClickCount = 0;
+            lastCalculatedProfit = 0;
+            const btn = document.getElementById('compoundPillBtn');
+            if (btn) {
+                btn.innerText = '複利';
+                btn.classList.remove('active');
+            }
+            const bar = document.getElementById('compoundShortcutBar');
+            if (bar) bar.classList.remove('show');
+        }
+
+        function onCompoundPillClick() {
+            if (!isTableCalculated) return;
+            const amtInputElem = document.getElementById('inputAmount');
+            let currentAmt = floorTo1Decimal(parseFloat(amtInputElem.value) || 0);
+            
+            // 本金 + 獲利
+            let newAmt = floorTo1Decimal(currentAmt + lastCalculatedProfit);
+            amtInputElem.value = newAmt;
+
+            compoundClickCount++;
+            const btn = document.getElementById('compoundPillBtn');
+            btn.innerText = `複利×${compoundClickCount}`;
+
+            // 自動執行計算
+            onConfirmClick(true);
         }
 
         function animatePrincipalIncrease(startVal, targetVal, duration = 800) {
@@ -1254,12 +1332,16 @@
             document.getElementById('resultTableContainer').style.display = 'none';
             document.getElementById('compoundTableContainer').style.display = 'none';
             document.getElementById('simPrincipalBox').classList.remove('show');
+            document.getElementById('compoundShortcutBar').classList.remove('show');
 
             if (type === 'bet') {
                 document.getElementById('stratBtnBet').classList.add('active');
                 document.getElementById('betCalcInputs').style.display = 'flex';
                 if (document.getElementById('resultTableBody').children.length > 0) {
                     document.getElementById('resultTableContainer').style.display = 'block';
+                    if (isTableCalculated) {
+                        document.getElementById('compoundShortcutBar').classList.add('show');
+                    }
                 }
             } else if (type === 'compound') {
                 document.getElementById('stratBtnCompound').classList.add('active');
@@ -1658,6 +1740,7 @@
             const validRounds = codeRoundsMap[val];
             document.getElementById('inputRoundDisplay').innerText = validRounds[0];
             closeCodeCountModal();
+            resetCompoundState();
         }
 
         function openRoundModal() {
@@ -1670,7 +1753,11 @@
             document.getElementById('roundModalOverlay').style.display = 'flex';
         }
         function closeRoundModal() { document.getElementById('roundModalOverlay').style.display = 'none'; }
-        function selectRoundValue(val) { document.getElementById('inputRoundDisplay').innerText = val; closeRoundModal(); }
+        function selectRoundValue(val) { 
+            document.getElementById('inputRoundDisplay').innerText = val; 
+            closeRoundModal(); 
+            resetCompoundState();
+        }
         
         function copyAmount(txt, raw) {
             navigator.clipboard.writeText(raw.toString()).then(() => showToast(`已複製：${txt}`));
@@ -1680,7 +1767,7 @@
             setTimeout(() => t.style.display = 'none', 1800);
         }
 
-        function onConfirmClick() {
+        function onConfirmClick(isFromCompound = false) {
             const amtInput = floorTo1Decimal(parseFloat(document.getElementById('inputAmount').value));
             const rndInput = document.getElementById('inputRoundDisplay').innerText;
             const codeCount = currentCodeCount;
@@ -1738,6 +1825,18 @@
                     `<tr><td class="round-label">${chineseRounds[i]}</td><td class="copyable-amount" onclick="copyAmount('${fmt}',${raw})">${fmt}</td></tr>`;
             }
             document.getElementById('resultTableContainer').style.display = 'block';
+
+            // 啟動複利快捷按鈕狀態
+            isTableCalculated = true;
+            lastCalculatedProfit = profitVal;
+            if (!isFromCompound) {
+                compoundClickCount = 0;
+                const pillBtn = document.getElementById('compoundPillBtn');
+                pillBtn.innerText = '複利';
+            }
+            const pillBtn = document.getElementById('compoundPillBtn');
+            pillBtn.classList.add('active');
+            document.getElementById('compoundShortcutBar').classList.add('show');
         }
 
         function switchLottery(code, name) {
