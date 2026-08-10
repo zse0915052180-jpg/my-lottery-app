@@ -394,6 +394,7 @@
             display: flex;
             gap: 6px;
             overflow-x: auto;
+            align-items: center;
         }
         .strategy-btn {
             background-color: #ffffff;
@@ -413,6 +414,30 @@
             border-color: #0369a1;
             box-shadow: 0 2px 4px rgba(2, 132, 199, 0.3);
         }
+
+        /* 策略切換列右側的複利按鈕 */
+        .compound-pill-btn {
+            background-color: #e0f2fe;
+            color: #0284c7;
+            border: 1px solid #bae6fd;
+            padding: 5px 12px;
+            font-size: 11.5px;
+            font-weight: 700;
+            border-radius: 6px;
+            cursor: pointer;
+            white-space: nowrap;
+            transition: all 0.2s;
+            box-shadow: 0 1px 2px rgba(0,0,0,0.05);
+            display: none; /* 預設隱藏，計算後才顯示 */
+        }
+        .compound-pill-btn.show {
+            display: inline-block;
+        }
+        .compound-pill-btn:active {
+            transform: scale(0.95);
+            background-color: #bae6fd;
+        }
+
         .strategy-principal-box {
             display: none;
             align-items: center;
@@ -511,39 +536,6 @@
         .profit-val { color: #10b981; font-size: 15px; background-color: #f1f5f9; }
         .copyable-amount { cursor: pointer; }
         .copyable-amount:active { background-color: #e0f2fe !important; }
-
-        /* 複利快捷按鈕樣式 */
-        .compound-shortcut-bar {
-            display: none;
-            justify-content: flex-start;
-            margin-bottom: 4px;
-        }
-        .compound-shortcut-bar.show {
-            display: flex;
-        }
-        .compound-pill-btn {
-            background-color: #e0f2fe;
-            color: #0284c7;
-            border: 1px solid #bae6fd;
-            padding: 3px 10px;
-            font-size: 11px;
-            font-weight: 700;
-            border-radius: 12px;
-            cursor: pointer;
-            transition: all 0.2s;
-            opacity: 0.4;
-            pointer-events: none;
-        }
-        .compound-pill-btn.active {
-            opacity: 1;
-            pointer-events: auto;
-            background-color: #bae6fd;
-            border-color: #7dd3fc;
-            box-shadow: 0 1px 3px rgba(2, 132, 199, 0.2);
-        }
-        .compound-pill-btn:active {
-            transform: scale(0.95);
-        }
 
         .simulation-panel {
             background-color: #ffffff;
@@ -828,6 +820,8 @@
                 <button id="stratBtnBet" class="strategy-btn active" onclick="switchStrategy('bet')">倍投</button>
                 <button id="stratBtnCompound" class="strategy-btn" onclick="switchStrategy('compound')">複利計算</button>
                 <button id="stratBtnSim" class="strategy-btn" onclick="switchStrategy('sim')">模擬操作</button>
+                <!-- 策略切換列右側的複利按鈕 -->
+                <button id="compoundPillBtn" class="compound-pill-btn" onclick="onCompoundPillClick()">複利</button>
             </div>
             <div id="simPrincipalBox" class="strategy-principal-box">
                 <span class="strategy-principal-label">$</span>
@@ -880,11 +874,6 @@
                     <button class="sim-clear-btn" onclick="clearSimInput()">清除</button>
                     <button id="simSubmitBtn" class="sim-submit-btn" onclick="submitSimOrder()">確認下注</button>
                 </div>
-            </div>
-
-            <!-- 倍投計算表上方的複利快捷按鈕區 -->
-            <div id="compoundShortcutBar" class="compound-shortcut-bar">
-                <button id="compoundPillBtn" class="compound-pill-btn" onclick="onCompoundPillClick()">複利</button>
             </div>
 
             <div id="resultTableContainer" class="result-table-container">
@@ -961,7 +950,6 @@
         let lastBetTotalCost = 0;      
         let activeBetOrder = null;     
 
-        // 複利按鈕狀態變數
         let compoundClickCount = 0;
         let lastCalculatedProfit = 0;
         let isTableCalculated = false;
@@ -1030,10 +1018,8 @@
             const btn = document.getElementById('compoundPillBtn');
             if (btn) {
                 btn.innerText = '複利';
-                btn.classList.remove('active');
+                btn.classList.remove('show');
             }
-            const bar = document.getElementById('compoundShortcutBar');
-            if (bar) bar.classList.remove('show');
         }
 
         function onCompoundPillClick() {
@@ -1041,7 +1027,6 @@
             const amtInputElem = document.getElementById('inputAmount');
             let currentAmt = floorTo1Decimal(parseFloat(amtInputElem.value) || 0);
             
-            // 本金 + 獲利
             let newAmt = floorTo1Decimal(currentAmt + lastCalculatedProfit);
             amtInputElem.value = newAmt;
 
@@ -1049,30 +1034,7 @@
             const btn = document.getElementById('compoundPillBtn');
             btn.innerText = `複利×${compoundClickCount}`;
 
-            // 自動執行計算
             onConfirmClick(true);
-        }
-
-        function animatePrincipalIncrease(startVal, targetVal, duration = 800) {
-            const principalInputElem = document.getElementById('simPrincipalInput');
-            if (!principalInputElem) return;
-
-            let startTime = performance.now();
-            function updateStep(currentTime) {
-                let elapsed = currentTime - startTime;
-                let progress = Math.min(elapsed / duration, 1);
-                let easeProgress = 1 - (1 - progress) * (1 - progress);
-                let currentVal = startVal + (targetVal - startVal) * easeProgress;
-                
-                principalInputElem.value = floorTo1Decimal(currentVal).toFixed(currentVal % 1 !== 0 ? 1 : 0);
-
-                if (progress < 1) {
-                    requestAnimationFrame(updateStep);
-                } else {
-                    principalInputElem.value = floorTo1Decimal(targetVal).toFixed(targetVal % 1 !== 0 ? 1 : 0);
-                }
-            }
-            requestAnimationFrame(updateStep);
         }
 
         function toggleMusic() {
@@ -1322,6 +1284,28 @@
             }
         }
 
+        function animatePrincipalIncrease(startVal, targetVal, duration = 800) {
+            const principalInputElem = document.getElementById('simPrincipalInput');
+            if (!principalInputElem) return;
+
+            let startTime = performance.now();
+            function updateStep(currentTime) {
+                let elapsed = currentTime - startTime;
+                let progress = Math.min(elapsed / duration, 1);
+                let easeProgress = 1 - (1 - progress) * (1 - progress);
+                let currentVal = startVal + (targetVal - startVal) * easeProgress;
+                
+                principalInputElem.value = floorTo1Decimal(currentVal).toFixed(currentVal % 1 !== 0 ? 1 : 0);
+
+                if (progress < 1) {
+                    requestAnimationFrame(updateStep);
+                } else {
+                    principalInputElem.value = floorTo1Decimal(targetVal).toFixed(targetVal % 1 !== 0 ? 1 : 0);
+                }
+            }
+            requestAnimationFrame(updateStep);
+        }
+
         function switchStrategy(type) {
             currentStrategy = type;
             document.querySelectorAll('.strategy-btn').forEach(b => b.classList.remove('active'));
@@ -1332,7 +1316,6 @@
             document.getElementById('resultTableContainer').style.display = 'none';
             document.getElementById('compoundTableContainer').style.display = 'none';
             document.getElementById('simPrincipalBox').classList.remove('show');
-            document.getElementById('compoundShortcutBar').classList.remove('show');
 
             if (type === 'bet') {
                 document.getElementById('stratBtnBet').classList.add('active');
@@ -1340,7 +1323,7 @@
                 if (document.getElementById('resultTableBody').children.length > 0) {
                     document.getElementById('resultTableContainer').style.display = 'block';
                     if (isTableCalculated) {
-                        document.getElementById('compoundShortcutBar').classList.add('show');
+                        document.getElementById('compoundPillBtn').classList.add('show');
                     }
                 }
             } else if (type === 'compound') {
@@ -1826,7 +1809,6 @@
             }
             document.getElementById('resultTableContainer').style.display = 'block';
 
-            // 啟動複利快捷按鈕狀態
             isTableCalculated = true;
             lastCalculatedProfit = profitVal;
             if (!isFromCompound) {
@@ -1834,9 +1816,7 @@
                 const pillBtn = document.getElementById('compoundPillBtn');
                 pillBtn.innerText = '複利';
             }
-            const pillBtn = document.getElementById('compoundPillBtn');
-            pillBtn.classList.add('active');
-            document.getElementById('compoundShortcutBar').classList.add('show');
+            document.getElementById('compoundPillBtn').classList.add('show');
         }
 
         function switchLottery(code, name) {
