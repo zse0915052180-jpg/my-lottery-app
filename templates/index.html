@@ -364,13 +364,13 @@
             box-shadow: 0 1px 2px rgba(0,0,0,0.1);
         }
         .num-box.text-black { color: #000000 !important; }
-        .num-box.green { background-color: #10b981; }
-        .num-box.red { background-color: #ef4444; }
-        .num-box.blue { background-color: #3b82f6; }
-        .num-box.yellow { background-color: #f59e0b; }
-        .num-box.hot-red { background-color: #dc2626 !important; }
-        .num-box.warm-yellow { background-color: #d97706 !important; }
-        .num-box.cold-blue { background-color: #2563eb !important; }
+        .num-box.green, .sim-ball-item.green { background-color: #10b981 !important; }
+        .num-box.red, .sim-ball-item.red { background-color: #ef4444 !important; }
+        .num-box.blue, .sim-ball-item.blue { background-color: #3b82f6 !important; }
+        .num-box.yellow, .sim-ball-item.yellow { background-color: #f59e0b !important; }
+        .num-box.hot-red, .sim-ball-item.hot-red { background-color: #dc2626 !important; }
+        .num-box.warm-yellow, .sim-ball-item.warm-yellow { background-color: #d97706 !important; }
+        .num-box.cold-blue, .sim-ball-item.cold-blue { background-color: #2563eb !important; }
 
         .signal-table { width: 100%; border-collapse: collapse; font-size: 12px; background: #fff; }
         .signal-table th { background-color: #f8fafc; color: #0284c7; font-weight: 700; padding: 6px 2px; border-bottom: 2px solid #cbd5e1; text-align: center; }
@@ -1050,7 +1050,6 @@
         const codeMultipliers = { 3: 1.44, 4: 1.71, 5: 2.06, 6: 2.62, 7: 3.59 };
         const profitMultipliers = { 3: 6.7, 4: 5.7, 5: 4.7, 6: 3.7, 7: 2.7 };
 
-        // 根據目前系統與選擇的名次，判定 1~10 號球對應的顏色 class 名稱
         function getSimBallColorClass(num, pos) {
             if (currentSystem === 'custom') {
                 for (let rule of customRules) {
@@ -1084,7 +1083,6 @@
                 }
                 return 'blue';
             } else {
-                // standard 順/反 模式
                 if (globalFullData.length > 0) {
                     const { headList, tailList } = getHeadTailForPosition(globalFullData, pos, currentSplit);
                     if (new Set(headList).has(num)) return 'green';
