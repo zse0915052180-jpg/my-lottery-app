@@ -415,7 +415,7 @@
             box-shadow: 0 2px 4px rgba(2, 132, 199, 0.3);
         }
 
-        /* 策略切換列右側的複利按鈕 */
+        /* 策略切換列右側的複利按鈕 (靠右對齊) */
         .compound-pill-btn {
             background-color: #e0f2fe;
             color: #0284c7;
@@ -820,9 +820,10 @@
                 <button id="stratBtnBet" class="strategy-btn active" onclick="switchStrategy('bet')">倍投</button>
                 <button id="stratBtnCompound" class="strategy-btn" onclick="switchStrategy('compound')">複利計算</button>
                 <button id="stratBtnSim" class="strategy-btn" onclick="switchStrategy('sim')">模擬操作</button>
-                <!-- 策略切換列右側的複利按鈕 -->
-                <button id="compoundPillBtn" class="compound-pill-btn" onclick="onCompoundPillClick()">複利</button>
             </div>
+            <!-- 策略切換列右側的複利按鈕 (靠右對齊) -->
+            <button id="compoundPillBtn" class="compound-pill-btn" onclick="onCompoundPillClick()">複利</button>
+            
             <div id="simPrincipalBox" class="strategy-principal-box">
                 <span class="strategy-principal-label">$</span>
                 <input type="number" id="simPrincipalInput" class="strategy-principal-input" value="10000" placeholder="本金" oninput="formatPrincipalInput(this)">
@@ -1316,6 +1317,7 @@
             document.getElementById('resultTableContainer').style.display = 'none';
             document.getElementById('compoundTableContainer').style.display = 'none';
             document.getElementById('simPrincipalBox').classList.remove('show');
+            document.getElementById('compoundPillBtn').style.display = 'none';
 
             if (type === 'bet') {
                 document.getElementById('stratBtnBet').classList.add('active');
@@ -1323,7 +1325,7 @@
                 if (document.getElementById('resultTableBody').children.length > 0) {
                     document.getElementById('resultTableContainer').style.display = 'block';
                     if (isTableCalculated) {
-                        document.getElementById('compoundPillBtn').classList.add('show');
+                        document.getElementById('compoundPillBtn').style.display = 'inline-block';
                     }
                 }
             } else if (type === 'compound') {
@@ -1816,7 +1818,7 @@
                 const pillBtn = document.getElementById('compoundPillBtn');
                 pillBtn.innerText = '複利';
             }
-            document.getElementById('compoundPillBtn').classList.add('show');
+            document.getElementById('compoundPillBtn').style.display = 'inline-block';
         }
 
         function switchLottery(code, name) {
