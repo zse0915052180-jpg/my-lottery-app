@@ -984,12 +984,10 @@
             });
         }
 
-        // 複利計算與模擬操作專用：無條件捨去至小數點第一位
         function floorTo1Decimal(val) {
             return Math.floor(val * 10) / 10;
         }
 
-        // 倍投專用：無條件捨去至整數
         function floorToInt(val) {
             return Math.floor(val);
         }
@@ -1098,9 +1096,6 @@
             6: [2, 3],
             7: [2, 3]
         };
-
-        const codeMultipliers = { 3: 1.44, 4: 1.71, 5: 2.06, 6: 2.62, 7: 3.59 };
-        const profitMultipliers = { 3: 6.7, 4: 5.7, 5: 4.7, 6: 3.7, 7: 2.7 };
 
         function getSimBallColorClass(num, pos) {
             if (currentSystem === 'custom') {
@@ -1763,7 +1758,7 @@
             setTimeout(() => t.style.display = 'none', 1800);
         }
 
-        // 倍投計算修改為無條件捨去至整數 (floorToInt)
+        // 均利（等額獲利）倍投算法
         function onConfirmClick(isFromCompound = false) {
             const amtInput = floorToInt(parseFloat(document.getElementById('inputAmount').value));
             const rndInput = document.getElementById('inputRoundDisplay').innerText;
@@ -1772,44 +1767,77 @@
             if (isNaN(amtInput) || amtInput <= 0) { return; }
             if (!rndInput) { return; }
             const r = parseInt(rndInput, 10);
-            
-            const mult = codeMultipliers[codeCount] || 1.44;
-            let ratios = [];
-            let currentRatio = 1;
-            for (let i = 0; i < r; i++) {
-                ratios.push(currentRatio);
-                currentRatio *= mult;
-            }
-            let sumRatio = ratios.reduce((a, b) => a + b, 0);
 
-            let bestFirst = floorToInt(amtInput / (sumRatio * codeCount));
-            if (bestFirst < 1) bestFirst = 1;
+            let bestP = floorToInt(amtInput / (r * 2)); 
+            if (bestP < 1) bestP = 1;
 
             let finalAmounts = [];
             let totalCost = 0;
+            let finalProfit = 0;
 
             while (true) {
-                let testAmounts = ratios.map(rat => floorToInt(rat * bestFirst));
-                let testSum = testAmounts.reduce((a, b) => a + b, 0);
-                if (testSum * codeCount <= amtInput) {
-                    finalAmounts = testAmounts;
-                    totalCost = floorToInt(testSum * codeCount);
-                    let nextAmounts = ratios.map(rat => floorToInt(rat * (bestFirst + 1)));
-                    let nextSum = nextAmounts.reduce((a, b) => a + b, 0);
-                    if (nextSum * codeCount > amtInput) break;
-                    bestFirst = floorToInt(bestFirst + 1);
-                } else {
-                    if (bestFirst > 1) {
-                        bestFirst = floorToInt(bestFirst - 1);
-                        finalAmounts = ratios.map(rat => floorToInt(rat * bestFirst));
+                let testAmounts = [];
+                let cumulativeCost = 0;
+                let isValid = true;
+
+                for (let i = 0; i < r; i++) {
+                    let requiredM;
+                    if (i === 0) {
+                        requiredM = bestP / (8.7 * codeCount);
+                    } else {
+                        let prevSumCost = 0;
+                        for(let k = 0; k < i; k++) {
+                            prevSumCost += testAmounts[k];
+                        }
+                        requiredM = (bestP + prevSumCost * codeCount) / (8.7 * codeCount);
                     }
-                    break;
+
+                    let m = floorToInt(requiredM);
+                    if (m < 1) m = 1;
+                    testAmounts.push(m);
+                    cumulativeCost += m * codeCount;
+                }
+
+                if (cumulativeCost <= amtInput) {
+                    finalAmounts = testAmounts;
+                    totalCost = cumulativeCost;
+                    finalProfit = bestP;
+
+                    let nextTestAmounts = [];
+                    let nextCumulativeCost = 0;
+                    let nextP = bestP + 1;
+                    for (let i = 0; i < r; i++) {
+                        let requiredM;
+                        if (i === 0) {
+                            requiredM = nextP / (8.7 * codeCount);
+                        } else {
+                            let prevSumCost = 0;
+                            for(let k = 0; k < i; k++) {
+                                prevSumCost += nextTestAmounts[k];
+                            }
+                            requiredM = (nextP + prevSumCost * codeCount) / (8.7 * codeCount);
+                        }
+                        let m = floorToInt(requiredM);
+                        if (m < 1) m = 1;
+                        nextTestAmounts.push(m);
+                        nextCumulativeCost += m * codeCount;
+                    }
+
+                    if (nextCumulativeCost > amtInput) {
+                        break;
+                    }
+                    bestP++;
+                } else {
+                    if (bestP > 1) {
+                        bestP--;
+                    } else {
+                        finalAmounts = testAmounts;
+                        totalCost = cumulativeCost;
+                        finalProfit = bestP;
+                        break;
+                    }
                 }
             }
-
-            let pFactor = profitMultipliers[codeCount] || 6.7;
-            let profitVal = floorToInt(finalAmounts[0] * pFactor);
-            if (profitVal < 0) profitVal = 0;
 
             const resBody = document.getElementById('resultTableBody'); 
             resBody.innerHTML = "";
@@ -1818,13 +1846,13 @@
                 let raw = floorToInt(finalAmounts[i]);
                 let fmt = raw.toLocaleString();
                 resBody.innerHTML += i === 0 ? 
-                    `<tr><td class="round-label">${chineseRounds[i]}</td><td class="copyable-amount" onclick="copyAmount('${fmt}',${raw})">${fmt}</td><td class="profit-val" rowspan="${r}">${floorToInt(profitVal).toLocaleString()}</td></tr>` : 
+                    `<tr><td class="round-label">${chineseRounds[i]}</td><td class="copyable-amount" onclick="copyAmount('${fmt}',${raw})">${fmt}</td><td class="profit-val" rowspan="${r}">${floorToInt(finalProfit).toLocaleString()}</td></tr>` : 
                     `<tr><td class="round-label">${chineseRounds[i]}</td><td class="copyable-amount" onclick="copyAmount('${fmt}',${raw})">${fmt}</td></tr>`;
             }
             document.getElementById('resultTableContainer').style.display = 'block';
 
             isTableCalculated = true;
-            lastCalculatedProfit = profitVal;
+            lastCalculatedProfit = finalProfit;
             if (!isFromCompound) {
                 compoundClickCount = 0;
                 const pillBtn = document.getElementById('compoundPillBtn');
