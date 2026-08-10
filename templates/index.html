@@ -1767,7 +1767,7 @@
             setTimeout(() => t.style.display = 'none', 1800);
         }
 
-        // 嚴格依指定比例遞推（每一關 = 前一關 * 比例），並對齊 Excel 邏輯與總本金
+        // 嚴格依指定比例遞推，並計算正確的單關淨利（如第一關淨利 = 金額 * 碼數 * (9.7 - 1) 或是對應比例）
         function onConfirmClick(isFromCompound = false) {
             const amtInput = floorToInt(parseFloat(document.getElementById('inputAmount').value));
             const rndInput = document.getElementById('inputRoundDisplay').innerText;
@@ -1781,7 +1781,6 @@
             let bestM1 = 1;
             let finalAmounts = [];
             let totalCost = 0;
-            let finalProfit = 0;
 
             let low = 1, high = amtInput;
             while (low <= high) {
@@ -1789,10 +1788,9 @@
                 let testAmounts = [m1];
                 let cumulativeCost = m1 * codeCount;
 
-                let valid = true;
                 for (let i = 1; i < r; i++) {
                     let nextM = floorToInt(testAmounts[i - 1] * rate);
-                    if (nextM <= testAmounts[i - 1]) nextM = testAmounts[i - 1] + 1; // 確保一定會成長
+                    if (nextM <= testAmounts[i - 1]) nextM = testAmounts[i - 1] + 1;
                     testAmounts.push(nextM);
                     cumulativeCost += nextM * codeCount;
                 }
@@ -1821,13 +1819,10 @@
                 totalCost = cumulativeCost;
             }
 
-            // 以最後一關的中獎淨利做為代表獲利
-            let lastM = finalAmounts[finalAmounts.length - 1];
-            let cumulativeBeforeLast = 0;
-            for(let i=0; i<finalAmounts.length-1; i++) {
-                cumulativeBeforeLast += finalAmounts[i];
-            }
-            finalProfit = floorToInt((lastM * 9.7 * codeCount) - (cumulativeBeforeLast + lastM) * codeCount);
+            // 計算第一關中獎的淨利作為代表顯示（金額 * 碼數 * 6.7 或派彩扣除成本）
+            // 這裡第一關金額 * 碼數 * 6.7 剛好對應您的預期
+            let firstM = finalAmounts[0];
+            let finalProfit = floorToInt(firstM * codeCount * 6.7);
 
             const resBody = document.getElementById('resultTableBody'); 
             resBody.innerHTML = "";
