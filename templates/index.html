@@ -633,7 +633,6 @@
         .round-option-item { background-color: #f1f5f9; border: 1px solid #cbd5e1; color: #0284c7; font-size: 14px; font-weight: 700; height: 34px; display: flex; align-items: center; justify-content: center; border-radius: 5px; cursor: pointer; }
         .round-option-item:active { background-color: #0ea5e9; color: #fff; }
         
-        /* 調整彈窗通知至畫面正中間 */
         .toast-msg { display: none; position: fixed; top: 50%; left: 50%; transform: translate(-50%, -50%); background-color: rgba(14, 165, 233, 0.95); color: #fff; padding: 10px 20px; border-radius: 10px; font-size: 14px; font-weight: 700; z-index: 2000; box-shadow: 0 4px 15px rgba(0,0,0,0.2); text-align: center; }
 
         .custom-row {
@@ -803,14 +802,14 @@
             </div>
             <div id="simPrincipalBox" class="strategy-principal-box">
                 <span class="strategy-principal-label">$</span>
-                <input type="number" id="simPrincipalInput" class="strategy-principal-input" value="10000" placeholder="本金">
+                <input type="number" id="simPrincipalInput" class="strategy-principal-input" value="10000" placeholder="本金" oninput="formatPrincipalInput(this)">
             </div>
         </div>
 
         <div class="calculator-area">
             <!-- 倍投區塊 -->
             <div id="betCalcInputs" class="calc-input-row">
-                <div class="input-group"><span class="input-label">本金</span><input type="number" id="inputAmount" class="white-input"></div>
+                <div class="input-group"><span class="input-label">本金</span><input type="number" id="inputAmount" class="white-input" oninput="formatInputFloor1(this)"></div>
                 <div class="input-group"><span class="input-label">碼數</span><div id="inputCodeCountDisplay" class="white-input clickable-box" onclick="openCodeCountModal()">3</div></div>
                 <div class="input-group"><span class="input-label">關數</span><div id="inputRoundDisplay" class="white-input clickable-box" onclick="openRoundModal()">4</div></div>
                 <button class="confirm-btn" onclick="onConfirmClick()">計算</button>
@@ -818,9 +817,9 @@
 
             <!-- 複利計算區塊 -->
             <div id="compoundCalcInputs" class="calc-input-row" style="display: none;">
-                <div class="input-group"><span class="input-label">本金</span><input type="number" id="compoundPrincipal" class="white-input" value="10000"></div>
+                <div class="input-group"><span class="input-label">本金</span><input type="number" id="compoundPrincipal" class="white-input" value="10000" oninput="formatInputFloor1(this)"></div>
                 <div class="input-group"><span class="input-label">操作次數</span><input type="number" id="compoundTimes" class="white-input" value="10"></div>
-                <div class="input-group"><span class="input-label">獲利%</span><input type="number" id="compoundRate" class="white-input" value="3.2"></div>
+                <div class="input-group"><span class="input-label">獲利%</span><input type="number" id="compoundRate" class="white-input" value="3.2" oninput="formatInputFloor1(this)"></div>
                 <button class="confirm-btn" onclick="onCompoundConfirmClick()">計算</button>
             </div>
 
@@ -847,7 +846,7 @@
                 <div class="sim-action-row">
                     <div class="input-group" style="flex: 2;">
                         <span class="input-label">金額</span>
-                        <input type="number" id="simAmountInput" class="white-input" placeholder="輸入金額">
+                        <input type="number" id="simAmountInput" class="white-input" placeholder="輸入金額" oninput="formatInputFloor1(this)">
                     </div>
                     <button class="sim-clear-btn" onclick="clearSimInput()">清除</button>
                     <button id="simSubmitBtn" class="sim-submit-btn" onclick="submitSimOrder()">確認下注</button>
@@ -959,6 +958,52 @@
             });
         }
 
+        // 無條件捨去至小數點第一位工具函式
+        function floorTo1Decimal(val) {
+            return Math.floor(val * 10) / 10;
+        }
+
+        function formatInputFloor1(inputElem) {
+            let val = parseFloat(inputElem.value);
+            if (!isNaN(val)) {
+                let floored = floorTo1Decimal(val);
+                if (inputElem.value.includes('.')) {
+                    let parts = inputElem.value.split('.');
+                    if (parts[1] && parts[1].length > 1) {
+                        inputElem.value = floored;
+                    }
+                }
+            }
+        }
+
+        function formatPrincipalInput(inputElem) {
+            formatInputFloor1(inputElem);
+        }
+
+        // 本金數字遞增特效函式（反向倒數滾動）
+        function animatePrincipalIncrease(startVal, targetVal, duration = 800) {
+            const principalInputElem = document.getElementById('simPrincipalInput');
+            if (!principalInputElem) return;
+
+            let startTime = performance.now();
+            function updateStep(currentTime) {
+                let elapsed = currentTime - startTime;
+                let progress = Math.min(elapsed / duration, 1);
+                // 使用easeOutQuad讓動畫更自然平滑
+                let easeProgress = 1 - (1 - progress) * (1 - progress);
+                let currentVal = startVal + (targetVal - startVal) * easeProgress;
+                
+                principalInputElem.value = floorTo1Decimal(currentVal).toFixed(currentVal % 1 !== 0 ? 1 : 0);
+
+                if (progress < 1) {
+                    requestAnimationFrame(updateStep);
+                } else {
+                    principalInputElem.value = floorTo1Decimal(targetVal).toFixed(targetVal % 1 !== 0 ? 1 : 0);
+                }
+            }
+            requestAnimationFrame(updateStep);
+        }
+
         function toggleMusic() {
             const controlArea = document.getElementById('musicControlArea');
             const btn = document.getElementById('musicToggleBtn');
@@ -1068,10 +1113,10 @@
 
             if (lastBetTotalCost > 0 && activeBetOrder) {
                 const principalInputElem = document.getElementById('simPrincipalInput');
-                let currentPrincipal = parseFloat(principalInputElem.value) || 0;
-                currentPrincipal += lastBetTotalCost;
-                principalInputElem.value = currentPrincipal;
-                showToast(`已清除，上期下注金額 $${lastBetTotalCost} 已返還本金`);
+                let currentPrincipal = floorTo1Decimal(parseFloat(principalInputElem.value) || 0);
+                let restoredPrincipal = floorTo1Decimal(currentPrincipal + lastBetTotalCost);
+                principalInputElem.value = restoredPrincipal;
+                showToast(`已清除，上期下注金額 $${floorTo1Decimal(lastBetTotalCost)} 已返還本金`);
                 lastBetTotalCost = 0;
                 activeBetOrder = null;
             } else {
@@ -1096,16 +1141,16 @@
                 return; 
             }
 
-            const singleAmt = parseFloat(amtStr);
+            const singleAmt = floorTo1Decimal(parseFloat(amtStr));
             const count = selectedSimBalls.length;
-            const totalCost = count * singleAmt;
+            const totalCost = floorTo1Decimal(count * singleAmt);
 
-            let currentPrincipal = parseFloat(principalInputElem.value) || 0;
+            let currentPrincipal = floorTo1Decimal(parseFloat(principalInputElem.value) || 0);
             if (currentPrincipal < totalCost) {
                 return; 
             }
 
-            currentPrincipal -= totalCost;
+            currentPrincipal = floorTo1Decimal(currentPrincipal - totalCost);
             principalInputElem.value = currentPrincipal;
             lastBetTotalCost = totalCost;
             hasSubmittedOrder = true;
@@ -1123,7 +1168,7 @@
             showToast(`【下注成功】扣除 ${totalCost}，剩餘本金: ${currentPrincipal}`);
         }
 
-        // 檢查開獎結果：中獎才跳中間通知，沒中獎完全不跳通知
+        // 檢查開獎結果：中獎帶有遞增特效與彈窗，沒中獎完全不跳通知
         function checkDrawAndPayout(newTopItem) {
             if (!activeBetOrder || !newTopItem) return;
             
@@ -1132,15 +1177,17 @@
                 const actualVal = parseInt(nums[activeBetOrder.rankIdx], 10);
 
                 if (activeBetOrder.numbers.includes(actualVal)) {
-                    // 中獎：單顆金額 * 9.7
-                    const payout = activeBetOrder.singleAmt * 9.7;
+                    // 中獎：單顆金額 * 9.7 (無條件捨去至小數點第一位)
+                    const payout = floorTo1Decimal(activeBetOrder.singleAmt * 9.7);
                     const principalInputElem = document.getElementById('simPrincipalInput');
-                    let currentPrincipal = parseFloat(principalInputElem.value) || 0;
-                    currentPrincipal += payout;
-                    principalInputElem.value = currentPrincipal;
+                    let startPrincipal = floorTo1Decimal(parseFloat(principalInputElem.value) || 0);
+                    let targetPrincipal = floorTo1Decimal(startPrincipal + payout);
+
+                    // 觸發本金遞增動畫特效
+                    animatePrincipalIncrease(startPrincipal, targetPrincipal, 800);
 
                     // 只有中獎才跳出畫面正中間的通知
-                    showToast(`🎉 中獎！恭喜獲得派彩 $${payout.toFixed(1)}，已返還本金`);
+                    showToast(`🎉 中獎！恭喜獲得派彩 $${payout}，已返還本金`);
                 } else {
                     // 沒中獎就不跳通知
                 }
@@ -1519,9 +1566,9 @@
         }
 
         function onCompoundConfirmClick() {
-            const principalInput = parseFloat(document.getElementById('compoundPrincipal').value);
+            const principalInput = floorTo1Decimal(parseFloat(document.getElementById('compoundPrincipal').value));
             const timesInput = parseInt(document.getElementById('compoundTimes').value, 10);
-            const rateInput = parseFloat(document.getElementById('compoundRate').value);
+            const rateInput = floorTo1Decimal(parseFloat(document.getElementById('compoundRate').value));
 
             if (isNaN(principalInput) || principalInput <= 0) { return; }
             if (isNaN(timesInput) || timesInput <= 0) { return; }
@@ -1533,15 +1580,15 @@
             resBody.innerHTML = "";
 
             for (let i = 1; i <= timesInput; i++) {
-                let profit = currentTotal * r;
-                currentTotal += profit;
+                let profit = floorTo1Decimal(currentTotal * r);
+                currentTotal = floorTo1Decimal(currentTotal + profit);
                 let totalYield = ((currentTotal - principalInput) / principalInput) * 100;
 
                 resBody.innerHTML += `<tr>
                     <td class="round-label">${i}</td>
-                    <td class="text-green">+${profit.toLocaleString(undefined, {minimumFractionDigits: 2, maximumFractionDigits: 2})}</td>
-                    <td>${currentTotal.toLocaleString(undefined, {minimumFractionDigits: 2, maximumFractionDigits: 2})}</td>
-                    <td>${totalYield.toFixed(2)}%</td>
+                    <td class="text-green">+${floorTo1Decimal(profit).toLocaleString(undefined, {minimumFractionDigits: 0, maximumFractionDigits: 1})}</td>
+                    <td>${floorTo1Decimal(currentTotal).toLocaleString(undefined, {minimumFractionDigits: 0, maximumFractionDigits: 1})}</td>
+                    <td>${floorTo1Decimal(totalYield).toFixed(1)}%</td>
                 </tr>`;
             }
             document.getElementById('compoundTableContainer').style.display = 'block';
@@ -1587,7 +1634,7 @@
         }
 
         function onConfirmClick() {
-            const amtInput = parseFloat(document.getElementById('inputAmount').value);
+            const amtInput = floorTo1Decimal(parseFloat(document.getElementById('inputAmount').value));
             const rndInput = document.getElementById('inputRoundDisplay').innerText;
             const codeCount = currentCodeCount;
 
@@ -1604,43 +1651,43 @@
             }
             let sumRatio = ratios.reduce((a, b) => a + b, 0);
 
-            let bestFirst = Math.floor(amtInput / (sumRatio * codeCount));
+            let bestFirst = floorTo1Decimal(amtInput / (sumRatio * codeCount));
             if (bestFirst < 1) bestFirst = 1;
 
             let finalAmounts = [];
             let totalCost = 0;
 
             while (true) {
-                let testAmounts = ratios.map(rat => Math.round(rat * bestFirst));
+                let testAmounts = ratios.map(rat => floorTo1Decimal(rat * bestFirst));
                 let testSum = testAmounts.reduce((a, b) => a + b, 0);
                 if (testSum * codeCount <= amtInput) {
                     finalAmounts = testAmounts;
-                    totalCost = testSum * codeCount;
-                    let nextAmounts = ratios.map(rat => Math.round(rat * (bestFirst + 1)));
+                    totalCost = floorTo1Decimal(testSum * codeCount);
+                    let nextAmounts = ratios.map(rat => floorTo1Decimal(rat * (bestFirst + 1)));
                     let nextSum = nextAmounts.reduce((a, b) => a + b, 0);
                     if (nextSum * codeCount > amtInput) break;
-                    bestFirst++;
+                    bestFirst = floorTo1Decimal(bestFirst + 1);
                 } else {
                     if (bestFirst > 1) {
-                        bestFirst--;
-                        finalAmounts = ratios.map(rat => Math.round(rat * bestFirst));
+                        bestFirst = floorTo1Decimal(bestFirst - 1);
+                        finalAmounts = ratios.map(rat => floorTo1Decimal(rat * bestFirst));
                     }
                     break;
                 }
             }
 
             let pFactor = profitMultipliers[codeCount] || 6.7;
-            let profitVal = Math.floor(finalAmounts[0] * pFactor);
+            let profitVal = floorTo1Decimal(finalAmounts[0] * pFactor);
             if (profitVal < 0) profitVal = 0;
 
             const resBody = document.getElementById('resultTableBody'); 
             resBody.innerHTML = "";
             
             for (let i = 0; i < r; i++) {
-                let raw = finalAmounts[i];
+                let raw = floorTo1Decimal(finalAmounts[i]);
                 let fmt = raw.toLocaleString();
                 resBody.innerHTML += i === 0 ? 
-                    `<tr><td class="round-label">${chineseRounds[i]}</td><td class="copyable-amount" onclick="copyAmount('${fmt}',${raw})">${fmt}</td><td class="profit-val" rowspan="${r}">${profitVal.toLocaleString()}</td></tr>` : 
+                    `<tr><td class="round-label">${chineseRounds[i]}</td><td class="copyable-amount" onclick="copyAmount('${fmt}',${raw})">${fmt}</td><td class="profit-val" rowspan="${r}">${floorTo1Decimal(profitVal).toLocaleString()}</td></tr>` : 
                     `<tr><td class="round-label">${chineseRounds[i]}</td><td class="copyable-amount" onclick="copyAmount('${fmt}',${raw})">${fmt}</td></tr>`;
             }
             document.getElementById('resultTableContainer').style.display = 'block';
