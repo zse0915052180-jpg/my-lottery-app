@@ -572,10 +572,6 @@
             transform: scale(0.92);
         }
         
-        .sim-ball-1, .sim-ball-2, .sim-ball-3 { background-color: #3b82f6; }
-        .sim-ball-4, .sim-ball-5, .sim-ball-6, .sim-ball-7 { background-color: #f59e0b; }
-        .sim-ball-8, .sim-ball-9, .sim-ball-10 { background-color: #ef4444; }
-
         .simulation-panel.has-selection .sim-ball-item:not(.selected) {
             opacity: 0.25;
             box-shadow: none;
@@ -958,7 +954,6 @@
             });
         }
 
-        // 無條件捨去至小數點第一位工具函式
         function floorTo1Decimal(val) {
             return Math.floor(val * 10) / 10;
         }
@@ -980,7 +975,6 @@
             formatInputFloor1(inputElem);
         }
 
-        // 本金數字遞增特效函式（反向倒數滾動）
         function animatePrincipalIncrease(startVal, targetVal, duration = 800) {
             const principalInputElem = document.getElementById('simPrincipalInput');
             if (!principalInputElem) return;
@@ -989,7 +983,6 @@
             function updateStep(currentTime) {
                 let elapsed = currentTime - startTime;
                 let progress = Math.min(elapsed / duration, 1);
-                // 使用easeOutQuad讓動畫更自然平滑
                 let easeProgress = 1 - (1 - progress) * (1 - progress);
                 let currentVal = startVal + (targetVal - startVal) * easeProgress;
                 
@@ -1057,12 +1050,68 @@
         const codeMultipliers = { 3: 1.44, 4: 1.71, 5: 2.06, 6: 2.62, 7: 3.59 };
         const profitMultipliers = { 3: 6.7, 4: 5.7, 5: 4.7, 6: 3.7, 7: 2.7 };
 
+        // 根據目前系統與選擇的名次，判定 1~10 號球對應的顏色 class 名稱
+        function getSimBallColorClass(num, pos) {
+            if (currentSystem === 'custom') {
+                for (let rule of customRules) {
+                    if (!rule.numbers.trim()) continue;
+                    let matchNums = rule.numbers.replace(/[,，]/g, ' ').split(/\s+/).map(s => parseInt(s.trim(), 10)).filter(n => !isNaN(n));
+                    if (matchNums.includes(num)) {
+                        if (rule.color === 'red') return 'red';
+                        if (rule.color === 'green') return 'green';
+                        if (rule.color === 'blue') return 'blue';
+                        if (rule.color === 'yellow') return 'yellow';
+                    }
+                }
+                return 'blue';
+            } else if (currentSystem === 'fixed') {
+                if (currentFixedGroup === 1 && (num === 8 || num === 9 || num === 10)) return 'red';
+                else if (currentFixedGroup === 2 && (num === 1 || num === 9 || num === 10)) return 'red';
+                else if (currentFixedGroup === 3 && (num === 1 || num === 2 || num === 10)) return 'red';
+                else if (currentFixedGroup === 4 && (num === 1 || num === 2 || num === 3)) return 'red';
+                else return 'blue';
+            } else if (currentSystem === 'size') {
+                if (num >= 1 && num <= 3) return 'blue';
+                else if (num >= 4 && num <= 7) return 'yellow';
+                else if (num >= 8 && num <= 10) return 'red';
+                else return 'blue';
+            } else if (currentSystem === 'hotcold') {
+                if (globalFullData.length > 0) {
+                    const { hot, warm, cold } = getHotColdListForPosition(globalFullData, pos);
+                    if (hot.includes(num)) return 'hot-red';
+                    else if (warm.includes(num)) return 'warm-yellow';
+                    else if (cold.includes(num)) return 'cold-blue';
+                }
+                return 'blue';
+            } else {
+                // standard 順/反 模式
+                if (globalFullData.length > 0) {
+                    const { headList, tailList } = getHeadTailForPosition(globalFullData, pos, currentSplit);
+                    if (new Set(headList).has(num)) return 'green';
+                    else if (new Set(tailList).has(num)) return 'red';
+                }
+                return 'blue';
+            }
+        }
+
         function initSimBalls() {
             const grid = document.getElementById('simBallsGrid');
             if (!grid) return;
             grid.innerHTML = "";
             for (let i = 1; i <= 10; i++) {
-                grid.innerHTML += `<div class="sim-ball-item sim-ball-${i}" id="simBall_${i}" onclick="toggleSimBall(${i})">${i}</div>`;
+                let colorCls = getSimBallColorClass(i, selectedSimRank);
+                grid.innerHTML += `<div class="sim-ball-item ${colorCls}" id="simBall_${i}" onclick="toggleSimBall(${i})">${i}</div>`;
+            }
+        }
+
+        function updateSimBallsColors() {
+            for (let i = 1; i <= 10; i++) {
+                const ballElem = document.getElementById(`simBall_${i}`);
+                if (ballElem) {
+                    ballElem.className = `sim-ball-item ${selectedSimBalls.includes(i) ? 'selected' : ''}`;
+                    let colorCls = getSimBallColorClass(i, selectedSimRank);
+                    ballElem.classList.add(colorCls);
+                }
             }
         }
 
@@ -1070,6 +1119,7 @@
             selectedSimRank = rankIdx;
             document.querySelectorAll('.sim-rank-btn').forEach(b => b.classList.remove('active'));
             btnElem.classList.add('active');
+            updateSimBallsColors();
         }
 
         function toggleSimBall(num) {
@@ -1168,7 +1218,6 @@
             showToast(`【下注成功】扣除 ${totalCost}，剩餘本金: ${currentPrincipal}`);
         }
 
-        // 檢查開獎結果：中獎帶有遞增特效與彈窗，沒中獎完全不跳通知
         function checkDrawAndPayout(newTopItem) {
             if (!activeBetOrder || !newTopItem) return;
             
@@ -1177,19 +1226,13 @@
                 const actualVal = parseInt(nums[activeBetOrder.rankIdx], 10);
 
                 if (activeBetOrder.numbers.includes(actualVal)) {
-                    // 中獎：單顆金額 * 9.7 (無條件捨去至小數點第一位)
                     const payout = floorTo1Decimal(activeBetOrder.singleAmt * 9.7);
                     const principalInputElem = document.getElementById('simPrincipalInput');
                     let startPrincipal = floorTo1Decimal(parseFloat(principalInputElem.value) || 0);
                     let targetPrincipal = floorTo1Decimal(startPrincipal + payout);
 
-                    // 觸發本金遞增動畫特效
                     animatePrincipalIncrease(startPrincipal, targetPrincipal, 800);
-
-                    // 只有中獎才跳出畫面正中間的通知
                     showToast(`🎉 中獎！恭喜獲得派彩 $${payout}，已返還本金`);
-                } else {
-                    // 沒中獎就不跳通知
                 }
 
                 activeBetOrder = null;
@@ -1230,6 +1273,7 @@
                 document.getElementById('stratBtnSim').classList.add('active');
                 document.getElementById('simOperationPanel').style.display = 'flex';
                 document.getElementById('simPrincipalBox').classList.add('show');
+                updateSimBallsColors();
             }
         }
 
@@ -1475,6 +1519,7 @@
                     document.getElementById('modeTabsContainer').style.display = 'none';
                     document.getElementById('fixedTabsContainer').style.display = 'none';
                     renderTableUI();
+                    updateSimBallsColors();
                 }
                 return;
             }
@@ -1499,6 +1544,7 @@
                 document.getElementById('fixedTabsContainer').style.display = 'none';
             }
             renderTableUI();
+            updateSimBallsColors();
         }
 
         function syncInputsToRules() {
@@ -1555,6 +1601,7 @@
             
             closeCustomModal();
             renderTableUI();
+            updateSimBallsColors();
             showToast("自訂顏色規則已套用！");
         }
 
@@ -1563,6 +1610,7 @@
             document.querySelectorAll('.fixed-btn').forEach(b => b.classList.remove('active'));
             document.getElementById(`fixedBtn${groupNum}`).classList.add('active');
             renderTableUI();
+            updateSimBallsColors();
         }
 
         function onCompoundConfirmClick() {
@@ -1600,6 +1648,7 @@
             document.querySelectorAll('#modeTabsContainer .mode-btn').forEach(b => b.classList.remove('active'));
             document.getElementById(`modeBtn${val}`).classList.add('active');
             renderTableUI();
+            updateSimBallsColors();
         }
 
         function openCodeCountModal() { document.getElementById('codeCountModalOverlay').style.display = 'flex'; }
@@ -1924,6 +1973,7 @@
                         if (data.remSeconds != null) { targetEndTimeMs = Date.now() + (parseInt(data.remSeconds, 10) * 1000); startCountdown(); }
                     }
                     renderTableUI();
+                    updateSimBallsColors();
                     if (currentMainTab === 'signal') renderSignalTable();
                 }
             } catch (e) { console.error(e); }
