@@ -1097,7 +1097,7 @@
             7: [2, 3]
         };
 
-        // 您指定的各碼數成長比例
+        // 各碼數固定成長比例
         const growthRates = {
             3: 1.448,
             4: 1.71,
@@ -1767,7 +1767,7 @@
             setTimeout(() => t.style.display = 'none', 1800);
         }
 
-        // 依指定比例遞推，並對齊 Excel 邏輯與總本金
+        // 嚴格依指定比例遞推（每一關 = 前一關 * 比例），並對齊 Excel 邏輯與總本金
         function onConfirmClick(isFromCompound = false) {
             const amtInput = floorToInt(parseFloat(document.getElementById('inputAmount').value));
             const rndInput = document.getElementById('inputRoundDisplay').innerText;
@@ -1778,59 +1778,56 @@
             const r = parseInt(rndInput, 10);
             const rate = growthRates[codeCount] || 1.448;
 
-            let bestP = 1;
+            let bestM1 = 1;
             let finalAmounts = [];
             let totalCost = 0;
             let finalProfit = 0;
 
-            let low = 1, high = amtInput * 2;
+            let low = 1, high = amtInput;
             while (low <= high) {
-                let midP = Math.floor((low + high) / 2);
-                let testAmounts = [];
-                let cumulativeCost = 0;
+                let m1 = Math.floor((low + high) / 2);
+                let testAmounts = [m1];
+                let cumulativeCost = m1 * codeCount;
 
-                for (let i = 0; i < r; i++) {
-                    let requiredM;
-                    if (i === 0) {
-                        requiredM = midP / ((9.7 * rate - 1) * codeCount);
-                    } else {
-                        let prevSumCost = 0;
-                        for (let k = 0; k < i; k++) {
-                            prevSumCost += testAmounts[k];
-                        }
-                        requiredM = (midP + prevSumCost * codeCount) / ((9.7 * rate - 1) * codeCount);
-                    }
-
-                    let m = floorToInt(requiredM);
-                    if (m < 1) m = 1;
-                    testAmounts.push(m);
-                    cumulativeCost += m * codeCount;
+                let valid = true;
+                for (let i = 1; i < r; i++) {
+                    let nextM = floorToInt(testAmounts[i - 1] * rate);
+                    if (nextM <= testAmounts[i - 1]) nextM = testAmounts[i - 1] + 1; // 確保一定會成長
+                    testAmounts.push(nextM);
+                    cumulativeCost += nextM * codeCount;
                 }
 
                 if (cumulativeCost <= amtInput) {
-                    bestP = midP;
+                    bestM1 = m1;
                     finalAmounts = testAmounts;
                     totalCost = cumulativeCost;
-                    finalProfit = midP;
-                    low = midP + 1;
+                    low = m1 + 1;
                 } else {
-                    high = midP - 1;
+                    high = m1 - 1;
                 }
             }
 
             if (finalAmounts.length === 0) {
-                let testAmounts = [];
-                let cumulativeCost = 0;
-                for (let i = 0; i < r; i++) {
-                    let requiredM = 1 / ((9.7 * rate - 1) * codeCount);
-                    let m = floorToInt(requiredM) < 1 ? 1 : floorToInt(requiredM);
-                    testAmounts.push(m);
-                    cumulativeCost += m * codeCount;
+                let m1 = 1;
+                let testAmounts = [m1];
+                let cumulativeCost = m1 * codeCount;
+                for (let i = 1; i < r; i++) {
+                    let nextM = floorToInt(testAmounts[i - 1] * rate);
+                    if (nextM <= testAmounts[i - 1]) nextM = testAmounts[i - 1] + 1;
+                    testAmounts.push(nextM);
+                    cumulativeCost += nextM * codeCount;
                 }
                 finalAmounts = testAmounts;
                 totalCost = cumulativeCost;
-                finalProfit = 1;
             }
+
+            // 以最後一關的中獎淨利做為代表獲利
+            let lastM = finalAmounts[finalAmounts.length - 1];
+            let cumulativeBeforeLast = 0;
+            for(let i=0; i<finalAmounts.length-1; i++) {
+                cumulativeBeforeLast += finalAmounts[i];
+            }
+            finalProfit = floorToInt((lastM * 9.7 * codeCount) - (cumulativeBeforeLast + lastM) * codeCount);
 
             const resBody = document.getElementById('resultTableBody'); 
             resBody.innerHTML = "";
