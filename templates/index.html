@@ -632,7 +632,9 @@
         .round-options-grid { display: grid; grid-template-columns: repeat(4, 1fr); gap: 5px; }
         .round-option-item { background-color: #f1f5f9; border: 1px solid #cbd5e1; color: #0284c7; font-size: 14px; font-weight: 700; height: 34px; display: flex; align-items: center; justify-content: center; border-radius: 5px; cursor: pointer; }
         .round-option-item:active { background-color: #0ea5e9; color: #fff; }
-        .toast-msg { display: none; position: fixed; bottom: 25px; left: 50%; transform: translateX(-50%); background-color: rgba(14, 165, 233, 0.95); color: #fff; padding: 5px 14px; border-radius: 20px; font-size: 12px; font-weight: 700; z-index: 2000; }
+        
+        /* 調整彈窗通知至畫面正中間 */
+        .toast-msg { display: none; position: fixed; top: 50%; left: 50%; transform: translate(-50%, -50%); background-color: rgba(14, 165, 233, 0.95); color: #fff; padding: 10px 20px; border-radius: 10px; font-size: 14px; font-weight: 700; z-index: 2000; box-shadow: 0 4px 15px rgba(0,0,0,0.2); text-align: center; }
 
         .custom-row {
             display: flex;
@@ -1108,7 +1110,6 @@
             lastBetTotalCost = totalCost;
             hasSubmittedOrder = true;
 
-            // 記錄下注訂單詳情（包含單顆金額 singleAmt）供開獎對比
             const topItem = globalFullData[0];
             const nextPeriod = topItem ? (BigInt(topItem.period) + 1n).toString() : "";
             activeBetOrder = {
@@ -1122,7 +1123,7 @@
             showToast(`【下注成功】扣除 ${totalCost}，剩餘本金: ${currentPrincipal}`);
         }
 
-        // 檢查開獎結果並自動派彩（以單顆金額 * 9.7 計算）
+        // 檢查開獎結果：中獎才跳中間通知，沒中獎完全不跳通知
         function checkDrawAndPayout(newTopItem) {
             if (!activeBetOrder || !newTopItem) return;
             
@@ -1138,9 +1139,10 @@
                     currentPrincipal += payout;
                     principalInputElem.value = currentPrincipal;
 
+                    // 只有中獎才跳出畫面正中間的通知
                     showToast(`🎉 中獎！恭喜獲得派彩 $${payout.toFixed(1)}，已返還本金`);
                 } else {
-                    showToast(`😢 未中獎，再接再厲！`);
+                    // 沒中獎就不跳通知
                 }
 
                 activeBetOrder = null;
@@ -1581,7 +1583,7 @@
         }
         function showToast(msg) {
             const t = document.getElementById('toastMsg'); t.innerText = msg; t.style.display = 'block';
-            setTimeout(() => t.style.display = 'none', 1500);
+            setTimeout(() => t.style.display = 'none', 1800);
         }
 
         function onConfirmClick() {
