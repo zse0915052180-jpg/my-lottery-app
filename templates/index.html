@@ -415,7 +415,6 @@
             box-shadow: 0 2px 4px rgba(2, 132, 199, 0.3);
         }
 
-        /* 策略切換列右側的複利按鈕 (靠右對齊) */
         .compound-pill-btn {
             background-color: #e0f2fe;
             color: #0284c7;
@@ -428,7 +427,7 @@
             white-space: nowrap;
             transition: all 0.2s;
             box-shadow: 0 1px 2px rgba(0,0,0,0.05);
-            display: none; /* 預設隱藏，計算後才顯示 */
+            display: none;
         }
         .compound-pill-btn.show {
             display: inline-block;
@@ -821,7 +820,6 @@
                 <button id="stratBtnCompound" class="strategy-btn" onclick="switchStrategy('compound')">複利計算</button>
                 <button id="stratBtnSim" class="strategy-btn" onclick="switchStrategy('sim')">模擬操作</button>
             </div>
-            <!-- 策略切換列右側的複利按鈕 (靠右對齊) -->
             <button id="compoundPillBtn" class="compound-pill-btn" onclick="onCompoundPillClick()">複利</button>
             
             <div id="simPrincipalBox" class="strategy-principal-box">
@@ -986,8 +984,14 @@
             });
         }
 
+        // 複利計算與模擬操作專用：無條件捨去至小數點第一位
         function floorTo1Decimal(val) {
             return Math.floor(val * 10) / 10;
+        }
+
+        // 倍投專用：無條件捨去至整數
+        function floorToInt(val) {
+            return Math.floor(val);
         }
 
         function formatInputFloor1(inputElem) {
@@ -1008,7 +1012,14 @@
         }
 
         function onInputAmountChange() {
-            formatInputFloor1(document.getElementById('inputAmount'));
+            let inputElem = document.getElementById('inputAmount');
+            let val = parseFloat(inputElem.value);
+            if (!isNaN(val)) {
+                let floored = floorToInt(val);
+                if (inputElem.value.includes('.')) {
+                    inputElem.value = floored;
+                }
+            }
             resetCompoundState();
         }
 
@@ -1026,9 +1037,9 @@
         function onCompoundPillClick() {
             if (!isTableCalculated) return;
             const amtInputElem = document.getElementById('inputAmount');
-            let currentAmt = floorTo1Decimal(parseFloat(amtInputElem.value) || 0);
+            let currentAmt = floorToInt(parseFloat(amtInputElem.value) || 0);
             
-            let newAmt = floorTo1Decimal(currentAmt + lastCalculatedProfit);
+            let newAmt = floorToInt(currentAmt + lastCalculatedProfit);
             amtInputElem.value = newAmt;
 
             compoundClickCount++;
@@ -1699,8 +1710,8 @@
 
                 resBody.innerHTML += `<tr>
                     <td class="round-label">${i}</td>
-                    <td class="text-green">+${floorTo1Decimal(profit).toLocaleString(undefined, {minimumFractionDigits: 0, maximumFractionDigits: 1})}</td>
-                    <td>${floorTo1Decimal(currentTotal).toLocaleString(undefined, {minimumFractionDigits: 0, maximumFractionDigits: 1})}</td>
+                    <td class="text-green">+${floorTo1Decimal(profit).toLocaleString(undefined, {minimumFractionDigits: 1, maximumFractionDigits: 1})}</td>
+                    <td>${floorTo1Decimal(currentTotal).toLocaleString(undefined, {minimumFractionDigits: 1, maximumFractionDigits: 1})}</td>
                     <td>${floorTo1Decimal(totalYield).toFixed(1)}%</td>
                 </tr>`;
             }
@@ -1752,8 +1763,9 @@
             setTimeout(() => t.style.display = 'none', 1800);
         }
 
+        // 倍投計算修改為無條件捨去至整數 (floorToInt)
         function onConfirmClick(isFromCompound = false) {
-            const amtInput = floorTo1Decimal(parseFloat(document.getElementById('inputAmount').value));
+            const amtInput = floorToInt(parseFloat(document.getElementById('inputAmount').value));
             const rndInput = document.getElementById('inputRoundDisplay').innerText;
             const codeCount = currentCodeCount;
 
@@ -1770,43 +1782,43 @@
             }
             let sumRatio = ratios.reduce((a, b) => a + b, 0);
 
-            let bestFirst = floorTo1Decimal(amtInput / (sumRatio * codeCount));
+            let bestFirst = floorToInt(amtInput / (sumRatio * codeCount));
             if (bestFirst < 1) bestFirst = 1;
 
             let finalAmounts = [];
             let totalCost = 0;
 
             while (true) {
-                let testAmounts = ratios.map(rat => floorTo1Decimal(rat * bestFirst));
+                let testAmounts = ratios.map(rat => floorToInt(rat * bestFirst));
                 let testSum = testAmounts.reduce((a, b) => a + b, 0);
                 if (testSum * codeCount <= amtInput) {
                     finalAmounts = testAmounts;
-                    totalCost = floorTo1Decimal(testSum * codeCount);
-                    let nextAmounts = ratios.map(rat => floorTo1Decimal(rat * (bestFirst + 1)));
+                    totalCost = floorToInt(testSum * codeCount);
+                    let nextAmounts = ratios.map(rat => floorToInt(rat * (bestFirst + 1)));
                     let nextSum = nextAmounts.reduce((a, b) => a + b, 0);
                     if (nextSum * codeCount > amtInput) break;
-                    bestFirst = floorTo1Decimal(bestFirst + 1);
+                    bestFirst = floorToInt(bestFirst + 1);
                 } else {
                     if (bestFirst > 1) {
-                        bestFirst = floorTo1Decimal(bestFirst - 1);
-                        finalAmounts = ratios.map(rat => floorTo1Decimal(rat * bestFirst));
+                        bestFirst = floorToInt(bestFirst - 1);
+                        finalAmounts = ratios.map(rat => floorToInt(rat * bestFirst));
                     }
                     break;
                 }
             }
 
             let pFactor = profitMultipliers[codeCount] || 6.7;
-            let profitVal = floorTo1Decimal(finalAmounts[0] * pFactor);
+            let profitVal = floorToInt(finalAmounts[0] * pFactor);
             if (profitVal < 0) profitVal = 0;
 
             const resBody = document.getElementById('resultTableBody'); 
             resBody.innerHTML = "";
             
             for (let i = 0; i < r; i++) {
-                let raw = floorTo1Decimal(finalAmounts[i]);
+                let raw = floorToInt(finalAmounts[i]);
                 let fmt = raw.toLocaleString();
                 resBody.innerHTML += i === 0 ? 
-                    `<tr><td class="round-label">${chineseRounds[i]}</td><td class="copyable-amount" onclick="copyAmount('${fmt}',${raw})">${fmt}</td><td class="profit-val" rowspan="${r}">${floorTo1Decimal(profitVal).toLocaleString()}</td></tr>` : 
+                    `<tr><td class="round-label">${chineseRounds[i]}</td><td class="copyable-amount" onclick="copyAmount('${fmt}',${raw})">${fmt}</td><td class="profit-val" rowspan="${r}">${floorToInt(profitVal).toLocaleString()}</td></tr>` : 
                     `<tr><td class="round-label">${chineseRounds[i]}</td><td class="copyable-amount" onclick="copyAmount('${fmt}',${raw})">${fmt}</td></tr>`;
             }
             document.getElementById('resultTableContainer').style.display = 'block';
