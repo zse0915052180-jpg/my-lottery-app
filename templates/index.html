@@ -1097,6 +1097,15 @@
             7: [2, 3]
         };
 
+        // 您指定的各碼數成長比例
+        const growthRates = {
+            3: 1.448,
+            4: 1.71,
+            5: 2.065,
+            6: 2.62163,
+            7: 3.5926
+        };
+
         function getSimBallColorClass(num, pos) {
             if (currentSystem === 'custom') {
                 for (let rule of customRules) {
@@ -1758,7 +1767,7 @@
             setTimeout(() => t.style.display = 'none', 1800);
         }
 
-        // 均利（等額獲利）倍投算法
+        // 依指定比例遞推，並對齊 Excel 邏輯與總本金
         function onConfirmClick(isFromCompound = false) {
             const amtInput = floorToInt(parseFloat(document.getElementById('inputAmount').value));
             const rndInput = document.getElementById('inputRoundDisplay').innerText;
@@ -1767,29 +1776,29 @@
             if (isNaN(amtInput) || amtInput <= 0) { return; }
             if (!rndInput) { return; }
             const r = parseInt(rndInput, 10);
+            const rate = growthRates[codeCount] || 1.448;
 
-            let bestP = floorToInt(amtInput / (r * 2)); 
-            if (bestP < 1) bestP = 1;
-
+            let bestP = 1;
             let finalAmounts = [];
             let totalCost = 0;
             let finalProfit = 0;
 
-            while (true) {
+            let low = 1, high = amtInput * 2;
+            while (low <= high) {
+                let midP = Math.floor((low + high) / 2);
                 let testAmounts = [];
                 let cumulativeCost = 0;
-                let isValid = true;
 
                 for (let i = 0; i < r; i++) {
                     let requiredM;
                     if (i === 0) {
-                        requiredM = bestP / (8.7 * codeCount);
+                        requiredM = midP / ((9.7 * rate - 1) * codeCount);
                     } else {
                         let prevSumCost = 0;
-                        for(let k = 0; k < i; k++) {
+                        for (let k = 0; k < i; k++) {
                             prevSumCost += testAmounts[k];
                         }
-                        requiredM = (bestP + prevSumCost * codeCount) / (8.7 * codeCount);
+                        requiredM = (midP + prevSumCost * codeCount) / ((9.7 * rate - 1) * codeCount);
                     }
 
                     let m = floorToInt(requiredM);
@@ -1799,44 +1808,28 @@
                 }
 
                 if (cumulativeCost <= amtInput) {
+                    bestP = midP;
                     finalAmounts = testAmounts;
                     totalCost = cumulativeCost;
-                    finalProfit = bestP;
-
-                    let nextTestAmounts = [];
-                    let nextCumulativeCost = 0;
-                    let nextP = bestP + 1;
-                    for (let i = 0; i < r; i++) {
-                        let requiredM;
-                        if (i === 0) {
-                            requiredM = nextP / (8.7 * codeCount);
-                        } else {
-                            let prevSumCost = 0;
-                            for(let k = 0; k < i; k++) {
-                                prevSumCost += nextTestAmounts[k];
-                            }
-                            requiredM = (nextP + prevSumCost * codeCount) / (8.7 * codeCount);
-                        }
-                        let m = floorToInt(requiredM);
-                        if (m < 1) m = 1;
-                        nextTestAmounts.push(m);
-                        nextCumulativeCost += m * codeCount;
-                    }
-
-                    if (nextCumulativeCost > amtInput) {
-                        break;
-                    }
-                    bestP++;
+                    finalProfit = midP;
+                    low = midP + 1;
                 } else {
-                    if (bestP > 1) {
-                        bestP--;
-                    } else {
-                        finalAmounts = testAmounts;
-                        totalCost = cumulativeCost;
-                        finalProfit = bestP;
-                        break;
-                    }
+                    high = midP - 1;
                 }
+            }
+
+            if (finalAmounts.length === 0) {
+                let testAmounts = [];
+                let cumulativeCost = 0;
+                for (let i = 0; i < r; i++) {
+                    let requiredM = 1 / ((9.7 * rate - 1) * codeCount);
+                    let m = floorToInt(requiredM) < 1 ? 1 : floorToInt(requiredM);
+                    testAmounts.push(m);
+                    cumulativeCost += m * codeCount;
+                }
+                finalAmounts = testAmounts;
+                totalCost = cumulativeCost;
+                finalProfit = 1;
             }
 
             const resBody = document.getElementById('resultTableBody'); 
