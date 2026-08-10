@@ -1106,6 +1106,15 @@
             7: 3.5926
         };
 
+        // 各碼數獲利乘數
+        const profitMultipliers = {
+            3: 6.7,
+            4: 5.7,
+            5: 4.7,
+            6: 3.7,
+            7: 2.7
+        };
+
         function getSimBallColorClass(num, pos) {
             if (currentSystem === 'custom') {
                 for (let rule of customRules) {
@@ -1767,7 +1776,7 @@
             setTimeout(() => t.style.display = 'none', 1800);
         }
 
-        // 嚴格依指定比例遞推，並計算正確的單關淨利（如第一關淨利 = 金額 * 碼數 * (9.7 - 1) 或是對應比例）
+        // 嚴格依指定比例遞推，並使用 第一關數字 * 對應乘數 計算獲利
         function onConfirmClick(isFromCompound = false) {
             const amtInput = floorToInt(parseFloat(document.getElementById('inputAmount').value));
             const rndInput = document.getElementById('inputRoundDisplay').innerText;
@@ -1819,10 +1828,10 @@
                 totalCost = cumulativeCost;
             }
 
-            // 計算第一關中獎的淨利作為代表顯示（金額 * 碼數 * 6.7 或派彩扣除成本）
-            // 這裡第一關金額 * 碼數 * 6.7 剛好對應您的預期
+            // 根據指定公式計算獲利：第一關數字 * 對應倍數
             let firstM = finalAmounts[0];
-            let finalProfit = floorToInt(firstM * codeCount * 6.7);
+            let mult = profitMultipliers[codeCount] || 6.7;
+            let finalProfit = floorToInt(firstM * mult);
 
             const resBody = document.getElementById('resultTableBody'); 
             resBody.innerHTML = "";
