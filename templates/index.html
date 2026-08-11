@@ -342,7 +342,7 @@
         }
         .rank-header-item:active { background-color: #bae6fd; }
         .table-scroll-container {
-            max-height: 180px; /* 調整為顯示6期左右的高度 */
+            max-height: 180px;
             overflow-y: auto;
             border-radius: 4px;
         }
@@ -368,6 +368,7 @@
         .num-box.red, .sim-ball-item.red { background-color: #ef4444 !important; }
         .num-box.blue, .sim-ball-item.blue { background-color: #3b82f6 !important; }
         .num-box.yellow, .sim-ball-item.yellow { background-color: #f59e0b !important; }
+        .num-box.purple, .sim-ball-item.purple { background-color: #a855f7 !important; }
         .num-box.hot-red, .sim-ball-item.hot-red { background-color: #dc2626 !important; }
         .num-box.warm-yellow, .sim-ball-item.warm-yellow { background-color: #d97706 !important; }
         .num-box.cold-blue, .sim-ball-item.cold-blue { background-color: #2563eb !important; }
@@ -677,11 +678,11 @@
         }
         .color-selector-group {
             display: flex;
-            gap: 5px;
+            gap: 4px;
         }
         .color-circle {
-            width: 20px;
-            height: 20px;
+            width: 18px;
+            height: 18px;
             border-radius: 50%;
             cursor: pointer;
             border: 2px solid transparent;
@@ -697,6 +698,7 @@
         .color-circle.green { background-color: #10b981; }
         .color-circle.blue { background-color: #3b82f6; }
         .color-circle.yellow { background-color: #f59e0b; }
+        .color-circle.purple { background-color: #a855f7; }
     </style>
 </head>
 <body>
@@ -903,7 +905,7 @@
     </div>
 
     <div id="customModalOverlay" class="modal-overlay" onclick="closeCustomModal()">
-        <div class="modal-card" onclick="event.stopPropagation()" style="max-width: 320px; padding: 12px;">
+        <div class="modal-card" onclick="event.stopPropagation()" style="max-width: 320px; padding: 12px; max-height: 85vh; overflow-y: auto;">
             <span class="modal-close" onclick="closeCustomModal()">&times;</span>
             <div class="modal-title" style="margin-bottom: 8px;">【自訂號碼顏色設定】</div>
             <div id="customRulesContainer" style="display: flex; flex-direction: column; gap: 6px;"></div>
@@ -957,7 +959,8 @@
             { numbers: "", color: "red" },
             { numbers: "", color: "green" },
             { numbers: "", color: "blue" },
-            { numbers: "", color: "yellow" }
+            { numbers: "", color: "yellow" },
+            { numbers: "", color: "purple" }
         ];
 
         const musicPlaylist = [
@@ -1123,6 +1126,7 @@
                         if (rule.color === 'green') return 'green';
                         if (rule.color === 'blue') return 'blue';
                         if (rule.color === 'yellow') return 'yellow';
+                        if (rule.color === 'purple') return 'purple';
                     }
                 }
                 return 'blue';
@@ -1635,7 +1639,7 @@
         }
 
         function syncInputsToRules() {
-            for (let i = 0; i < 4; i++) {
+            for (let i = 0; i < 5; i++) {
                 let inputElem = document.getElementById(`customNums_${i}`);
                 if (inputElem) {
                     customRules[i].numbers = inputElem.value;
@@ -1660,6 +1664,7 @@
                                 <div class="color-circle green ${rule.color==='green'?'selected':''}" onclick="selectColor(${idx}, 'green')"></div>
                                 <div class="color-circle blue ${rule.color==='blue'?'selected':''}" onclick="selectColor(${idx}, 'blue')"></div>
                                 <div class="color-circle yellow ${rule.color==='yellow'?'selected':''}" onclick="selectColor(${idx}, 'yellow')"></div>
+                                <div class="color-circle purple ${rule.color==='purple'?'selected':''}" onclick="selectColor(${idx}, 'purple')"></div>
                             </div>
                         </div>
                     </div>
@@ -2003,7 +2008,6 @@
             
             if (currentMainTab === 'signal') return;
 
-            // 確保記錄50期數據，但只呈現給使用者看到的視覺效果在 scroll-container 的 css 中限制
             globalFullData.slice(0, 50).forEach((item, idx) => {
                 const past = globalFullData.slice(idx + 1), nums = item.number.replace(/\s+/g, '').split(',');
                 const boxes = nums.map((n, p) => {
