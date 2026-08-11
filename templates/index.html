@@ -428,7 +428,6 @@
             font-weight: 700;
             text-align: center;
             outline: none;
-            cursor: pointer;
         }
         .white-input.active-focus {
             border-color: #0ea5e9;
@@ -521,7 +520,7 @@
         .sim-clear-btn { background-color: #ef4444; color: #ffffff; border: 1px solid #dc2626; padding: 0 12px; height: 32px; font-size: 11.5px; font-weight: 700; border-radius: 5px; cursor: pointer; }
         .sim-submit-btn { background-color: #10b981; color: #ffffff; border: 1px solid #059669; padding: 0 14px; height: 32px; font-size: 11.5px; font-weight: 700; border-radius: 5px; cursor: pointer; }
 
-        /* 自訂九宮格數字鍵盤樣式 */
+        /* 手機專屬九宮格數字鍵盤（附即時預覽列） */
         .custom-numpad-overlay {
             display: none;
             position: fixed;
@@ -531,7 +530,7 @@
             background-color: #e2e8f0;
             border-top: 1px solid #cbd5e1;
             z-index: 3000;
-            padding: 8px;
+            padding: 6px 8px 10px 8px;
             box-shadow: 0 -4px 15px rgba(0,0,0,0.15);
             animation: slideUpPad 0.2s ease-out;
         }
@@ -541,14 +540,32 @@
         }
         .numpad-header {
             display: flex;
-            justify-content: flex-end;
+            justify-content: space-between;
+            align-items: center;
             margin-bottom: 6px;
+            padding: 0 2px;
+        }
+        .numpad-preview-screen {
+            background: #ffffff;
+            border: 1px solid #cbd5e1;
+            border-radius: 4px;
+            padding: 4px 8px;
+            font-size: 14px;
+            font-weight: 700;
+            color: #0f172a;
+            flex: 1;
+            margin-right: 8px;
+            text-align: right;
+            height: 28px;
+            display: flex;
+            align-items: center;
+            justify-content: flex-end;
         }
         .numpad-close-btn {
             background: #0284c7;
             color: #fff;
             border: none;
-            padding: 4px 12px;
+            padding: 5px 14px;
             font-size: 12px;
             font-weight: 700;
             border-radius: 4px;
@@ -565,7 +582,7 @@
             background-color: #ffffff;
             border: 1px solid #cbd5e1;
             border-radius: 6px;
-            height: 44px;
+            height: 42px;
             font-size: 18px;
             font-weight: 700;
             color: #0f172a;
@@ -736,22 +753,22 @@
             
             <div id="simPrincipalBox" class="strategy-principal-box">
                 <span class="strategy-principal-label">$</span>
-                <input type="text" readonly id="simPrincipalInput" class="strategy-principal-input custom-numpad-target" value="10000" placeholder="本金" onclick="openCustomNumpad(this)">
+                <input type="number" id="simPrincipalInput" class="strategy-principal-input numpad-trigger" value="10000" placeholder="本金" oninput="formatPrincipalInput(this)">
             </div>
         </div>
 
         <div class="calculator-area">
             <div id="betCalcInputs" class="calc-input-row">
-                <div class="input-group"><span class="input-label">本金</span><input type="text" readonly id="inputAmount" class="white-input custom-numpad-target" placeholder="輸入金額" onclick="openCustomNumpad(this)"></div>
+                <div class="input-group"><span class="input-label">本金</span><input type="number" id="inputAmount" class="white-input numpad-trigger" placeholder="輸入金額" oninput="onInputAmountChange()"></div>
                 <div class="input-group"><span class="input-label">碼數</span><div id="inputCodeCountDisplay" class="white-input clickable-box" onclick="openCodeCountModal()">3</div></div>
                 <div class="input-group"><span class="input-label">關數</span><div id="inputRoundDisplay" class="white-input clickable-box" onclick="openRoundModal()">4</div></div>
                 <button class="confirm-btn" onclick="onConfirmClick()">計算</button>
             </div>
 
             <div id="compoundCalcInputs" class="calc-input-row" style="display: none;">
-                <div class="input-group"><span class="input-label">本金</span><input type="text" readonly id="compoundPrincipal" class="white-input custom-numpad-target" value="10000" onclick="openCustomNumpad(this)"></div>
-                <div class="input-group"><span class="input-label">操作次數</span><input type="text" readonly id="compoundTimes" class="white-input custom-numpad-target" value="10" onclick="openCustomNumpad(this)"></div>
-                <div class="input-group"><span class="input-label">獲利%</span><input type="text" readonly id="compoundRate" class="white-input custom-numpad-target" value="3.2" onclick="openCustomNumpad(this)"></div>
+                <div class="input-group"><span class="input-label">本金</span><input type="number" id="compoundPrincipal" class="white-input numpad-trigger" value="10000" oninput="formatInputFloor1(this)"></div>
+                <div class="input-group"><span class="input-label">操作次數</span><input type="number" id="compoundTimes" class="white-input numpad-trigger" value="10"></div>
+                <div class="input-group"><span class="input-label">獲利%</span><input type="number" id="compoundRate" class="white-input numpad-trigger" value="3.2" oninput="formatInputFloor1(this)"></div>
                 <button class="confirm-btn" onclick="onCompoundConfirmClick()">計算</button>
             </div>
 
@@ -774,7 +791,7 @@
                 <div class="sim-action-row">
                     <div class="input-group" style="flex: 2;">
                         <span class="input-label">金額</span>
-                        <input type="text" readonly id="simAmountInput" class="white-input custom-numpad-target" placeholder="輸入金額" onclick="openCustomNumpad(this)">
+                        <input type="number" id="simAmountInput" class="white-input numpad-trigger" placeholder="輸入金額" oninput="formatInputFloor1(this)">
                     </div>
                     <button class="sim-clear-btn" onclick="clearSimInput()">清除</button>
                     <button id="simSubmitBtn" class="sim-submit-btn" onclick="submitSimOrder()">確認下注</button>
@@ -797,9 +814,10 @@
         </div>
     </div>
     
-    <!-- 自訂九宮格數字鍵盤 -->
+    <!-- 手機專屬九宮格數字鍵盤（附即時預覽列） -->
     <div id="customNumpad" class="custom-numpad-overlay">
         <div class="numpad-header">
+            <div id="numpadPreviewScreen" class="numpad-preview-screen">0</div>
             <button class="numpad-close-btn" onclick="closeCustomNumpad()">完成</button>
         </div>
         <div class="numpad-grid">
@@ -869,13 +887,36 @@
         let compoundClickCount = 0, lastCalculatedProfit = 0, isTableCalculated = false;
         let customRules = [{numbers:"", color:"red"}, {numbers:"", color:"green"}, {numbers:"", color:"blue"}, {numbers:"", color:"yellow"}];
 
-        // 九宮格鍵盤連動目標
+        // 判斷是否為行動裝置
+        const isMobileDevice = () => /Android|webOS|iPhone|iPad|iPod|BlackBerry|IEMobile|Opera Mini/i.test(navigator.userAgent) || window.innerWidth <= 768;
+
         let activeNumpadInput = null;
 
+        // 綁定所有數字輸入框的點擊事件（電腦維持原生實體鍵盤，手機彈出九宮格）
+        document.addEventListener("DOMContentLoaded", () => {
+            document.querySelectorAll('.numpad-trigger').forEach(input => {
+                input.addEventListener('focus', (e) => {
+                    if (isMobileDevice()) {
+                        e.preventDefault(); // 阻止手機原生鍵盤彈出
+                        openCustomNumpad(input);
+                    }
+                });
+                input.addEventListener('click', (e) => {
+                    if (isMobileDevice()) {
+                        e.preventDefault();
+                        openCustomNumpad(input);
+                    }
+                });
+            });
+        });
+
         function openCustomNumpad(inputElem) {
-            document.querySelectorAll('.custom-numpad-target').forEach(el => el.classList.remove('active-focus'));
+            document.querySelectorAll('.numpad-trigger').forEach(el => el.classList.remove('active-focus'));
             activeNumpadInput = inputElem;
             activeNumpadInput.classList.add('active-focus');
+            
+            // 同步預覽列數值
+            document.getElementById('numpadPreviewScreen').innerText = activeNumpadInput.value || "0";
             document.getElementById('customNumpad').style.display = 'block';
         }
 
@@ -893,25 +934,28 @@
             let currentVal = activeNumpadInput.value;
             if (val === '.' && currentVal.includes('.')) return;
             activeNumpadInput.value = currentVal + val;
+            
+            // 更新即時預覽列
+            document.getElementById('numpadPreviewScreen').innerText = activeNumpadInput.value;
 
-            // 觸發即時計算或格式檢查
             if (activeNumpadInput.id === 'inputAmount') onInputAmountChange();
-            else if (activeNumpadInput.id === 'simPrincipalInput' || activeNumpadInput.id === 'compoundPrincipal' || activeNumpadInput.id === 'compoundRate' || activeNumpadInput.id === 'simAmountInput') {
-                // 可根據需要執行對應檢查
-            }
         }
 
         function numpadDelete() {
             if (!activeNumpadInput) return;
             let currentVal = activeNumpadInput.value;
             activeNumpadInput.value = currentVal.slice(0, -1);
+            
+            // 更新即時預覽列
+            document.getElementById('numpadPreviewScreen').innerText = activeNumpadInput.value || "0";
+
             if (activeNumpadInput.id === 'inputAmount') onInputAmountChange();
         }
 
         const musicPlaylist = [
             { id: '_LbQyPyup24', title: '狂飆腎上腺素欲罷不能的旋律', artist: '台灣夜店DJ舞曲' },
             { id: '82Blqjragi0', title: '觸電般的靈魂震盪快感', artist: '台灣夜店DJ舞曲' },
-            { id: '7i9nOQbVA2E', title: '夜驾必听 Rap EDM 2026', artist: 'Rap EDM' },
+            { id: '7i9nOQbVA2E', title: '夜驾见听 Rap EDM 2026', artist: 'Rap EDM' },
             { id: 'K3WjeYMKqHw', title: '戴上耳機徹底淪陷的魔性旋律', artist: 'EDM夜色' },
             { id: '9sBsNG5rJ8Y', title: '2026全中文舞曲串燒', artist: '臺灣REMIX HUB' }
         ];
@@ -928,6 +972,16 @@
 
         const floorTo1Decimal = val => Math.floor(val * 10) / 10;
         const floorToInt = val => Math.floor(val);
+
+        function formatInputFloor1(elem) {
+            let val = parseFloat(elem.value);
+            if (!isNaN(val) && elem.value.includes('.')) {
+                let parts = elem.value.split('.');
+                if (parts[1] && parts[1].length > 1) elem.value = floorTo1Decimal(val);
+            }
+        }
+
+        const formatPrincipalInput = formatInputFloor1;
 
         function onInputAmountChange() {
             let elem = document.getElementById('inputAmount');
