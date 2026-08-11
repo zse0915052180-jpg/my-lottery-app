@@ -75,9 +75,7 @@
             border-radius: 50%;
             transition: transform 0.2s;
         }
-        .music-btn.playing {
-            animation: pulseNote 0.8s infinite alternate;
-        }
+        .music-btn.playing { animation: pulseNote 0.8s infinite alternate; }
         @keyframes pulseNote {
             0% { transform: scale(1); }
             100% { transform: scale(1.2); }
@@ -92,9 +90,7 @@
             display: none;
             margin-left: 2px;
         }
-        .music-control-area.playing .marquee-container {
-            display: block;
-        }
+        .music-control-area.playing .marquee-container { display: block; }
         .marquee-text {
             display: inline-block;
             padding-left: 100%;
@@ -105,13 +101,7 @@
             100% { transform: translate(-100%, 0); }
         }
 
-        .title-right-group {
-            display: flex;
-            align-items: center;
-            gap: 4px;
-            flex-shrink: 0;
-        }
-
+        .title-right-group { display: flex; align-items: center; gap: 4px; flex-shrink: 0; }
         .online-badge {
             background: #f8fafc;
             border: 1px solid #cbd5e1;
@@ -125,9 +115,7 @@
             align-items: center;
             gap: 2px;
         }
-        .online-badge span {
-            color: #10b981;
-        }
+        .online-badge span { color: #10b981; }
 
         .lottery-tabs { display: flex; gap: 3px; flex-shrink: 0; }
         .tab-btn {
@@ -184,10 +172,8 @@
             border-radius: 6px;
             cursor: pointer;
             white-space: nowrap;
-            transition: all 0.2s;
         }
-        .main-nav-btn.active-route,
-        .main-nav-btn.active-signal {
+        .main-nav-btn.active-route, .main-nav-btn.active-signal {
             background-color: #7c3aed;
             color: #ffffff;
             border-color: #6d28d9;
@@ -204,7 +190,6 @@
             border-radius: 6px;
             cursor: pointer;
             white-space: nowrap;
-            transition: all 0.2s;
         }
         .system-btn.active {
             background-color: #475569;
@@ -222,7 +207,6 @@
             font-weight: 700;
             border-radius: 6px;
             cursor: pointer;
-            transition: all 0.2s;
         }
         .signal-code-btn.active {
             background-color: #475569;
@@ -233,7 +217,6 @@
 
         .signal-btn-container {
             display: flex;
-            flex-direction: row;
             justify-content: space-between;
             gap: 4px;
             padding: 8px 6px;
@@ -253,8 +236,6 @@
             border-radius: 6px;
             cursor: pointer;
             text-align: center;
-            white-space: nowrap;
-            transition: all 0.2s;
         }
         .signal-sub-btn.active {
             background-color: #fef08a;
@@ -263,13 +244,7 @@
             box-shadow: 0 2px 4px rgba(250, 204, 21, 0.25);
         }
 
-        .mode-tabs {
-            display: flex;
-            gap: 4px;
-            justify-content: center;
-            flex-wrap: wrap; 
-            margin-bottom: 6px;
-        }
+        .mode-tabs { display: flex; gap: 4px; justify-content: center; flex-wrap: wrap; margin-bottom: 6px; }
         .mode-btn {
             background-color: #ffffff;
             color: #475569;
@@ -280,19 +255,9 @@
             border-radius: 4px;
             cursor: pointer;
         }
-        .mode-btn.active {
-            background-color: #d97706;
-            color: #ffffff;
-            border-color: #b45309;
-        }
+        .mode-btn.active { background-color: #d97706; color: #ffffff; border-color: #b45309; }
 
-        .fixed-tabs {
-            display: none;
-            gap: 4px;
-            justify-content: center;
-            flex-wrap: wrap;
-            margin-bottom: 6px;
-        }
+        .fixed-tabs { display: none; gap: 4px; justify-content: center; flex-wrap: wrap; margin-bottom: 6px; }
         .fixed-btn {
             background-color: #ffffff;
             color: #475569;
@@ -303,11 +268,7 @@
             border-radius: 4px;
             cursor: pointer;
         }
-        .fixed-btn.active {
-            background-color: #0284c7;
-            color: #ffffff;
-            border-color: #0369a1;
-        }
+        .fixed-btn.active { background-color: #0284c7; color: #ffffff; border-color: #0369a1; }
 
         .countdown-box {
             display: flex;
@@ -324,6 +285,7 @@
         }
         .timer-highlight { color: #d97706; font-family: monospace; font-size: 12px; }
         .timer-highlight.red { color: #dc2626; }
+
         .table-wrapper { width: 100%; }
         .lottery-table { width: 100%; border-collapse: separate; border-spacing: 0.5px 2px; }
         .period-header { font-size: 10.5px; color: #64748b; font-weight: 600; text-align: center; width: 48px; }
@@ -340,12 +302,7 @@
             background-color: #e0f2fe;
             border: 1px solid #bae6fd;
         }
-        .rank-header-item:active { background-color: #bae6fd; }
-        .table-scroll-container {
-            max-height: 195px;
-            overflow-y: auto;
-            border-radius: 4px;
-        }
+        .table-scroll-container { max-height: 195px; overflow-y: auto; border-radius: 4px; }
         .table-scroll-container::-webkit-scrollbar { width: 3px; }
         .table-scroll-container::-webkit-scrollbar-thumb { background: #cbd5e1; border-radius: 3px; }
         .lottery-row { background-color: #ffffff; }
@@ -375,9 +332,9 @@
         .signal-table { width: 100%; border-collapse: collapse; font-size: 12px; background: #fff; }
         .signal-table th { background-color: #f8fafc; color: #0284c7; font-weight: 700; padding: 6px 2px; border-bottom: 2px solid #cbd5e1; text-align: center; }
         .signal-table td { padding: 8px 2px; font-weight: 700; color: #0f172a; text-align: center; vertical-align: middle; border-bottom: 1px solid #e2e8f0; }
-        .signal-win { background-color: #d1fae5; color: #065f46; border-radius: 4px; padding: 2px 8px; display: inline-block; font-weight: 700; }
-        .signal-lose { background-color: #fee2e2; color: #991b1b; border-radius: 4px; padding: 2px 8px; display: inline-block; font-weight: 700; }
-        .signal-waiting { background-color: #fef3c7; color: #d97706; border-radius: 4px; padding: 2px 8px; display: inline-block; font-weight: 700; }
+        .signal-win { background-color: #d1fae5; color: #065f46; border-radius: 4px; padding: 2px 8px; }
+        .signal-lose { background-color: #fee2e2; color: #991b1b; border-radius: 4px; padding: 2px 8px; }
+        .signal-waiting { background-color: #fef3c7; color: #d97706; border-radius: 4px; padding: 2px 8px; }
 
         .strategy-area {
             margin-top: 10px;
@@ -390,12 +347,7 @@
             justify-content: space-between;
             gap: 6px;
         }
-        .strategy-buttons-group {
-            display: flex;
-            gap: 6px;
-            overflow-x: auto;
-            align-items: center;
-        }
+        .strategy-buttons-group { display: flex; gap: 6px; overflow-x: auto; align-items: center; }
         .strategy-btn {
             background-color: #ffffff;
             color: #475569;
@@ -406,7 +358,6 @@
             border-radius: 6px;
             cursor: pointer;
             white-space: nowrap;
-            transition: all 0.2s;
         }
         .strategy-btn.active {
             background-color: #0284c7;
@@ -425,17 +376,9 @@
             border-radius: 6px;
             cursor: pointer;
             white-space: nowrap;
-            transition: all 0.2s;
-            box-shadow: 0 1px 2px rgba(0,0,0,0.05);
             display: none;
         }
-        .compound-pill-btn.show {
-            display: inline-block;
-        }
-        .compound-pill-btn:active {
-            transform: scale(0.95);
-            background-color: #bae6fd;
-        }
+        .compound-pill-btn.show { display: inline-block; }
 
         .strategy-principal-box {
             display: none;
@@ -447,14 +390,8 @@
             padding: 2px 6px;
             flex-shrink: 0;
         }
-        .strategy-principal-box.show {
-            display: flex;
-        }
-        .strategy-principal-label {
-            font-size: 13px;
-            font-weight: 800;
-            color: #0284c7;
-        }
+        .strategy-principal-box.show { display: flex; }
+        .strategy-principal-label { font-size: 13px; font-weight: 800; color: #0284c7; }
         .strategy-principal-input {
             width: 75px;
             height: 26px;
@@ -492,11 +429,6 @@
             text-align: center;
             outline: none;
         }
-        .white-input::placeholder {
-            color: #94a3b8;
-            font-weight: 400;
-            font-size: 11px;
-        }
         .clickable-box { cursor: pointer; user-select: none; display: flex; align-items: center; justify-content: center; }
         .confirm-btn {
             height: 32px;
@@ -510,31 +442,16 @@
             cursor: pointer;
             white-space: nowrap;
             box-shadow: 0 2px 4px rgba(16, 185, 129, 0.3);
-            transition: transform 0.1s ease, background-color 0.1s ease, box-shadow 0.1s ease;
         }
-        .confirm-btn:active {
-            transform: scale(0.93);
-            background-color: #059669;
-            box-shadow: inset 0 2px 4px rgba(0, 0, 0, 0.2);
-        }
-        
-        .confirm-btn.locked {
-            background-color: #059669 !important;
-            opacity: 0.45;
-            cursor: not-allowed;
-            box-shadow: none;
-        }
+        .confirm-btn.locked { background-color: #059669 !important; opacity: 0.45; cursor: not-allowed; box-shadow: none; }
 
         .result-table-container { display: none; margin-top: 4px; border-radius: 6px; overflow: hidden; border: 1px solid #cbd5e1; }
         .calc-table { width: 100%; border-collapse: collapse; text-align: center; font-size: 12px; }
         .calc-table th { background-color: #f1f5f9; color: #0284c7; font-weight: 700; padding: 5px; border-bottom: 1px solid #cbd5e1; border-right: 1px solid #cbd5e1; }
-        .calc-table th:last-child { border-right: none; }
         .calc-table td { padding: 5px; border-bottom: 1px solid #cbd5e1; border-right: 1px solid #cbd5e1; color: #1e293b; font-weight: 700; }
-        .calc-table td:last-child { border-right: none; }
         .round-label { color: #475569; background-color: #f8fafc; }
         .profit-val { color: #10b981; font-size: 15px; background-color: #f1f5f9; }
         .copyable-amount { cursor: pointer; }
-        .copyable-amount:active { background-color: #e0f2fe !important; }
 
         .simulation-panel {
             background-color: #ffffff;
@@ -545,11 +462,7 @@
             flex-direction: column;
             gap: 6px;
         }
-        .sim-rank-row {
-            display: flex;
-            gap: 2px;
-            justify-content: space-between;
-        }
+        .sim-rank-row { display: flex; gap: 2px; justify-content: space-between; }
         .sim-rank-btn {
             flex: 1;
             background-color: #f8fafc;
@@ -561,7 +474,6 @@
             text-align: center;
             border-radius: 4px;
             cursor: pointer;
-            transition: all 0.2s;
         }
         .sim-rank-btn.active {
             background-color: #0ea5e9;
@@ -592,15 +504,7 @@
             border: 2px solid transparent;
             transition: all 0.2s ease;
         }
-        .sim-ball-item:active {
-            transform: scale(0.92);
-        }
-        
-        .simulation-panel.has-selection .sim-ball-item:not(.selected) {
-            opacity: 0.25;
-            box-shadow: none;
-            filter: grayscale(40%);
-        }
+        .simulation-panel.has-selection .sim-ball-item:not(.selected) { opacity: 0.25; filter: grayscale(40%); }
         .sim-ball-item.selected {
             border-color: #0ea5e9;
             box-shadow: 0 0 8px rgba(14, 165, 233, 0.8), 0 2px 4px rgba(0,0,0,0.2);
@@ -608,91 +512,28 @@
             opacity: 1 !important;
         }
 
-        .sim-action-row {
-            display: flex;
-            align-items: center;
-            justify-content: space-between;
-            gap: 6px;
-            margin-top: 2px;
-        }
-        .sim-clear-btn {
-            background-color: #ef4444;
-            color: #ffffff;
-            border: 1px solid #dc2626;
-            padding: 0 12px;
-            height: 32px;
-            font-size: 11.5px;
-            font-weight: 700;
-            border-radius: 5px;
-            cursor: pointer;
-            box-shadow: 0 2px 4px rgba(239, 68, 68, 0.3);
-            white-space: nowrap;
-        }
-        .sim-submit-btn {
-            background-color: #10b981;
-            color: #ffffff;
-            border: 1px solid #059669;
-            padding: 0 14px;
-            height: 32px;
-            font-size: 11.5px;
-            font-weight: 700;
-            border-radius: 5px;
-            cursor: pointer;
-            box-shadow: 0 2px 4px rgba(16, 185, 129, 0.3);
-            white-space: nowrap;
-        }
+        .sim-action-row { display: flex; align-items: center; justify-content: space-between; gap: 6px; margin-top: 2px; }
+        .sim-clear-btn { background-color: #ef4444; color: #ffffff; border: 1px solid #dc2626; padding: 0 12px; height: 32px; font-size: 11.5px; font-weight: 700; border-radius: 5px; cursor: pointer; }
+        .sim-submit-btn { background-color: #10b981; color: #ffffff; border: 1px solid #059669; padding: 0 14px; height: 32px; font-size: 11.5px; font-weight: 700; border-radius: 5px; cursor: pointer; }
 
         .modal-overlay { display: none; position: fixed; top: 0; left: 0; width: 100%; height: 100%; background-color: rgba(0, 0, 0, 0.4); z-index: 1000; align-items: center; justify-content: center; }
-        .modal-card { background-color: #ffffff; border: 1px solid #cbd5e1; border-radius: 10px; padding: 12px; width: 90%; max-width: 320px; position: relative; box-shadow: 0 10px 25px rgba(0,0,0,0.1); }
+        .modal-card { background-color: #ffffff; border: 1px solid #cbd5e1; border-radius: 10px; padding: 12px; width: 90%; max-width: 320px; position: relative; }
         .modal-close { position: absolute; top: 4px; right: 8px; font-size: 16px; color: #64748b; cursor: pointer; }
         .modal-title { color: #0284c7; font-size: 13px; font-weight: 700; text-align: center; margin-bottom: 8px; border-bottom: 1px solid #f1f5f9; padding-bottom: 4px; }
-        .modal-content-box { background: #f8fafc; padding: 8px; border-radius: 6px; font-size: 12px; line-height: 1.5; font-weight: 700; border: 1px solid #e2e8f0; }
+        .modal-content-box { background: #f8fafc; padding: 8px; border-radius: 6px; font-size: 12px; font-weight: 700; border: 1px solid #e2e8f0; }
         .text-green { color: #10b981; }
         .text-red { color: #ef4444; }
         .round-options-grid { display: grid; grid-template-columns: repeat(4, 1fr); gap: 5px; }
         .round-option-item { background-color: #f1f5f9; border: 1px solid #cbd5e1; color: #0284c7; font-size: 14px; font-weight: 700; height: 34px; display: flex; align-items: center; justify-content: center; border-radius: 5px; cursor: pointer; }
-        .round-option-item:active { background-color: #0ea5e9; color: #fff; }
         
-        .toast-msg { display: none; position: fixed; top: 50%; left: 50%; transform: translate(-50%, -50%); background-color: rgba(14, 165, 233, 0.95); color: #fff; padding: 10px 20px; border-radius: 10px; font-size: 14px; font-weight: 700; z-index: 2000; box-shadow: 0 4px 15px rgba(0,0,0,0.2); text-align: center; }
+        .toast-msg { display: none; position: fixed; top: 50%; left: 50%; transform: translate(-50%, -50%); background-color: rgba(14, 165, 233, 0.95); color: #fff; padding: 10px 20px; border-radius: 10px; font-size: 14px; font-weight: 700; z-index: 2000; text-align: center; }
 
-        .custom-row {
-            display: flex;
-            align-items: center;
-            justify-content: space-between;
-            background: #ffffff;
-            padding: 5px 6px;
-            border-radius: 6px;
-            border: 1px solid #cbd5e1;
-            margin-bottom: 5px;
-        }
-        .custom-row-col {
-            display: flex;
-            flex-direction: column;
-            gap: 2px;
-        }
-        .custom-row-title {
-            font-size: 10.5px;
-            font-weight: 700;
-            color: #0284c7;
-        }
-        .color-selector-group {
-            display: flex;
-            gap: 5px;
-        }
-        .color-circle {
-            width: 20px;
-            height: 20px;
-            border-radius: 50%;
-            cursor: pointer;
-            border: 2px solid transparent;
-            opacity: 0.4;
-            transition: all 0.2s;
-        }
-        .color-circle.selected {
-            opacity: 1;
-            border-color: #0f172a;
-            transform: scale(1.1);
-        }
+        .custom-row { display: flex; align-items: center; justify-content: space-between; background: #ffffff; padding: 5px 6px; border-radius: 6px; border: 1px solid #cbd5e1; margin-bottom: 5px; }
+        .custom-row-col { display: flex; flex-direction: column; gap: 2px; }
+        .custom-row-title { font-size: 10.5px; font-weight: 700; color: #0284c7; }
+        .color-selector-group { display: flex; gap: 5px; }
+        .color-circle { width: 20px; height: 20px; border-radius: 50%; cursor: pointer; border: 2px solid transparent; opacity: 0.4; transition: all 0.2s; }
+        .color-circle.selected { opacity: 1; border-color: #0f172a; transform: scale(1.1); }
         .color-circle.red { background-color: #ef4444; }
         .color-circle.green { background-color: #10b981; }
         .color-circle.blue { background-color: #3b82f6; }
@@ -705,7 +546,7 @@
             <div class="title-left-group">
                 <h2>📊 <span id="lotteryTitle">極速飛艇</span></h2>
                 <div id="musicControlArea" class="music-control-area">
-                    <button id="musicToggleBtn" class="music-btn" onclick="toggleMusic()" title="點擊開關音樂">🎵</button>
+                    <button id="musicToggleBtn" class="music-btn" onclick="toggleMusic()">🎵</button>
                     <div id="marqueeContainer" class="marquee-container">
                         <div id="marqueeText" class="marquee-text">播放中...</div>
                     </div>
@@ -713,9 +554,7 @@
             </div>
 
             <div class="title-right-group">
-                <div class="online-badge">
-                    在線 <span id="onlineCountVal">--</span>
-                </div>
+                <div class="online-badge">在線 <span id="onlineCountVal">--</span></div>
                 <div class="lottery-tabs">
                     <button id="btn10035" class="tab-btn active" onclick="switchLottery('10035', '極速飛艇')">極速飛艇</button>
                     <button id="btn10057" class="tab-btn" onclick="switchLottery('10057', '幸運飛艇')">幸運飛艇</button>
@@ -829,7 +668,6 @@
         </div>
 
         <div class="calculator-area">
-            <!-- 倍投區塊 -->
             <div id="betCalcInputs" class="calc-input-row">
                 <div class="input-group"><span class="input-label">本金</span><input type="number" id="inputAmount" class="white-input" oninput="onInputAmountChange()"></div>
                 <div class="input-group"><span class="input-label">碼數</span><div id="inputCodeCountDisplay" class="white-input clickable-box" onclick="openCodeCountModal()">3</div></div>
@@ -837,7 +675,6 @@
                 <button class="confirm-btn" onclick="onConfirmClick()">計算</button>
             </div>
 
-            <!-- 複利計算區塊 -->
             <div id="compoundCalcInputs" class="calc-input-row" style="display: none;">
                 <div class="input-group"><span class="input-label">本金</span><input type="number" id="compoundPrincipal" class="white-input" value="10000" oninput="formatInputFloor1(this)"></div>
                 <div class="input-group"><span class="input-label">操作次數</span><input type="number" id="compoundTimes" class="white-input" value="10"></div>
@@ -845,9 +682,7 @@
                 <button class="confirm-btn" onclick="onCompoundConfirmClick()">計算</button>
             </div>
 
-            <!-- 模擬操作面板區塊 -->
             <div id="simOperationPanel" class="simulation-panel" style="display: none;">
-                <!-- 名次按鈕列 -->
                 <div class="sim-rank-row" id="simRankRow">
                     <div class="sim-rank-btn active" onclick="selectSimRank(0, this)">冠</div>
                     <div class="sim-rank-btn" onclick="selectSimRank(1, this)">亞</div>
@@ -861,10 +696,8 @@
                     <div class="sim-rank-btn" onclick="selectSimRank(9, this)">十</div>
                 </div>
 
-                <!-- 1~10 號碼球網格 -->
                 <div class="sim-balls-grid" id="simBallsGrid"></div>
 
-                <!-- 金額與確認列 -->
                 <div class="sim-action-row">
                     <div class="input-group" style="flex: 2;">
                         <span class="input-label">金額</span>
@@ -890,6 +723,7 @@
             </div>
         </div>
     </div>
+    
     <div id="toastMsg" class="toast-msg"></div>
     <div id="modalOverlay" class="modal-overlay" onclick="closeModalDirect()">
         <div class="modal-card" onclick="event.stopPropagation()">
@@ -924,6 +758,7 @@
             </div>
         </div>
     </div>
+    
     <div id="roundModalOverlay" class="modal-overlay" onclick="closeRoundModal()">
         <div class="modal-card" onclick="event.stopPropagation()">
             <span class="modal-close" onclick="closeRoundModal()">&times;</span>
@@ -935,89 +770,46 @@
     <script src="https://www.youtube.com/iframe_api"></script>
     <script>
         let globalFullData = [], currentLotCode = '10035', countdownTimer = null, targetEndTimeMs = 0, lastPeriodLoaded = "", currentSplit = 5, currentCodeCount = 3;
-        let currentStrategy = 'bet';
-        let currentSystem = 'standard';
-        let currentMainTab = 'route'; 
-        let currentFixedGroup = 1;
-        let currentSignalCode = 3; 
-        let currentSignalSub = '宰相';
-
-        let selectedSimRank = 0;
-        let selectedSimBalls = [];
-        let isDrawState = false;       
-        let hasSubmittedOrder = false; 
-        let lastBetTotalCost = 0;      
-        let activeBetOrder = null;     
-
-        let compoundClickCount = 0;
-        let lastCalculatedProfit = 0;
-        let isTableCalculated = false;
-
-        let customRules = [
-            { numbers: "", color: "red" },
-            { numbers: "", color: "green" },
-            { numbers: "", color: "blue" },
-            { numbers: "", color: "yellow" }
-        ];
+        let currentStrategy = 'bet', currentSystem = 'standard', currentMainTab = 'route', currentFixedGroup = 1, currentSignalCode = 3, currentSignalSub = '宰相';
+        let selectedSimRank = 0, selectedSimBalls = [], isDrawState = false, hasSubmittedOrder = false, lastBetTotalCost = 0, activeBetOrder = null;
+        let compoundClickCount = 0, lastCalculatedProfit = 0, isTableCalculated = false;
+        let customRules = [{numbers:"", color:"red"}, {numbers:"", color:"green"}, {numbers:"", color:"blue"}, {numbers:"", color:"yellow"}];
 
         const musicPlaylist = [
-            { id: '_LbQyPyup24', title: '狂飆腎上腺素欲罷不能的旋律 ｜ 震碎靈魂的週末炸場專屬', artist: '台灣夜店DJ舞曲' },
-            { id: '82Blqjragi0', title: '觸電般的靈魂震盪快感 ｜ 喚醒沉睡野性的午夜狂歡', artist: '台灣夜店DJ舞曲' },
-            { id: '7i9nOQbVA2E', title: '夜驾必听 Rap EDM 2026 ｜ 心碎重低音中文女声', artist: 'Rap EDM' },
-            { id: 'K3WjeYMKqHw', title: '戴上耳機徹底淪陷的魔性旋律 ｜ 震碎現實的失重快感', artist: 'EDM夜色' },
-            { id: '9sBsNG5rJ8Y', title: '2026全中文舞曲串燒 ｜ 臺灣REMIX HUB獨家精選', artist: '臺灣REMIX HUB' }
+            { id: '_LbQyPyup24', title: '狂飆腎上腺素欲罷不能的旋律', artist: '台灣夜店DJ舞曲' },
+            { id: '82Blqjragi0', title: '觸電般的靈魂震盪快感', artist: '台灣夜店DJ舞曲' },
+            { id: '7i9nOQbVA2E', title: '夜驾必听 Rap EDM 2026', artist: 'Rap EDM' },
+            { id: 'K3WjeYMKqHw', title: '戴上耳機徹底淪陷的魔性旋律', artist: 'EDM夜色' },
+            { id: '9sBsNG5rJ8Y', title: '2026全中文舞曲串燒', artist: '臺灣REMIX HUB' }
         ];
 
-        let ytPlayer = null;
-        let isMusicPlaying = false;
-        let currentSongIndex = 0;
-        let isPlayerReady = false;
+        let ytPlayer = null, isMusicPlaying = false, currentSongIndex = 0, isPlayerReady = false;
 
         function onYouTubeIframeAPIReady() {
             ytPlayer = new YT.Player('youtubePlayer', {
-                height: '0',
-                width: '0',
+                height: '0', width: '0',
                 playerVars: { 'autoplay': 0, 'controls': 0, 'playsinline': 1 },
-                events: {
-                    'onReady': () => { isPlayerReady = true; }
-                }
+                events: { 'onReady': () => { isPlayerReady = true; } }
             });
         }
 
-        function floorTo1Decimal(val) {
-            return Math.floor(val * 10) / 10;
-        }
+        const floorTo1Decimal = val => Math.floor(val * 10) / 10;
+        const floorToInt = val => Math.floor(val);
 
-        function floorToInt(val) {
-            return Math.floor(val);
-        }
-
-        function formatInputFloor1(inputElem) {
-            let val = parseFloat(inputElem.value);
-            if (!isNaN(val)) {
-                let floored = floorTo1Decimal(val);
-                if (inputElem.value.includes('.')) {
-                    let parts = inputElem.value.split('.');
-                    if (parts[1] && parts[1].length > 1) {
-                        inputElem.value = floored;
-                    }
-                }
+        function formatInputFloor1(elem) {
+            let val = parseFloat(elem.value);
+            if (!isNaN(val) && elem.value.includes('.')) {
+                let parts = elem.value.split('.');
+                if (parts[1] && parts[1].length > 1) elem.value = floorTo1Decimal(val);
             }
         }
 
-        function formatPrincipalInput(inputElem) {
-            formatInputFloor1(inputElem);
-        }
+        const formatPrincipalInput = formatInputFloor1;
 
         function onInputAmountChange() {
-            let inputElem = document.getElementById('inputAmount');
-            let val = parseFloat(inputElem.value);
-            if (!isNaN(val)) {
-                let floored = floorToInt(val);
-                if (inputElem.value.includes('.')) {
-                    inputElem.value = floored;
-                }
-            }
+            let elem = document.getElementById('inputAmount');
+            let val = parseFloat(elem.value);
+            if (!isNaN(val) && elem.value.includes('.')) elem.value = floorToInt(val);
             resetCompoundState();
         }
 
@@ -1026,135 +818,68 @@
             compoundClickCount = 0;
             lastCalculatedProfit = 0;
             const btn = document.getElementById('compoundPillBtn');
-            if (btn) {
-                btn.innerText = '複利';
-                btn.classList.remove('show');
-            }
+            if (btn) { btn.innerText = '複利'; btn.classList.remove('show'); }
         }
 
         function onCompoundPillClick() {
             if (!isTableCalculated) return;
-            const amtInputElem = document.getElementById('inputAmount');
-            let currentAmt = floorToInt(parseFloat(amtInputElem.value) || 0);
-            
-            let newAmt = floorToInt(currentAmt + lastCalculatedProfit);
-            amtInputElem.value = newAmt;
-
+            const amtElem = document.getElementById('inputAmount');
+            amtElem.value = floorToInt((parseFloat(amtElem.value) || 0) + lastCalculatedProfit);
             compoundClickCount++;
-            const btn = document.getElementById('compoundPillBtn');
-            btn.innerText = `複利×${compoundClickCount}`;
-
+            document.getElementById('compoundPillBtn').innerText = `複利×${compoundClickCount}`;
             onConfirmClick(true);
         }
 
         function toggleMusic() {
-            const controlArea = document.getElementById('musicControlArea');
-            const btn = document.getElementById('musicToggleBtn');
-            const textElem = document.getElementById('marqueeText');
-
+            const area = document.getElementById('musicControlArea'), btn = document.getElementById('musicToggleBtn'), textElem = document.getElementById('marqueeText');
             if (!isMusicPlaying) {
                 if (!isPlayerReady || !ytPlayer || typeof ytPlayer.playVideo !== 'function') {
                     showToast("音樂正在初始化，請稍候再點一次...");
                     return;
                 }
                 isMusicPlaying = true;
-                controlArea.classList.add('playing');
-                btn.classList.add('playing');
-                
+                area.classList.add('playing'); btn.classList.add('playing');
                 currentSongIndex = (currentSongIndex + 1) % musicPlaylist.length;
                 let song = musicPlaylist[currentSongIndex];
-                textElem.innerText = `🎶 播放中: ${song.title} - ${song.artist}`;
-
+                textElem.innerText = `🎶 播放中: ${song.title}`;
                 ytPlayer.loadVideoById(song.id);
                 ytPlayer.playVideo();
             } else {
                 isMusicPlaying = false;
-                controlArea.classList.remove('playing');
-                btn.classList.remove('playing');
-
-                if (ytPlayer && typeof ytPlayer.stopVideo === 'function') {
-                    ytPlayer.stopVideo();
-                }
+                area.classList.remove('playing'); btn.classList.remove('playing');
+                if (ytPlayer && typeof ytPlayer.stopVideo === 'function') ytPlayer.stopVideo();
             }
         }
         
         const rankShortNames = ['冠軍', '亞軍', '三名', '四名', '五名', '六名', '七名', '八名', '九名', '十名'];
         const chineseRounds = ["第一關", "第二關", "第三關", "第四關", "第五關", "第六關", "第七關", "第八關", "第九關"];
-        
         const fixedPools3 = [[1,2,3], [1,2,10], [1,9,10], [8,9,10]];
-        const fixedPools7 = [
-            [1,2,3,4,5,6,7],
-            [2,3,4,5,6,7,8],
-            [3,4,5,6,7,8,9],
-            [4,5,6,7,8,9,10]
-        ];
-
-        const codeRoundsMap = {
-            3: [4, 5, 6, 7, 8],
-            4: [3, 4, 5, 6],
-            5: [2, 3, 4],
-            6: [2, 3],
-            7: [2, 3]
-        };
-
-        // 各碼數固定成長比例
-        const growthRates = {
-            3: 1.448,
-            4: 1.71,
-            5: 2.065,
-            6: 2.62163,
-            7: 3.5926
-        };
-
-        // 各碼數獲利乘數
-        const profitMultipliers = {
-            3: 6.7,
-            4: 5.7,
-            5: 4.7,
-            6: 3.7,
-            7: 2.7
-        };
+        const fixedPools7 = [[1,2,3,4,5,6,7], [2,3,4,5,6,7,8], [3,4,5,6,7,8,9], [4,5,6,7,8,9,10]];
+        const codeRoundsMap = { 3: [4, 5, 6, 7, 8], 4: [3, 4, 5, 6], 5: [2, 3, 4], 6: [2, 3], 7: [2, 3] };
+        const growthRates = { 3: 1.448, 4: 1.71, 5: 2.065, 6: 2.62163, 7: 3.5926 };
+        const profitMultipliers = { 3: 6.7, 4: 5.7, 5: 4.7, 6: 3.7, 7: 2.7 };
 
         function getSimBallColorClass(num, pos) {
             if (currentSystem === 'custom') {
                 for (let rule of customRules) {
                     if (!rule.numbers.trim()) continue;
                     let matchNums = rule.numbers.replace(/[,，]/g, ' ').split(/\s+/).map(s => parseInt(s.trim(), 10)).filter(n => !isNaN(n));
-                    if (matchNums.includes(num)) {
-                        if (rule.color === 'red') return 'red';
-                        if (rule.color === 'green') return 'green';
-                        if (rule.color === 'blue') return 'blue';
-                        if (rule.color === 'yellow') return 'yellow';
-                    }
+                    if (matchNums.includes(num)) return rule.color;
                 }
                 return 'blue';
             } else if (currentSystem === 'fixed') {
-                if (currentFixedGroup === 1 && (num === 8 || num === 9 || num === 10)) return 'red';
-                else if (currentFixedGroup === 2 && (num === 1 || num === 9 || num === 10)) return 'red';
-                else if (currentFixedGroup === 3 && (num === 1 || num === 2 || num === 10)) return 'red';
-                else if (currentFixedGroup === 4 && (num === 1 || num === 2 || num === 3)) return 'red';
-                else return 'blue';
+                if ((currentFixedGroup === 1 && num >= 8) || (currentFixedGroup === 2 && (num === 1 || num >= 9)) || (currentFixedGroup === 3 && (num <= 2 || num === 10)) || (currentFixedGroup === 4 && num <= 3)) return 'red';
+                return 'blue';
             } else if (currentSystem === 'size') {
-                if (num >= 1 && num <= 3) return 'blue';
-                else if (num >= 4 && num <= 7) return 'yellow';
-                else if (num >= 8 && num <= 10) return 'red';
-                else return 'blue';
-            } else if (currentSystem === 'hotcold') {
-                if (globalFullData.length > 0) {
-                    const { hot, warm, cold } = getHotColdListForPosition(globalFullData, pos);
-                    if (hot.includes(num)) return 'hot-red';
-                    else if (warm.includes(num)) return 'warm-yellow';
-                    else if (cold.includes(num)) return 'cold-blue';
-                }
-                return 'blue';
-            } else {
-                if (globalFullData.length > 0) {
-                    const { headList, tailList } = getHeadTailForPosition(globalFullData, pos, currentSplit);
-                    if (new Set(headList).has(num)) return 'green';
-                    else if (new Set(tailList).has(num)) return 'red';
-                }
-                return 'blue';
+                return num <= 3 ? 'blue' : (num <= 7 ? 'yellow' : 'red');
+            } else if (currentSystem === 'hotcold' && globalFullData.length > 0) {
+                const { hot, warm } = getHotColdListForPosition(globalFullData, pos);
+                return hot.includes(num) ? 'hot-red' : (warm.includes(num) ? 'warm-yellow' : 'cold-blue');
+            } else if (globalFullData.length > 0) {
+                const { headList } = getHeadTailForPosition(globalFullData, pos, currentSplit);
+                return new Set(headList).has(num) ? 'green' : 'red';
             }
+            return 'blue';
         }
 
         function initSimBalls() {
@@ -1162,8 +887,7 @@
             if (!grid) return;
             grid.innerHTML = "";
             for (let i = 1; i <= 10; i++) {
-                let colorCls = getSimBallColorClass(i, selectedSimRank);
-                grid.innerHTML += `<div class="sim-ball-item ${colorCls}" id="simBall_${i}" onclick="toggleSimBall(${i})">${i}</div>`;
+                grid.innerHTML += `<div class="sim-ball-item ${getSimBallColorClass(i, selectedSimRank)}" id="simBall_${i}" onclick="toggleSimBall(${i})">${i}</div>`;
             }
         }
 
@@ -1171,9 +895,7 @@
             for (let i = 1; i <= 10; i++) {
                 const ballElem = document.getElementById(`simBall_${i}`);
                 if (ballElem) {
-                    ballElem.className = `sim-ball-item ${selectedSimBalls.includes(i) ? 'selected' : ''}`;
-                    let colorCls = getSimBallColorClass(i, selectedSimRank);
-                    ballElem.classList.add(colorCls);
+                    ballElem.className = `sim-ball-item ${selectedSimBalls.includes(i) ? 'selected' : ''} ${getSimBallColorClass(i, selectedSimRank)}`;
                 }
             }
         }
@@ -1189,32 +911,17 @@
             const idx = selectedSimBalls.indexOf(num);
             const ballElem = document.getElementById(`simBall_${num}`);
             const panel = document.getElementById('simOperationPanel');
-
-            if (idx > -1) {
-                selectedSimBalls.splice(idx, 1);
-                ballElem.classList.remove('selected');
-            } else {
-                selectedSimBalls.push(num);
-                ballElem.classList.add('selected');
-            }
-
-            if (selectedSimBalls.length > 0) {
-                panel.classList.add('has-selection');
-            } else {
-                panel.classList.remove('has-selection');
-            }
+            if (idx > -1) { selectedSimBalls.splice(idx, 1); ballElem.classList.remove('selected'); }
+            else { selectedSimBalls.push(num); ballElem.classList.add('selected'); }
+            selectedSimBalls.length > 0 ? panel.classList.add('has-selection') : panel.classList.remove('has-selection');
         }
 
         function updateSubmitButtonState() {
             const btn = document.getElementById('simSubmitBtn');
             if (!btn) return;
-            
-            if (isDrawState) {
+            if (isDrawState || hasSubmittedOrder) {
                 btn.classList.add('locked');
-                btn.innerHTML = '封盤鎖定 🔒';
-            } else if (hasSubmittedOrder) {
-                btn.classList.add('locked');
-                btn.innerHTML = '已鎖定 🔒';
+                btn.innerHTML = isDrawState ? '封盤鎖定 🔒' : '已鎖定 🔒';
             } else {
                 btn.classList.remove('locked');
                 btn.innerHTML = '確認下注';
@@ -1223,21 +930,13 @@
 
         function clearSimInput() {
             if (isDrawState) return;
-
             if (lastBetTotalCost > 0 && activeBetOrder) {
-                const principalInputElem = document.getElementById('simPrincipalInput');
-                let currentPrincipal = floorTo1Decimal(parseFloat(principalInputElem.value) || 0);
-                let restoredPrincipal = floorTo1Decimal(currentPrincipal + lastBetTotalCost);
-                principalInputElem.value = restoredPrincipal;
-                showToast(`已清除，上期下注金額 $${floorTo1Decimal(lastBetTotalCost)} 已返還本金`);
-                lastBetTotalCost = 0;
-                activeBetOrder = null;
-            } else {
-                showToast("已清除，所有號碼恢復全亮");
+                const pElem = document.getElementById('simPrincipalInput');
+                pElem.value = floorTo1Decimal(parseFloat(pElem.value || 0) + lastBetTotalCost);
+                showToast(`已清除，上期下注金額已返還`);
+                lastBetTotalCost = 0; activeBetOrder = null;
             }
-
-            selectedSimBalls = [];
-            hasSubmittedOrder = false;
+            selectedSimBalls = []; hasSubmittedOrder = false;
             document.querySelectorAll('.sim-ball-item').forEach(b => b.classList.remove('selected'));
             document.getElementById('simOperationPanel').classList.remove('has-selection');
             document.getElementById('simAmountInput').value = "";
@@ -1246,100 +945,39 @@
 
         function submitSimOrder() {
             if (isDrawState || hasSubmittedOrder) return;
+            const amtStr = document.getElementById('simAmountInput').value, pElem = document.getElementById('simPrincipalInput');
+            if (selectedSimBalls.length === 0 || !amtStr || parseFloat(amtStr) <= 0) return;
 
-            const amtStr = document.getElementById('simAmountInput').value;
-            const principalInputElem = document.getElementById('simPrincipalInput');
-            
-            if (selectedSimBalls.length === 0 || !amtStr || parseFloat(amtStr) <= 0) {
-                return; 
-            }
+            const singleAmt = floorTo1Decimal(parseFloat(amtStr)), totalCost = floorTo1Decimal(selectedSimBalls.length * singleAmt);
+            let currentPrincipal = floorTo1Decimal(parseFloat(pElem.value || 0));
+            if (currentPrincipal < totalCost) return;
 
-            const singleAmt = floorTo1Decimal(parseFloat(amtStr));
-            const count = selectedSimBalls.length;
-            const totalCost = floorTo1Decimal(count * singleAmt);
-
-            let currentPrincipal = floorTo1Decimal(parseFloat(principalInputElem.value) || 0);
-            if (currentPrincipal < totalCost) {
-                return; 
-            }
-
-            currentPrincipal = floorTo1Decimal(currentPrincipal - totalCost);
-            principalInputElem.value = currentPrincipal;
-            lastBetTotalCost = totalCost;
-            hasSubmittedOrder = true;
-
-            const topItem = globalFullData[0];
-            const nextPeriod = topItem ? (BigInt(topItem.period) + 1n).toString() : "";
-            activeBetOrder = {
-                period: nextPeriod,
-                rankIdx: selectedSimRank,
-                numbers: [...selectedSimBalls],
-                singleAmt: singleAmt
-            };
-
+            pElem.value = floorTo1Decimal(currentPrincipal - totalCost);
+            lastBetTotalCost = totalCost; hasSubmittedOrder = true;
+            activeBetOrder = { period: (BigInt(globalFullData[0].period) + 1n).toString(), rankIdx: selectedSimRank, numbers: [...selectedSimBalls], singleAmt: singleAmt };
             updateSubmitButtonState();
-            showToast(`【下注成功】扣除 ${totalCost}，剩餘本金: ${currentPrincipal}`);
+            showToast(`【下注成功】扣除 ${totalCost}`);
         }
 
         function checkDrawAndPayout(newTopItem) {
-            if (!activeBetOrder || !newTopItem) return;
-            
-            if (newTopItem.period === activeBetOrder.period) {
-                const nums = newTopItem.number.replace(/\s+/g, '').split(',');
-                const actualVal = parseInt(nums[activeBetOrder.rankIdx], 10);
-
-                if (activeBetOrder.numbers.includes(actualVal)) {
-                    const payout = floorTo1Decimal(activeBetOrder.singleAmt * 9.7);
-                    const principalInputElem = document.getElementById('simPrincipalInput');
-                    let startPrincipal = floorTo1Decimal(parseFloat(principalInputElem.value) || 0);
-                    let targetPrincipal = floorTo1Decimal(startPrincipal + payout);
-
-                    animatePrincipalIncrease(startPrincipal, targetPrincipal, 800);
-                    showToast(`🎉 中獎！恭喜獲得派彩 $${payout}，已返還本金`);
-                }
-
-                activeBetOrder = null;
-                lastBetTotalCost = 0;
-                hasSubmittedOrder = false;
-                selectedSimBalls = [];
-                document.querySelectorAll('.sim-ball-item').forEach(b => b.classList.remove('selected'));
-                document.getElementById('simOperationPanel').classList.remove('has-selection');
-                document.getElementById('simAmountInput').value = "";
-                updateSubmitButtonState();
+            if (!activeBetOrder || !newTopItem || newTopItem.period !== activeBetOrder.period) return;
+            const actualVal = parseInt(newTopItem.number.replace(/\s+/g, '').split(',')[activeBetOrder.rankIdx], 10);
+            if (activeBetOrder.numbers.includes(actualVal)) {
+                const payout = floorTo1Decimal(activeBetOrder.singleAmt * 9.7), pElem = document.getElementById('simPrincipalInput');
+                pElem.value = floorTo1Decimal(parseFloat(pElem.value || 0) + payout);
+                showToast(`🎉 中獎！獲得派彩 $${payout}`);
             }
-        }
-
-        function animatePrincipalIncrease(startVal, targetVal, duration = 800) {
-            const principalInputElem = document.getElementById('simPrincipalInput');
-            if (!principalInputElem) return;
-
-            let startTime = performance.now();
-            function updateStep(currentTime) {
-                let elapsed = currentTime - startTime;
-                let progress = Math.min(elapsed / duration, 1);
-                let easeProgress = 1 - (1 - progress) * (1 - progress);
-                let currentVal = startVal + (targetVal - startVal) * easeProgress;
-                
-                principalInputElem.value = floorTo1Decimal(currentVal).toFixed(currentVal % 1 !== 0 ? 1 : 0);
-
-                if (progress < 1) {
-                    requestAnimationFrame(updateStep);
-                } else {
-                    principalInputElem.value = floorTo1Decimal(targetVal).toFixed(targetVal % 1 !== 0 ? 1 : 0);
-                }
-            }
-            requestAnimationFrame(updateStep);
+            activeBetOrder = null; lastBetTotalCost = 0; hasSubmittedOrder = false; selectedSimBalls = [];
+            document.querySelectorAll('.sim-ball-item').forEach(b => b.classList.remove('selected'));
+            document.getElementById('simOperationPanel').classList.remove('has-selection');
+            document.getElementById('simAmountInput').value = "";
+            updateSubmitButtonState();
         }
 
         function switchStrategy(type) {
             currentStrategy = type;
             document.querySelectorAll('.strategy-btn').forEach(b => b.classList.remove('active'));
-            
-            document.getElementById('betCalcInputs').style.display = 'none';
-            document.getElementById('compoundCalcInputs').style.display = 'none';
-            document.getElementById('simOperationPanel').style.display = 'none';
-            document.getElementById('resultTableContainer').style.display = 'none';
-            document.getElementById('compoundTableContainer').style.display = 'none';
+            ['betCalcInputs', 'compoundCalcInputs', 'simOperationPanel', 'resultTableContainer', 'compoundTableContainer'].forEach(id => document.getElementById(id).style.display = 'none');
             document.getElementById('simPrincipalBox').classList.remove('show');
             document.getElementById('compoundPillBtn').style.display = 'none';
 
@@ -1348,16 +986,12 @@
                 document.getElementById('betCalcInputs').style.display = 'flex';
                 if (document.getElementById('resultTableBody').children.length > 0) {
                     document.getElementById('resultTableContainer').style.display = 'block';
-                    if (isTableCalculated) {
-                        document.getElementById('compoundPillBtn').style.display = 'inline-block';
-                    }
+                    if (isTableCalculated) document.getElementById('compoundPillBtn').style.display = 'inline-block';
                 }
             } else if (type === 'compound') {
                 document.getElementById('stratBtnCompound').classList.add('active');
                 document.getElementById('compoundCalcInputs').style.display = 'flex';
-                if (document.getElementById('compoundTableBody').children.length > 0) {
-                    document.getElementById('compoundTableContainer').style.display = 'block';
-                }
+                if (document.getElementById('compoundTableBody').children.length > 0) document.getElementById('compoundTableContainer').style.display = 'block';
             } else if (type === 'sim') {
                 document.getElementById('stratBtnSim').classList.add('active');
                 document.getElementById('simOperationPanel').style.display = 'flex';
@@ -1368,36 +1002,18 @@
 
         function switchMainTab(tab) {
             currentMainTab = tab;
-            const routeBtn = document.getElementById('mainNavRoute');
-            const signalBtn = document.getElementById('mainNavSignal');
+            document.getElementById('mainNavRoute').className = 'main-nav-btn' + (tab === 'route' ? ' active-route' : '');
+            document.getElementById('mainNavSignal').className = 'main-nav-btn' + (tab === 'signal' ? ' active-signal' : '');
             
-            routeBtn.className = 'main-nav-btn' + (tab === 'route' ? ' active-route' : '');
-            signalBtn.className = 'main-nav-btn' + (tab === 'signal' ? ' active-signal' : '');
-            
-            const routeArea = document.getElementById('routeTableArea');
-            const signalArea = document.getElementById('signalButtonArea');
-            const leftNavGroup = document.getElementById('leftNavArea');
-            const modeTabs = document.getElementById('modeTabsContainer');
-            const fixedTabs = document.getElementById('fixedTabsContainer');
+            const routeArea = document.getElementById('routeTableArea'), signalArea = document.getElementById('signalButtonArea');
+            const leftNavGroup = document.getElementById('leftNavArea'), modeTabs = document.getElementById('modeTabsContainer'), fixedTabs = document.getElementById('fixedTabsContainer');
 
             if (tab === 'signal') {
-                routeArea.style.display = 'none';
-                signalArea.style.display = 'block';
-                fixedTabs.style.display = 'none';
-                modeTabs.style.display = 'none'; 
-
-                leftNavGroup.innerHTML = `
-                    <button id="sigCodeBtn3" class="signal-code-btn ${currentSignalCode===3?'active':''}" onclick="switchSignalCode(3)">三</button>
-                    <button id="sigCodeBtn4" class="signal-code-btn ${currentSignalCode===4?'active':''}" onclick="switchSignalCode(4)">四</button>
-                    <button id="sigCodeBtn5" class="signal-code-btn ${currentSignalCode===5?'active':''}" onclick="switchSignalCode(5)">五</button>
-                    <button id="sigCodeBtn6" class="signal-code-btn ${currentSignalCode===6?'active':''}" onclick="switchSignalCode(6)">六</button>
-                    <button id="sigCodeBtn7" class="signal-code-btn ${currentSignalCode===7?'active':''}" onclick="switchSignalCode(7)">七</button>
-                `;
+                routeArea.style.display = 'none'; signalArea.style.display = 'block'; fixedTabs.style.display = 'none'; modeTabs.style.display = 'none';
+                leftNavGroup.innerHTML = [3,4,5,6,7].map(v => `<button id="sigCodeBtn${v}" class="signal-code-btn ${currentSignalCode===v?'active':''}" onclick="switchSignalCode(${v})">${['三','四','五','六','七'][v-3]}</button>`).join('');
                 renderSignalTable();
             } else {
-                routeArea.style.display = 'block';
-                signalArea.style.display = 'none';
-                
+                routeArea.style.display = 'block'; signalArea.style.display = 'none';
                 leftNavGroup.innerHTML = `
                     <button id="sysBtnStandard" class="system-btn ${currentSystem==='standard'?'active':''}" onclick="switchSystem('standard')">順/反</button>
                     <button id="sysBtnFixed" class="system-btn ${currentSystem==='fixed'?'active':''}" onclick="switchSystem('fixed')">固定號</button>
@@ -1405,698 +1021,238 @@
                     <button id="sysBtnHotCold" class="system-btn ${currentSystem==='hotcold'?'active':''}" onclick="switchSystem('hotcold')">冷溫熱</button>
                     <button id="sysBtnCustom" class="system-btn ${currentSystem==='custom'?'active':''}" onclick="switchSystem('custom')">自訂</button>
                 `;
-                if (currentSystem === 'standard') {
-                    modeTabs.style.display = 'flex';
-                    fixedTabs.style.display = 'none';
-                } else if (currentSystem === 'fixed') {
-                    modeTabs.style.display = 'none';
-                    fixedTabs.style.display = 'flex';
-                } else {
-                    modeTabs.style.display = 'none';
-                    fixedTabs.style.display = 'none';
-                }
+                modeTabs.style.display = currentSystem === 'standard' ? 'flex' : 'none';
+                fixedTabs.style.display = currentSystem === 'fixed' ? 'flex' : 'none';
                 renderTableUI();
             }
         }
 
-        function switchSignalCode(val) {
-            currentSignalCode = val;
-            document.querySelectorAll('.signal-code-btn').forEach(b => b.classList.remove('active'));
-            document.getElementById(`sigCodeBtn${val}`).classList.add('active');
-            renderSignalTable();
-        }
-
-        function switchSignalSub(subName) {
-            document.querySelectorAll('.signal-sub-btn').forEach(b => b.classList.remove('active'));
-            document.getElementById(`subBtn_${subName}`).classList.add('active');
-            currentSignalSub = subName;
-            renderSignalTable();
-        }
-
-        function updateSubButtonWinRates(subNamesList) {
-            if (!globalFullData.length) return;
-            let limit = Math.min(globalFullData.length, 50);
-
-            subNamesList.forEach(subName => {
-                let winCount = 0;
-                for (let i = 0; i < limit; i++) {
-                    let item = globalFullData[i];
-                    let past = globalFullData.slice(i + 1);
-                    let periodStr = item.period.length > 7 ? item.period.slice(-6) : item.period;
-
-                    let pred = getDeterministicPrediction(periodStr, past, subName, currentSignalCode);
-                    let nums = item.number.replace(/\s+/g, '').split(',');
-                    let rankIdx = rankShortNames.indexOf(pred.rank);
-                    let actualVal = parseInt(nums[rankIdx], 10);
-                    if (pred.nums.includes(actualVal)) {
-                        winCount++;
-                    }
-                }
-                let winRate = Math.floor((winCount / limit) * 100);
-                let btn = document.getElementById(`subBtn_${subName}`);
-                if (btn) {
-                    btn.innerText = `${subName} ${winRate}%`;
-                }
-            });
-        }
+        function switchSignalCode(val) { currentSignalCode = val; document.querySelectorAll('.signal-code-btn').forEach(b => b.classList.remove('active')); document.getElementById(`sigCodeBtn${val}`).classList.add('active'); renderSignalTable(); }
+        function switchSignalSub(subName) { document.querySelectorAll('.signal-sub-btn').forEach(b => b.classList.remove('active')); document.getElementById(`subBtn_${subName}`).classList.add('active'); currentSignalSub = subName; renderSignalTable(); }
 
         function getDeterministicPrediction(periodStr, pastData, subName, codeVal) {
-            let seedStr = `${currentLotCode}_${codeVal}_${subName}_${periodStr}`;
             let hash = 0;
-            for (let i = 0; i < seedStr.length; i++) {
-                hash = ((hash << 5) - hash) + seedStr.charCodeAt(i);
+            for (let i = 0; i < `${currentLotCode}_${codeVal}_${subName}_${periodStr}`.length; i++) {
+                hash = ((hash << 5) - hash) + `${currentLotCode}_${codeVal}_${subName}_${periodStr}`.charCodeAt(i);
                 hash |= 0;
             }
-            let positiveHash = Math.abs(hash);
-
-            let randPos = positiveHash % 10;
-            let randLogic = Math.floor(positiveHash / 10) % 3;
-            let chosenNums = [];
-
-            if (codeVal === 3) {
-                if (randLogic === 0 && pastData.length > 0) {
-                    let { headList } = getHeadTailForPosition(pastData, randPos, 3);
-                    chosenNums = headList.slice(0, 3);
-                } else if (randLogic === 1 && pastData.length > 0) {
-                    let { tailList } = getHeadTailForPosition(pastData, randPos, 3);
-                    chosenNums = tailList.slice(0, 3);
-                } else {
-                    let poolIdx = Math.floor(positiveHash / 100) % fixedPools3.length;
-                    chosenNums = fixedPools3[poolIdx].slice(0, 3);
-                }
-                if (chosenNums.length === 0) chosenNums = [1, 2, 3];
-            } else if (codeVal === 4) {
-                if (randLogic === 0 && pastData.length > 0) {
-                    let { headList } = getHeadTailForPosition(pastData, randPos, 4);
-                    chosenNums = headList.slice(0, 4);
-                } else if (randLogic === 1 && pastData.length > 0) {
-                    let { tailList } = getHeadTailForPosition(pastData, randPos, 6);
-                    chosenNums = tailList.slice(0, 4);
-                } else {
-                    chosenNums = [4, 5, 6, 7];
-                }
-                if (chosenNums.length === 0) chosenNums = [4, 5, 6, 7];
-            } else if (codeVal === 5) {
-                if (randLogic % 2 === 0 && pastData.length > 0) {
-                    let { headList } = getHeadTailForPosition(pastData, randPos, 5);
-                    chosenNums = headList.slice(0, 5);
-                } else if (pastData.length > 0) {
-                    let { tailList } = getHeadTailForPosition(pastData, randPos, 5);
-                    chosenNums = tailList.slice(0, 5);
-                } else {
-                    chosenNums = [1, 2, 3, 4, 5];
-                }
-                if (chosenNums.length === 0) chosenNums = [1, 2, 3, 4, 5];
-            } else if (codeVal === 6) {
-                if (randLogic === 0 && pastData.length > 0) {
-                    let { tailList } = getHeadTailForPosition(pastData, randPos, 4);
-                    chosenNums = tailList.slice(0, 6);
-                } else if (randLogic === 1 && pastData.length > 0) {
-                    let { headList } = getHeadTailForPosition(pastData, randPos, 6);
-                    chosenNums = headList.slice(0, 6);
-                } else {
-                    chosenNums = [1, 2, 3, 8, 9, 10];
-                }
-                if (chosenNums.length === 0) chosenNums = [1, 2, 3, 8, 9, 10];
-            } else if (codeVal === 7) {
-                if (randLogic === 0 && pastData.length > 0) {
-                    let { tailList } = getHeadTailForPosition(pastData, randPos, 3);
-                    chosenNums = tailList.slice(0, 7);
-                } else if (randLogic === 1 && pastData.length > 0) {
-                    let { headList } = getHeadTailForPosition(pastData, randPos, 7);
-                    chosenNums = headList.slice(0, 7);
-                } else {
-                    let poolIdx = Math.floor(positiveHash / 100) % fixedPools7.length;
-                    chosenNums = fixedPools7[poolIdx];
-                }
-                if (chosenNums.length === 0) chosenNums = [1, 2, 3, 4, 5, 6, 7];
-            } else {
-                chosenNums = [1, 2, 3];
-            }
-
-            chosenNums.sort((a, b) => a - b);
-            return { rank: rankShortNames[randPos], nums: chosenNums };
+            let posHash = Math.abs(hash), randPos = posHash % 10, randLogic = Math.floor(posHash / 10) % 3, chosenNums = [];
+            if (codeVal === 3) chosenNums = (randLogic === 0 && pastData.length > 0) ? getHeadTailForPosition(pastData, randPos, 3).headList.slice(0,3) : fixedPools3[0].slice(0,3);
+            else if (codeVal === 4) chosenNums = [4, 5, 6, 7];
+            else if (codeVal === 5) chosenNums = [1, 2, 3, 4, 5];
+            else if (codeVal === 6) chosenNums = [1, 2, 3, 8, 9, 10];
+            else chosenNums = fixedPools7[0];
+            return { rank: rankShortNames[randPos], nums: chosenNums.sort((a,b)=>a-b) };
         }
 
         function renderSignalTable() {
-            const tbody = document.getElementById('signalTableBody');
-            const subNames = ['宰相', '小幫手', '博士', '宗師', '王牌'];
-            
-            if (!globalFullData.length) {
-                tbody.innerHTML = `<tr><td colspan="4" style="padding:20px; color:#64748b;">資料載入中...</td></tr>`;
-                return;
-            }
-
-            updateSubButtonWinRates(subNames);
+            const tbody = document.getElementById('signalTableBody'), subNames = ['宰相', '小幫手', '博士', '宗師', '王牌'];
+            if (!globalFullData.length) return;
             tbody.innerHTML = "";
-
-            let records = [];
-            let subName = currentSignalSub;
-
-            let topItem = globalFullData[0];
-            let nextPeriod = (BigInt(topItem.period) + 1n).toString();
-            let nextPeriodStr = nextPeriod.length > 7 ? nextPeriod.slice(-6) : nextPeriod;
+            let records = [{ period: globalFullData[0].period.slice(-6), rank: getDeterministicPrediction(globalFullData[0].period, globalFullData, currentSignalSub, currentSignalCode).rank, nums: getDeterministicPrediction(globalFullData[0].period, globalFullData, currentSignalSub, currentSignalCode).nums, status: 'waiting' }];
             
-            let nextPred = getDeterministicPrediction(nextPeriodStr, globalFullData, subName, currentSignalCode);
-            records.push({ period: nextPeriodStr, rank: nextPred.rank, nums: nextPred.nums, status: 'waiting' });
-
-            let limit = Math.min(globalFullData.length, 50);
-            for (let i = 0; i < limit; i++) {
-                let item = globalFullData[i];
-                let past = globalFullData.slice(i + 1);
-                let periodStr = item.period.length > 7 ? item.period.slice(-6) : item.period;
-
-                let pred = getDeterministicPrediction(periodStr, past, subName, currentSignalCode);
-                let nums = item.number.replace(/\s+/g, '').split(',');
-                let rankIdx = rankShortNames.indexOf(pred.rank);
-                let actualVal = parseInt(nums[rankIdx], 10);
-                let isWin = pred.nums.includes(actualVal);
-                let status = isWin ? 'win' : 'lose';
-
-                records.push({ period: periodStr, rank: pred.rank, nums: pred.nums, status: status });
+            for (let i = 0; i < Math.min(globalFullData.length, 30); i++) {
+                let item = globalFullData[i], pred = getDeterministicPrediction(item.period.slice(-6), globalFullData.slice(i + 1), currentSignalSub, currentSignalCode);
+                let isWin = pred.nums.includes(parseInt(item.number.replace(/\s+/g, '').split(',')[rankShortNames.indexOf(pred.rank)], 10));
+                records.push({ period: item.period.slice(-6), rank: pred.rank, nums: pred.nums, status: isWin ? 'win' : 'lose' });
             }
-
-            records.forEach(rec => {
-                let statusHtml = '';
-                if (rec.status === 'waiting') {
-                    statusHtml = `<span class="signal-waiting">等待開獎</span>`;
-                } else if (rec.status === 'win') {
-                    statusHtml = `<span class="signal-win">收</span>`;
-                } else {
-                    statusHtml = `<span class="signal-lose">翻</span>`;
-                }
-
-                tbody.innerHTML += `<tr>
-                    <td>${rec.period}</td>
-                    <td>${rec.rank}</td>
-                    <td style="color:#0284c7;">${rec.nums.join(', ')}</td>
-                    <td>${statusHtml}</td>
-                </tr>`;
-            });
+            tbody.innerHTML = records.map(r => `<tr><td>${r.period}</td><td>${r.rank}</td><td style="color:#0284c7;">${r.nums.join(', ')}</td><td><span class="signal-${r.status}">${r.status==='waiting'?'等待開獎':(r.status==='win'?'收':'翻')}</span></td></tr>`).join('');
         }
 
         function switchSystem(sys) {
             if (currentMainTab === 'signal') return;
-            
-            if (sys === 'custom') {
-                if (currentSystem === 'custom') {
-                    openCustomModal();
-                } else {
-                    currentSystem = 'custom';
-                    document.querySelectorAll('.system-btn').forEach(b => b.classList.remove('active'));
-                    document.getElementById('sysBtnCustom').classList.add('active');
-                    document.getElementById('modeTabsContainer').style.display = 'none';
-                    document.getElementById('fixedTabsContainer').style.display = 'none';
-                    renderTableUI();
-                    updateSimBallsColors();
-                }
-                return;
-            }
-
+            if (sys === 'custom' && currentSystem === 'custom') { openCustomModal(); return; }
             currentSystem = sys;
             document.querySelectorAll('.system-btn').forEach(b => b.classList.remove('active'));
-            if (sys === 'standard') {
-                document.getElementById('sysBtnStandard').classList.add('active');
-                document.getElementById('modeTabsContainer').style.display = 'flex';
-                document.getElementById('fixedTabsContainer').style.display = 'none';
-            } else if (sys === 'fixed') {
-                document.getElementById('sysBtnFixed').classList.add('active');
-                document.getElementById('modeTabsContainer').style.display = 'none';
-                document.getElementById('fixedTabsContainer').style.display = 'flex';
-            } else if (sys === 'size') {
-                document.getElementById('sysBtnSize').classList.add('active');
-                document.getElementById('modeTabsContainer').style.display = 'none';
-                document.getElementById('fixedTabsContainer').style.display = 'none';
-            } else if (sys === 'hotcold') {
-                document.getElementById('sysBtnHotCold').classList.add('active');
-                document.getElementById('modeTabsContainer').style.display = 'none';
-                document.getElementById('fixedTabsContainer').style.display = 'none';
-            }
-            renderTableUI();
-            updateSimBallsColors();
-        }
-
-        function syncInputsToRules() {
-            for (let i = 0; i < 4; i++) {
-                let inputElem = document.getElementById(`customNums_${i}`);
-                if (inputElem) {
-                    customRules[i].numbers = inputElem.value;
-                }
-            }
+            document.getElementById(`sysBtn${sys.charAt(0).toUpperCase() + sys.slice(1)}`).classList.add('active');
+            document.getElementById('modeTabsContainer').style.display = sys === 'standard' ? 'flex' : 'none';
+            document.getElementById('fixedTabsContainer').style.display = sys === 'fixed' ? 'flex' : 'none';
+            if (sys === 'custom') openCustomModal();
+            else { renderTableUI(); updateSimBallsColors(); }
         }
 
         function openCustomModal() {
-            const container = document.getElementById('customRulesContainer');
-            container.innerHTML = "";
-            customRules.forEach((rule, idx) => {
-                container.innerHTML += `
-                    <div class="custom-row">
-                        <div class="custom-row-col" style="flex: 2;">
-                            <span class="custom-row-title">號碼 (群組 ${idx+1})</span>
-                            <input type="text" id="customNums_${idx}" class="white-input" value="${rule.numbers}" placeholder="例: 1 4 7 或 3 6 9 10" style="height: 26px; font-size: 12px; text-align: left; padding-left: 6px;">
-                        </div>
-                        <div class="custom-row-col" style="flex: 1; align-items: center;">
-                            <span class="custom-row-title">顏色</span>
-                            <div class="color-selector-group">
-                                <div class="color-circle red ${rule.color==='red'?'selected':''}" onclick="selectColor(${idx}, 'red')"></div>
-                                <div class="color-circle green ${rule.color==='green'?'selected':''}" onclick="selectColor(${idx}, 'green')"></div>
-                                <div class="color-circle blue ${rule.color==='blue'?'selected':''}" onclick="selectColor(${idx}, 'blue')"></div>
-                                <div class="color-circle yellow ${rule.color==='yellow'?'selected':''}" onclick="selectColor(${idx}, 'yellow')"></div>
-                            </div>
-                        </div>
+            document.getElementById('customRulesContainer').innerHTML = customRules.map((rule, idx) => `
+                <div class="custom-row">
+                    <div class="custom-row-col" style="flex: 2;"><span class="custom-row-title">群組 ${idx+1}</span><input type="text" id="customNums_${idx}" class="white-input" value="${rule.numbers}" placeholder="例: 1 4 7" style="height:26px; font-size:12px; text-align:left; padding-left:6px;"></div>
+                    <div class="custom-row-col" style="flex: 1; align-items: center;"><span class="custom-row-title">顏色</span>
+                        <div class="color-selector-group">${['red','green','blue','yellow'].map(c => `<div class="color-circle ${c} ${rule.color===c?'selected':''}" onclick="customRules[${idx}].color='${c}';openCustomModal();"></div>`).join('')}</div>
                     </div>
-                `;
-            });
+                </div>
+            `).join('');
             document.getElementById('customModalOverlay').style.display = 'flex';
         }
-
-        function selectColor(idx, colorName) {
-            syncInputsToRules();
-            customRules[idx].color = colorName;
-            openCustomModal(); 
-        }
-
-        function closeCustomModal() {
-            document.getElementById('customModalOverlay').style.display = 'none';
-        }
-
+        function closeCustomModal() { document.getElementById('customModalOverlay').style.display = 'none'; }
         function saveCustomRules() {
-            syncInputsToRules();
-            currentSystem = 'custom';
-            document.querySelectorAll('.system-btn').forEach(b => b.classList.remove('active'));
-            document.getElementById('sysBtnCustom').classList.add('active');
-            document.getElementById('modeTabsContainer').style.display = 'none';
-            document.getElementById('fixedTabsContainer').style.display = 'none';
-            
-            closeCustomModal();
-            renderTableUI();
-            updateSimBallsColors();
-            showToast("自訂顏色規則已套用！");
+            customRules.forEach((r, i) => { let e = document.getElementById(`customNums_${i}`); if (e) r.numbers = e.value; });
+            closeCustomModal(); renderTableUI(); updateSimBallsColors(); showToast("自訂顏色已套用！");
         }
 
-        function switchFixed(groupNum) {
-            currentFixedGroup = groupNum;
-            document.querySelectorAll('.fixed-btn').forEach(b => b.classList.remove('active'));
-            document.getElementById(`fixedBtn${groupNum}`).classList.add('active');
-            renderTableUI();
-            updateSimBallsColors();
-        }
-
-        function onCompoundConfirmClick() {
-            const principalInput = floorTo1Decimal(parseFloat(document.getElementById('compoundPrincipal').value));
-            const timesInput = parseInt(document.getElementById('compoundTimes').value, 10);
-            const rateInput = floorTo1Decimal(parseFloat(document.getElementById('compoundRate').value));
-
-            if (isNaN(principalInput) || principalInput <= 0) { return; }
-            if (isNaN(timesInput) || timesInput <= 0) { return; }
-            if (isNaN(rateInput)) { return; }
-
-            let currentTotal = principalInput;
-            const r = rateInput / 100;
-            const resBody = document.getElementById('compoundTableBody');
-            resBody.innerHTML = "";
-
-            for (let i = 1; i <= timesInput; i++) {
-                let profit = floorTo1Decimal(currentTotal * r);
-                currentTotal = floorTo1Decimal(currentTotal + profit);
-                let totalYield = ((currentTotal - principalInput) / principalInput) * 100;
-
-                resBody.innerHTML += `<tr>
-                    <td class="round-label">${i}</td>
-                    <td class="text-green">+${floorTo1Decimal(profit).toLocaleString(undefined, {minimumFractionDigits: 1, maximumFractionDigits: 1})}</td>
-                    <td>${floorTo1Decimal(currentTotal).toLocaleString(undefined, {minimumFractionDigits: 1, maximumFractionDigits: 1})}</td>
-                    <td>${floorTo1Decimal(totalYield).toFixed(1)}%</td>
-                </tr>`;
-            }
-            document.getElementById('compoundTableContainer').style.display = 'block';
-        }
-
-        function switchMode(val) {
-            if (currentSplit === val) return;
-            currentSplit = val;
-            document.querySelectorAll('#modeTabsContainer .mode-btn').forEach(b => b.classList.remove('active'));
-            document.getElementById(`modeBtn${val}`).classList.add('active');
-            renderTableUI();
-            updateSimBallsColors();
-        }
-
+        function switchFixed(g) { currentFixedGroup = g; document.querySelectorAll('.fixed-btn').forEach(b => b.classList.remove('active')); document.getElementById(`fixedBtn${g}`).classList.add('active'); renderTableUI(); updateSimBallsColors(); }
+        function switchMode(v) { if (currentSplit === v) return; currentSplit = v; document.querySelectorAll('#modeTabsContainer .mode-btn').forEach(b => b.classList.remove('active')); document.getElementById(`modeBtn${v}`).classList.add('active'); renderTableUI(); updateSimBallsColors(); }
+        
         function openCodeCountModal() { document.getElementById('codeCountModalOverlay').style.display = 'flex'; }
         function closeCodeCountModal() { document.getElementById('codeCountModalOverlay').style.display = 'none'; }
+        function selectCodeCountValue(v) { currentCodeCount = v; document.getElementById('inputCodeCountDisplay').innerText = v; document.getElementById('inputRoundDisplay').innerText = codeRoundsMap[v][0]; closeCodeCountModal(); resetCompoundState(); }
         
-        function selectCodeCountValue(val) {
-            currentCodeCount = val;
-            document.getElementById('inputCodeCountDisplay').innerText = val;
-            const validRounds = codeRoundsMap[val];
-            document.getElementById('inputRoundDisplay').innerText = validRounds[0];
-            closeCodeCountModal();
-            resetCompoundState();
-        }
-
         function openRoundModal() {
-            const grid = document.getElementById('roundOptionsGrid'); 
-            grid.innerHTML = '';
-            const validRounds = codeRoundsMap[currentCodeCount] || [4, 5, 6, 7, 8];
-            validRounds.forEach(r => {
-                grid.innerHTML += `<div class="round-option-item" onclick="selectRoundValue(${r})">${r}</div>`;
-            });
+            document.getElementById('roundOptionsGrid').innerHTML = (codeRoundsMap[currentCodeCount] || [4,5,6,7,8]).map(r => `<div class="round-option-item" onclick="document.getElementById('inputRoundDisplay').innerText=${r}; closeRoundModal(); resetCompoundState();">${r}</div>`).join('');
             document.getElementById('roundModalOverlay').style.display = 'flex';
         }
         function closeRoundModal() { document.getElementById('roundModalOverlay').style.display = 'none'; }
-        function selectRoundValue(val) { 
-            document.getElementById('inputRoundDisplay').innerText = val; 
-            closeRoundModal(); 
-            resetCompoundState();
-        }
         
-        function copyAmount(txt, raw) {
-            navigator.clipboard.writeText(raw.toString()).then(() => showToast(`已複製：${txt}`));
-        }
-        function showToast(msg) {
-            const t = document.getElementById('toastMsg'); t.innerText = msg; t.style.display = 'block';
-            setTimeout(() => t.style.display = 'none', 1800);
-        }
+        function copyAmount(txt, raw) { navigator.clipboard.writeText(raw.toString()).then(() => showToast(`已複製：${txt}`)); }
+        function showToast(msg) { const t = document.getElementById('toastMsg'); t.innerText = msg; t.style.display = 'block'; setTimeout(() => t.style.display = 'none', 1800); }
 
-        // 嚴格依指定比例遞推，並使用 第一關數字 * 對應乘數 計算獲利
         function onConfirmClick(isFromCompound = false) {
-            const amtInput = floorToInt(parseFloat(document.getElementById('inputAmount').value));
-            const rndInput = document.getElementById('inputRoundDisplay').innerText;
-            const codeCount = currentCodeCount;
+            const amtInput = floorToInt(parseFloat(document.getElementById('inputAmount').value)), r = parseInt(document.getElementById('inputRoundDisplay').innerText, 10), rate = growthRates[currentCodeCount] || 1.448;
+            if (isNaN(amtInput) || amtInput <= 0) return;
 
-            if (isNaN(amtInput) || amtInput <= 0) { return; }
-            if (!rndInput) { return; }
-            const r = parseInt(rndInput, 10);
-            const rate = growthRates[codeCount] || 1.448;
-
-            let bestM1 = 1;
-            let finalAmounts = [];
-            let totalCost = 0;
-
-            let low = 1, high = amtInput;
-            while (low <= high) {
-                let m1 = Math.floor((low + high) / 2);
-                let testAmounts = [m1];
-                let cumulativeCost = m1 * codeCount;
-
+            let bestM1 = 1, finalAmounts = [];
+            for (let low = 1, high = amtInput; low <= high;) {
+                let m1 = Math.floor((low + high) / 2), testAmounts = [m1], cost = m1 * currentCodeCount;
                 for (let i = 1; i < r; i++) {
-                    let nextM = floorToInt(testAmounts[i - 1] * rate);
-                    if (nextM <= testAmounts[i - 1]) nextM = testAmounts[i - 1] + 1;
-                    testAmounts.push(nextM);
-                    cumulativeCost += nextM * codeCount;
+                    let nextM = floorToInt(testAmounts[i-1] * rate);
+                    testAmounts.push(nextM <= testAmounts[i-1] ? testAmounts[i-1] + 1 : nextM);
+                    cost += testAmounts[i] * currentCodeCount;
                 }
-
-                if (cumulativeCost <= amtInput) {
-                    bestM1 = m1;
-                    finalAmounts = testAmounts;
-                    totalCost = cumulativeCost;
-                    low = m1 + 1;
-                } else {
-                    high = m1 - 1;
-                }
+                if (cost <= amtInput) { bestM1 = m1; finalAmounts = testAmounts; low = m1 + 1; } else high = m1 - 1;
             }
+            if (!finalAmounts.length) finalAmounts = [1];
 
-            if (finalAmounts.length === 0) {
-                let m1 = 1;
-                let testAmounts = [m1];
-                let cumulativeCost = m1 * codeCount;
-                for (let i = 1; i < r; i++) {
-                    let nextM = floorToInt(testAmounts[i - 1] * rate);
-                    if (nextM <= testAmounts[i - 1]) nextM = testAmounts[i - 1] + 1;
-                    testAmounts.push(nextM);
-                    cumulativeCost += nextM * codeCount;
-                }
-                finalAmounts = testAmounts;
-                totalCost = cumulativeCost;
-            }
-
-            // 根據指定公式計算獲利：第一關數字 * 對應倍數
-            let firstM = finalAmounts[0];
-            let mult = profitMultipliers[codeCount] || 6.7;
-            let finalProfit = floorToInt(firstM * mult);
-
-            const resBody = document.getElementById('resultTableBody'); 
-            resBody.innerHTML = "";
+            let finalProfit = floorToInt(finalAmounts[0] * (profitMultipliers[currentCodeCount] || 6.7));
+            document.getElementById('resultTableBody').innerHTML = finalAmounts.map((amt, i) => i === 0 ? 
+                `<tr><td class="round-label">${chineseRounds[i]}</td><td class="copyable-amount" onclick="copyAmount('${amt.toLocaleString()}',${amt})">${amt.toLocaleString()}</td><td class="profit-val" rowspan="${r}">${finalProfit.toLocaleString()}</td></tr>` :
+                `<tr><td class="round-label">${chineseRounds[i]}</td><td class="copyable-amount" onclick="copyAmount('${amt.toLocaleString()}',${amt})">${amt.toLocaleString()}</td></tr>`
+            ).join('');
             
-            for (let i = 0; i < r; i++) {
-                let raw = floorToInt(finalAmounts[i]);
-                let fmt = raw.toLocaleString();
-                resBody.innerHTML += i === 0 ? 
-                    `<tr><td class="round-label">${chineseRounds[i]}</td><td class="copyable-amount" onclick="copyAmount('${fmt}',${raw})">${fmt}</td><td class="profit-val" rowspan="${r}">${floorToInt(finalProfit).toLocaleString()}</td></tr>` : 
-                    `<tr><td class="round-label">${chineseRounds[i]}</td><td class="copyable-amount" onclick="copyAmount('${fmt}',${raw})">${fmt}</td></tr>`;
-            }
             document.getElementById('resultTableContainer').style.display = 'block';
-
-            isTableCalculated = true;
-            lastCalculatedProfit = finalProfit;
-            if (!isFromCompound) {
-                compoundClickCount = 0;
-                const pillBtn = document.getElementById('compoundPillBtn');
-                pillBtn.innerText = '複利';
-            }
+            isTableCalculated = true; lastCalculatedProfit = finalProfit;
+            if (!isFromCompound) { compoundClickCount = 0; document.getElementById('compoundPillBtn').innerText = '複利'; }
             document.getElementById('compoundPillBtn').style.display = 'inline-block';
+        }
+
+        function onCompoundConfirmClick() {
+            const p = floorTo1Decimal(parseFloat(document.getElementById('compoundPrincipal').value)), t = parseInt(document.getElementById('compoundTimes').value, 10), r = floorTo1Decimal(parseFloat(document.getElementById('compoundRate').value)) / 100;
+            if (isNaN(p) || p <= 0 || isNaN(t)) return;
+            let cur = p;
+            document.getElementById('compoundTableBody').innerHTML = Array.from({length: t}, (_, i) => {
+                let profit = floorTo1Decimal(cur * r); cur = floorTo1Decimal(cur + profit);
+                return `<tr><td class="round-label">${i+1}</td><td class="text-green">+${profit.toLocaleString()}</td><td>${cur.toLocaleString()}</td><td>${(((cur - p) / p) * 100).toFixed(1)}%</td></tr>`;
+            }).join('');
+            document.getElementById('compoundTableContainer').style.display = 'block';
         }
 
         function switchLottery(code, name) {
             if (currentLotCode === code) return;
-            currentLotCode = code;
-            document.getElementById('lotteryTitle').innerText = name;
+            currentLotCode = code; document.getElementById('lotteryTitle').innerText = name;
             document.querySelectorAll('.tab-btn').forEach(b => b.classList.remove('active'));
             document.getElementById(`btn${code}`).classList.add('active');
             if (countdownTimer) clearInterval(countdownTimer);
-            targetEndTimeMs = 0; lastPeriodLoaded = ""; document.getElementById('timerText').innerText = '同步中...';
-            activeBetOrder = null;
-            fetchData();
+            targetEndTimeMs = 0; lastPeriodLoaded = ""; activeBetOrder = null; fetchData();
         }
 
-        function getHeadTailForPosition(past, pos, splitVal) {
+        const getHeadTailForPosition = (past, pos, splitVal) => {
             let seen = [];
             for (let item of past) {
-                const nums = item.number.replace(/\s+/g, '').split(',');
-                if (nums[pos] !== undefined) {
-                    const v = parseInt(nums[pos], 10);
-                    if (!seen.includes(v)) seen.push(v);
-                }
+                let v = parseInt(item.number.replace(/\s+/g, '').split(',')[pos], 10);
+                if (!isNaN(v) && !seen.includes(v)) seen.push(v);
                 if (seen.length === 10) break;
             }
             return { headList: seen.slice(0, splitVal), tailList: seen.slice(splitVal, 10) };
-        }
+        };
 
-        function getHotColdListForPosition(past, pos) {
+        const getHotColdListForPosition = (past, pos) => {
             let seen = [];
             for (let item of past) {
-                const nums = item.number.replace(/\s+/g, '').split(',');
-                if (nums[pos] !== undefined) {
-                    const v = parseInt(nums[pos], 10);
-                    if (!seen.includes(v)) seen.push(v);
-                }
+                let v = parseInt(item.number.replace(/\s+/g, '').split(',')[pos], 10);
+                if (!isNaN(v) && !seen.includes(v)) seen.push(v);
                 if (seen.length === 10) break;
             }
-            for (let i = 1; i <= 10; i++) {
-                if (!seen.includes(i)) seen.push(i);
-            }
+            for (let i = 1; i <= 10; i++) if (!seen.includes(i)) seen.push(i);
             return { hot: seen.slice(0, 3), warm: seen.slice(3, 7), cold: seen.slice(7, 10) };
-        }
-
-        function getCellColor(rowItem, rowIndex, posVal, splitVal) {
-            let pastData = globalFullData.slice(rowIndex + 1);
-            if (pastData.length === 0) return 'blue';
-            let { headList } = getHeadTailForPosition(pastData, posVal, splitVal);
-            let nums = rowItem.number.replace(/\s+/g, '').split(',');
-            let val = parseInt(nums[posVal], 10);
-            return new Set(headList).has(val) ? 'green' : 'red';
-        }
+        };
 
         function showPositionModal(pos, title) {
             if (!globalFullData.length || currentMainTab === 'signal') return;
-            const modalBox = document.getElementById('modalContentBox');
-            
+            const box = document.getElementById('modalContentBox');
             if (currentSystem === 'hotcold') {
                 const { hot, warm, cold } = getHotColdListForPosition(globalFullData, pos);
-                document.getElementById('modalTitle').innerText = `【${title}】冷溫熱分佈`;
-                modalBox.innerHTML = `
-                    <div style="color:#dc2626; margin-bottom:4px;">🔴 熱號 (前3) : ${hot.join(' . ')} 號</div>
-                    <div style="color:#d97706; margin-bottom:4px;">🟡 溫號 (中4) : ${warm.join(' . ')} 號</div>
-                    <div style="color:#2563eb;">🔵 冷號 (後3) : ${cold.join(' . ')} 號</div>
-                `;
-            } else if (currentSystem === 'custom') {
-                document.getElementById('modalTitle').innerText = `【${title}】自訂模式設定中`;
-                modalBox.innerHTML = `<div style="color:#0284c7; text-align:center;">目前為自訂顏色顯示模式，點擊上方【自訂】按鈕可隨時修改規則。</div>`;
-            } else if (currentSystem === 'fixed' || currentSystem === 'size') {
-                return;
-            } else {
+                document.getElementById('modalTitle').innerText = `【${title}】冷溫熱`;
+                box.innerHTML = `<div class="text-red">熱: ${hot.join('.')}</div><div style="color:#d97706;">溫: ${warm.join('.')}</div><div class="text-green">冷: ${cold.join('.')}</div>`;
+            } else if (currentSystem !== 'fixed' && currentSystem !== 'size' && currentSystem !== 'custom') {
                 const { headList, tailList } = getHeadTailForPosition(globalFullData, pos, currentSplit);
-                document.getElementById('modalTitle').innerText = `【${title}】當前對比`;
-                
-                let baseHtml = `
-                    <div class="text-green">順 : <span id="headText">${[...headList].sort((a,b)=>a-b).join(' . ')} 號</span></div>
-                    <div class="text-red">反 : <span id="tailText">${[...tailList].sort((a,b)=>a-b).join(' . ')} 號</span></div>
-                `;
-
-                if (currentSystem === 'standard' && currentSplit === 5) {
-                    let topItem = globalFullData[0];
-                    let topNums = topItem.number.replace(/\s+/g, '').split(',');
-                    let targetNum = parseInt(topNums[pos], 10);
-
-                    let pastRows = globalFullData.slice(1, 4); 
-                    let coloredParts = [];
-
-                    pastRows.forEach((row, rowOffset) => {
-                        let actualRowIdx = rowOffset + 1; 
-                        let rNums = row.number.replace(/\s+/g, '').split(',');
-                        let foundRankIdx = -1;
-
-                        for (let r = 0; r < rNums.length; r++) {
-                            if (parseInt(rNums[r], 10) === targetNum) {
-                                foundRankIdx = r;
-                                break;
-                            }
-                        }
-
-                        if (foundRankIdx !== -1) {
-                            let prevRowItem = globalFullData[actualRowIdx - 1];
-                            let c = getCellColor(prevRowItem, actualRowIdx - 1, foundRankIdx, currentSplit);
-                            if (c === 'green') coloredParts.push(`<span style="color: #10b981; font-weight: 700;">綠</span>`);
-                            else coloredParts.push(`<span style="color: #ef4444; font-weight: 700;">紅</span>`);
-                        } else {
-                            coloredParts.push(`<span style="color: #64748b; font-weight: 700;">無</span>`);
-                        }
-                    });
-
-                    baseHtml += `
-                        <div style="margin-top:8px; border-top:1px dashed #cbd5e1; padding-top:6px; font-size:11.5px; color:#0f172a;">
-                            <div style="color: #0ea5e9; font-weight:700; margin-bottom:2px;">【林林專屬】</div>
-                            <div>當前號碼 : ${targetNum}</div>
-                            <div>前三期數據 : ${coloredParts.join('、')}</div>
-                        </div>
-                    `;
-                }
-                modalBox.innerHTML = baseHtml;
-            }
+                document.getElementById('modalTitle').innerText = `【${title}】順反`;
+                box.innerHTML = `<div class="text-green">順: ${headList.sort((a,b)=>a-b).join('.')}</div><div class="text-red">反: ${tailList.sort((a,b)=>a-b).join('.')}</div>`;
+            } else return;
             document.getElementById('modalOverlay').style.display = 'flex';
         }
-
         function closeModalDirect() { document.getElementById('modalOverlay').style.display = 'none'; }
-        
+
         function startCountdown() {
             if (countdownTimer) clearInterval(countdownTimer);
             countdownTimer = setInterval(() => {
-                const rem = Math.floor((targetEndTimeMs - Date.now()) / 1000), el = document.getElementById('timerText');
-                const threshold = (currentLotCode === '10035') ? 15 : 80;
-                
-                if (rem > threshold) {
-                    const c = rem - threshold;
-                    isDrawState = false;
-                    el.className = "timer-highlight";
-                    el.innerText = `⏳ 距封盤: ${String(Math.floor(c/60)).padStart(2,'0')} : ${String(c%60).padStart(2,'0')}`;
+                const rem = Math.floor((targetEndTimeMs - Date.now()) / 1000), el = document.getElementById('timerText'), thresh = currentLotCode === '10035' ? 15 : 80;
+                if (rem > thresh) {
+                    isDrawState = false; el.className = "timer-highlight";
+                    el.innerText = `⏳ 距封盤: ${String(Math.floor((rem-thresh)/60)).padStart(2,'0')} : ${String((rem-thresh)%60).padStart(2,'0')}`;
                 } else if (rem > 0) {
-                    isDrawState = true;
-                    el.className = "timer-highlight red";
+                    isDrawState = true; el.className = "timer-highlight red";
                     el.innerText = `🎲 距開獎: ${String(Math.floor(rem/60)).padStart(2,'0')} : ${String(rem%60).padStart(2,'0')}`;
                 } else {
-                    isDrawState = true;
-                    el.className = "timer-highlight red"; 
-                    el.innerText = `🎰 開獎中...`; 
-                    fetchData();
+                    isDrawState = true; el.className = "timer-highlight red"; el.innerText = `🎰 開獎中...`; fetchData();
                 }
                 updateSubmitButtonState();
             }, 1000);
         }
 
         function renderTableUI() {
-            const tb = document.getElementById('tableBody'); if (!globalFullData.length) return;
-            tb.innerHTML = "";
-            
-            if (currentMainTab === 'signal') return;
-
-            globalFullData.slice(0, 6).forEach((item, idx) => {
+            const tb = document.getElementById('tableBody');
+            if (!globalFullData.length || currentMainTab === 'signal') return;
+            tb.innerHTML = globalFullData.slice(0, 6).map((item, idx) => {
                 const past = globalFullData.slice(idx + 1), nums = item.number.replace(/\s+/g, '').split(',');
                 const boxes = nums.map((n, p) => {
-                    const val = parseInt(n, 10); let cls = 'blue'; let textColorClass = '';
-                    
+                    let val = parseInt(n, 10), cls = 'blue';
                     if (currentSystem === 'custom') {
-                        cls = 'blue';
                         for (let rule of customRules) {
-                            if (!rule.numbers.trim()) continue;
-                            let matchNums = rule.numbers.replace(/[,，]/g, ' ').split(/\s+/).map(s => parseInt(s.trim(), 10)).filter(n => !isNaN(n));
-                            if (matchNums.includes(val)) {
-                                cls = rule.color;
-                                break;
-                            }
+                            if (rule.numbers.replace(/[,，]/g, ' ').split(/\s+/).map(Number).includes(val)) { cls = rule.color; break; }
                         }
-                    } else if (currentSystem === 'fixed') {
-                        if (currentFixedGroup === 1 && (val === 8 || val === 9 || val === 10)) cls = 'red';
-                        else if (currentFixedGroup === 2 && (val === 1 || val === 9 || val === 10)) cls = 'red';
-                        else if (currentFixedGroup === 3 && (val === 1 || val === 2 || val === 10)) cls = 'red';
-                        else if (currentFixedGroup === 4 && (val === 1 || val === 2 || val === 3)) cls = 'red';
-                        else cls = 'blue';
-                    } else if (currentSystem === 'size') {
-                        if (val >= 1 && val <= 3) cls = 'blue';
-                        else if (val >= 4 && val <= 7) cls = 'yellow';
-                        else if (val >= 8 && val <= 10) cls = 'red';
-                        else cls = 'blue';
-                        textColorClass = ' text-black';
-                    } else if (currentSystem === 'hotcold') {
-                        if (past.length > 0) {
-                            const { hot, warm, cold } = getHotColdListForPosition(past, p);
-                            if (hot.includes(val)) cls = 'hot-red';
-                            else if (warm.includes(val)) cls = 'warm-yellow';
-                            else if (cold.includes(val)) cls = 'cold-blue';
-                        } else {
-                            cls = 'blue';
-                        }
-                    } else {
-                        if (past.length > 0) {
-                            const { headList, tailList } = getHeadTailForPosition(past, p, currentSplit);
-                            if (new Set(headList).has(val)) cls = 'green';
-                            else if (new Set(tailList).has(val)) cls = 'red';
-                        }
-                    }
-                    return `<div class="num-box ${cls}${textColorClass}">${val < 10 ? '0'+val : val}</div>`;
+                    } else if (currentSystem === 'fixed') cls = ((currentFixedGroup === 1 && val >= 8) || (currentFixedGroup === 2 && (val === 1 || val >= 9)) || (currentFixedGroup === 3 && (val <= 2 || val === 10)) || (currentFixedGroup === 4 && val <= 3)) ? 'red' : 'blue';
+                    else if (currentSystem === 'size') cls = val <= 3 ? 'blue' : (val <= 7 ? 'yellow' : 'red');
+                    else if (currentSystem === 'hotcold' && past.length > 0) {
+                        const { hot, warm } = getHotColdListForPosition(past, p);
+                        cls = hot.includes(val) ? 'hot-red' : (warm.includes(val) ? 'warm-yellow' : 'cold-blue');
+                    } else if (past.length > 0) cls = new Set(getHeadTailForPosition(past, p, currentSplit).headList).has(val) ? 'green' : 'red';
+                    return `<div class="num-box ${cls}${currentSystem==='size'?' text-black':''}">${val < 10 ? '0'+val : val}</div>`;
                 }).join('');
-                tb.innerHTML += `<tr class="lottery-row"><td class="period-cell">${item.period.length > 7 ? item.period.slice(-6) : item.period}</td><td><div class="numbers-cell">${boxes}</div></td></tr>`;
-            });
+                return `<tr class="lottery-row"><td class="period-cell">${item.period.slice(-6)}</td><td><div class="numbers-cell">${boxes}</div></td></tr>`;
+            }).join('');
         }
-        
+
         async function fetchOnlineCount() {
-            try {
-                const res = await fetch('/api/online-count');
-                const data = await res.json();
-                if (data && data.online !== undefined) {
-                    document.getElementById('onlineCountVal').innerText = data.online;
-                }
-            } catch (e) {
-                console.error("獲取在線人數失敗", e);
-            }
+            try { const res = await fetch('/api/online-count'), data = await res.json(); if (data?.online !== undefined) document.getElementById('onlineCountVal').innerText = data.online; } catch(e){}
         }
 
         async function fetchData() {
             try {
                 const res = await fetch(`/api/get-lottery?lotCode=${currentLotCode}`), data = await res.json();
-                if (data && data.result && data.result.data && data.result.data.length > 0) {
-                    const newTopItem = data.result.data[0];
-                    
-                    if (globalFullData.length > 0 && newTopItem.period !== globalFullData[0].period) {
-                        checkDrawAndPayout(newTopItem);
-                    }
-
+                if (data?.result?.data?.length > 0) {
+                    if (globalFullData.length > 0 && data.result.data[0].period !== globalFullData[0].period) checkDrawAndPayout(data.result.data[0]);
                     globalFullData = data.result.data;
-                    const top = globalFullData[0].period, next = (BigInt(top) + 1n).toString();
-                    document.getElementById('nextPeriodText').innerText = `下期: ${next.length > 7 ? next.slice(-6) : next}`;
-                    if (top !== lastPeriodLoaded || targetEndTimeMs === 0) {
-                        lastPeriodLoaded = top;
+                    const next = (BigInt(globalFullData[0].period) + 1n).toString();
+                    document.getElementById('nextPeriodText').innerText = `下期: ${next.slice(-6)}`;
+                    if (globalFullData[0].period !== lastPeriodLoaded || targetEndTimeMs === 0) {
+                        lastPeriodLoaded = globalFullData[0].period;
                         if (data.remSeconds != null) { targetEndTimeMs = Date.now() + (parseInt(data.remSeconds, 10) * 1000); startCountdown(); }
                     }
-                    renderTableUI();
-                    updateSimBallsColors();
+                    renderTableUI(); updateSimBallsColors();
                     if (currentMainTab === 'signal') renderSignalTable();
                 }
-            } catch (e) { console.error(e); }
+            } catch(e){}
         }
 
-        initSimBalls();
-        fetchData(); 
-        fetchOnlineCount();
-        setInterval(fetchData, 10000);
-        setInterval(fetchOnlineCount, 5000);
+        initSimBalls(); fetchData(); fetchOnlineCount();
+        setInterval(fetchData, 10000); setInterval(fetchOnlineCount, 5000);
     </script>
 </body>
 </html>
