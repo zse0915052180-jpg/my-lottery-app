@@ -637,7 +637,7 @@
                     <button class="signal-sub-btn" id="subBtn_宗師" onclick="switchSignalSub('宗師')">宗師</button>
                     <button class="signal-sub-btn" id="subBtn_王牌" onclick="switchSignalSub('王牌')">王牌</button>
                 </div>
-                <div class="table-scroll-container" style="max-height: 245px;">
+                <div class="table-scroll-container" style="max-height: 195px;">
                     <table class="signal-table">
                         <thead>
                             <tr>
@@ -1051,7 +1051,7 @@
             tbody.innerHTML = "";
             let records = [{ period: globalFullData[0].period.slice(-6), rank: getDeterministicPrediction(globalFullData[0].period, globalFullData, currentSignalSub, currentSignalCode).rank, nums: getDeterministicPrediction(globalFullData[0].period, globalFullData, currentSignalSub, currentSignalCode).nums, status: 'waiting' }];
             
-            for (let i = 0; i < Math.min(globalFullData.length, 30); i++) {
+            for (let i = 0; i < globalFullData.length; i++) {
                 let item = globalFullData[i], pred = getDeterministicPrediction(item.period.slice(-6), globalFullData.slice(i + 1), currentSignalSub, currentSignalCode);
                 let isWin = pred.nums.includes(parseInt(item.number.replace(/\s+/g, '').split(',')[rankShortNames.indexOf(pred.rank)], 10));
                 records.push({ period: item.period.slice(-6), rank: pred.rank, nums: pred.nums, status: isWin ? 'win' : 'lose' });
@@ -1209,7 +1209,7 @@
         function renderTableUI() {
             const tb = document.getElementById('tableBody');
             if (!globalFullData.length || currentMainTab === 'signal') return;
-            tb.innerHTML = globalFullData.slice(0, 6).map((item, idx) => {
+            tb.innerHTML = globalFullData.map((item, idx) => {
                 const past = globalFullData.slice(idx + 1), nums = item.number.replace(/\s+/g, '').split(',');
                 const boxes = nums.map((n, p) => {
                     let val = parseInt(n, 10), cls = 'blue';
