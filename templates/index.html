@@ -429,10 +429,6 @@
             text-align: center;
             outline: none;
         }
-        .white-input.active-focus {
-            border-color: #0ea5e9;
-            box-shadow: 0 0 0 2px rgba(14, 165, 233, 0.2);
-        }
         .clickable-box { cursor: pointer; user-select: none; display: flex; align-items: center; justify-content: center; }
         .confirm-btn {
             height: 32px;
@@ -519,92 +515,6 @@
         .sim-action-row { display: flex; align-items: center; justify-content: space-between; gap: 6px; margin-top: 2px; }
         .sim-clear-btn { background-color: #ef4444; color: #ffffff; border: 1px solid #dc2626; padding: 0 12px; height: 32px; font-size: 11.5px; font-weight: 700; border-radius: 5px; cursor: pointer; }
         .sim-submit-btn { background-color: #10b981; color: #ffffff; border: 1px solid #059669; padding: 0 14px; height: 32px; font-size: 11.5px; font-weight: 700; border-radius: 5px; cursor: pointer; }
-
-        /* 手機專屬九宮格數字鍵盤（附即時預覽列） */
-        .custom-numpad-overlay {
-            display: none;
-            position: fixed;
-            bottom: 0;
-            left: 0;
-            width: 100%;
-            background-color: #e2e8f0;
-            border-top: 1px solid #cbd5e1;
-            z-index: 3000;
-            padding: 6px 8px 10px 8px;
-            box-shadow: 0 -4px 15px rgba(0,0,0,0.15);
-            animation: slideUpPad 0.2s ease-out;
-        }
-        @keyframes slideUpPad {
-            from { transform: translateY(100%); }
-            to { transform: translateY(0); }
-        }
-        .numpad-header {
-            display: flex;
-            justify-content: space-between;
-            align-items: center;
-            margin-bottom: 6px;
-            padding: 0 2px;
-        }
-        .numpad-preview-screen {
-            background: #ffffff;
-            border: 1px solid #cbd5e1;
-            border-radius: 4px;
-            padding: 4px 8px;
-            font-size: 14px;
-            font-weight: 700;
-            color: #0f172a;
-            flex: 1;
-            margin-right: 8px;
-            text-align: right;
-            height: 28px;
-            display: flex;
-            align-items: center;
-            justify-content: flex-end;
-        }
-        .numpad-close-btn {
-            background: #0284c7;
-            color: #fff;
-            border: none;
-            padding: 5px 14px;
-            font-size: 12px;
-            font-weight: 700;
-            border-radius: 4px;
-            cursor: pointer;
-        }
-        .numpad-grid {
-            display: grid;
-            grid-template-columns: repeat(3, 1fr);
-            gap: 6px;
-            max-width: 400px;
-            margin: 0 auto;
-        }
-        .numpad-key {
-            background-color: #ffffff;
-            border: 1px solid #cbd5e1;
-            border-radius: 6px;
-            height: 42px;
-            font-size: 18px;
-            font-weight: 700;
-            color: #0f172a;
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            cursor: pointer;
-            box-shadow: 0 1px 2px rgba(0,0,0,0.05);
-            user-select: none;
-        }
-        .numpad-key:active {
-            background-color: #bae6fd;
-            transform: scale(0.97);
-        }
-        .numpad-key.action-del {
-            background-color: #fee2e2;
-            color: #dc2626;
-        }
-        .numpad-key.action-ok {
-            background-color: #10b981;
-            color: #ffffff;
-        }
 
         .modal-overlay { display: none; position: fixed; top: 0; left: 0; width: 100%; height: 100%; background-color: rgba(0, 0, 0, 0.4); z-index: 1000; align-items: center; justify-content: center; }
         .modal-card { background-color: #ffffff; border: 1px solid #cbd5e1; border-radius: 10px; padding: 12px; width: 90%; max-width: 320px; position: relative; }
@@ -753,22 +663,22 @@
             
             <div id="simPrincipalBox" class="strategy-principal-box">
                 <span class="strategy-principal-label">$</span>
-                <input type="number" id="simPrincipalInput" class="strategy-principal-input numpad-trigger" value="10000" placeholder="本金" oninput="formatPrincipalInput(this)">
+                <input type="number" id="simPrincipalInput" class="strategy-principal-input" value="10000" placeholder="本金" oninput="formatPrincipalInput(this)">
             </div>
         </div>
 
         <div class="calculator-area">
             <div id="betCalcInputs" class="calc-input-row">
-                <div class="input-group"><span class="input-label">本金</span><input type="number" id="inputAmount" class="white-input numpad-trigger" placeholder="輸入金額" oninput="onInputAmountChange()"></div>
+                <div class="input-group"><span class="input-label">本金</span><input type="number" id="inputAmount" class="white-input" oninput="onInputAmountChange()"></div>
                 <div class="input-group"><span class="input-label">碼數</span><div id="inputCodeCountDisplay" class="white-input clickable-box" onclick="openCodeCountModal()">3</div></div>
                 <div class="input-group"><span class="input-label">關數</span><div id="inputRoundDisplay" class="white-input clickable-box" onclick="openRoundModal()">4</div></div>
                 <button class="confirm-btn" onclick="onConfirmClick()">計算</button>
             </div>
 
             <div id="compoundCalcInputs" class="calc-input-row" style="display: none;">
-                <div class="input-group"><span class="input-label">本金</span><input type="number" id="compoundPrincipal" class="white-input numpad-trigger" value="10000" oninput="formatInputFloor1(this)"></div>
-                <div class="input-group"><span class="input-label">操作次數</span><input type="number" id="compoundTimes" class="white-input numpad-trigger" value="10"></div>
-                <div class="input-group"><span class="input-label">獲利%</span><input type="number" id="compoundRate" class="white-input numpad-trigger" value="3.2" oninput="formatInputFloor1(this)"></div>
+                <div class="input-group"><span class="input-label">本金</span><input type="number" id="compoundPrincipal" class="white-input" value="10000" oninput="formatInputFloor1(this)"></div>
+                <div class="input-group"><span class="input-label">操作次數</span><input type="number" id="compoundTimes" class="white-input" value="10"></div>
+                <div class="input-group"><span class="input-label">獲利%</span><input type="number" id="compoundRate" class="white-input" value="3.2" oninput="formatInputFloor1(this)"></div>
                 <button class="confirm-btn" onclick="onCompoundConfirmClick()">計算</button>
             </div>
 
@@ -791,7 +701,7 @@
                 <div class="sim-action-row">
                     <div class="input-group" style="flex: 2;">
                         <span class="input-label">金額</span>
-                        <input type="number" id="simAmountInput" class="white-input numpad-trigger" placeholder="輸入金額" oninput="formatInputFloor1(this)">
+                        <input type="number" id="simAmountInput" class="white-input" placeholder="輸入金額" oninput="formatInputFloor1(this)">
                     </div>
                     <button class="sim-clear-btn" onclick="clearSimInput()">清除</button>
                     <button id="simSubmitBtn" class="sim-submit-btn" onclick="submitSimOrder()">確認下注</button>
@@ -814,28 +724,6 @@
         </div>
     </div>
     
-    <!-- 手機專屬九宮格數字鍵盤（附即時預覽列） -->
-    <div id="customNumpad" class="custom-numpad-overlay">
-        <div class="numpad-header">
-            <div id="numpadPreviewScreen" class="numpad-preview-screen">0</div>
-            <button class="numpad-close-btn" onclick="closeCustomNumpad()">完成</button>
-        </div>
-        <div class="numpad-grid">
-            <div class="numpad-key" onclick="numpadInput('1')">1</div>
-            <div class="numpad-key" onclick="numpadInput('2')">2</div>
-            <div class="numpad-key" onclick="numpadInput('3')">3</div>
-            <div class="numpad-key" onclick="numpadInput('4')">4</div>
-            <div class="numpad-key" onclick="numpadInput('5')">5</div>
-            <div class="numpad-key" onclick="numpadInput('6')">6</div>
-            <div class="numpad-key" onclick="numpadInput('7')">7</div>
-            <div class="numpad-key" onclick="numpadInput('8')">8</div>
-            <div class="numpad-key" onclick="numpadInput('9')">9</div>
-            <div class="numpad-key" onclick="numpadInput('.')">.</div>
-            <div class="numpad-key" onclick="numpadInput('0')">0</div>
-            <div class="numpad-key action-del" onclick="numpadDelete()">⌫</div>
-        </div>
-    </div>
-
     <div id="toastMsg" class="toast-msg"></div>
     <div id="modalOverlay" class="modal-overlay" onclick="closeModalDirect()">
         <div class="modal-card" onclick="event.stopPropagation()">
@@ -887,75 +775,10 @@
         let compoundClickCount = 0, lastCalculatedProfit = 0, isTableCalculated = false;
         let customRules = [{numbers:"", color:"red"}, {numbers:"", color:"green"}, {numbers:"", color:"blue"}, {numbers:"", color:"yellow"}];
 
-        // 判斷是否為行動裝置
-        const isMobileDevice = () => /Android|webOS|iPhone|iPad|iPod|BlackBerry|IEMobile|Opera Mini/i.test(navigator.userAgent) || window.innerWidth <= 768;
-
-        let activeNumpadInput = null;
-
-        // 綁定所有數字輸入框的點擊事件（電腦維持原生實體鍵盤，手機彈出九宮格）
-        document.addEventListener("DOMContentLoaded", () => {
-            document.querySelectorAll('.numpad-trigger').forEach(input => {
-                input.addEventListener('focus', (e) => {
-                    if (isMobileDevice()) {
-                        e.preventDefault(); // 阻止手機原生鍵盤彈出
-                        openCustomNumpad(input);
-                    }
-                });
-                input.addEventListener('click', (e) => {
-                    if (isMobileDevice()) {
-                        e.preventDefault();
-                        openCustomNumpad(input);
-                    }
-                });
-            });
-        });
-
-        function openCustomNumpad(inputElem) {
-            document.querySelectorAll('.numpad-trigger').forEach(el => el.classList.remove('active-focus'));
-            activeNumpadInput = inputElem;
-            activeNumpadInput.classList.add('active-focus');
-            
-            // 同步預覽列數值
-            document.getElementById('numpadPreviewScreen').innerText = activeNumpadInput.value || "0";
-            document.getElementById('customNumpad').style.display = 'block';
-        }
-
-        function closeCustomNumpad() {
-            if (activeNumpadInput) {
-                activeNumpadInput.classList.remove('active-focus');
-                if (activeNumpadInput.id === 'inputAmount') onInputAmountChange();
-                activeNumpadInput = null;
-            }
-            document.getElementById('customNumpad').style.display = 'none';
-        }
-
-        function numpadInput(val) {
-            if (!activeNumpadInput) return;
-            let currentVal = activeNumpadInput.value;
-            if (val === '.' && currentVal.includes('.')) return;
-            activeNumpadInput.value = currentVal + val;
-            
-            // 更新即時預覽列
-            document.getElementById('numpadPreviewScreen').innerText = activeNumpadInput.value;
-
-            if (activeNumpadInput.id === 'inputAmount') onInputAmountChange();
-        }
-
-        function numpadDelete() {
-            if (!activeNumpadInput) return;
-            let currentVal = activeNumpadInput.value;
-            activeNumpadInput.value = currentVal.slice(0, -1);
-            
-            // 更新即時預覽列
-            document.getElementById('numpadPreviewScreen').innerText = activeNumpadInput.value || "0";
-
-            if (activeNumpadInput.id === 'inputAmount') onInputAmountChange();
-        }
-
         const musicPlaylist = [
             { id: '_LbQyPyup24', title: '狂飆腎上腺素欲罷不能的旋律', artist: '台灣夜店DJ舞曲' },
             { id: '82Blqjragi0', title: '觸電般的靈魂震盪快感', artist: '台灣夜店DJ舞曲' },
-            { id: '7i9nOQbVA2E', title: '夜驾见听 Rap EDM 2026', artist: 'Rap EDM' },
+            { id: '7i9nOQbVA2E', title: '夜驾必听 Rap EDM 2026', artist: 'Rap EDM' },
             { id: 'K3WjeYMKqHw', title: '戴上耳機徹底淪陷的魔性旋律', artist: 'EDM夜色' },
             { id: '9sBsNG5rJ8Y', title: '2026全中文舞曲串燒', artist: '臺灣REMIX HUB' }
         ];
@@ -1153,7 +976,6 @@
 
         function switchStrategy(type) {
             currentStrategy = type;
-            closeCustomNumpad();
             document.querySelectorAll('.strategy-btn').forEach(b => b.classList.remove('active'));
             ['betCalcInputs', 'compoundCalcInputs', 'simOperationPanel', 'resultTableContainer', 'compoundTableContainer'].forEach(id => document.getElementById(id).style.display = 'none');
             document.getElementById('simPrincipalBox').classList.remove('show');
@@ -1180,7 +1002,6 @@
 
         function switchMainTab(tab) {
             currentMainTab = tab;
-            closeCustomNumpad();
             document.getElementById('mainNavRoute').className = 'main-nav-btn' + (tab === 'route' ? ' active-route' : '');
             document.getElementById('mainNavSignal').className = 'main-nav-btn' + (tab === 'signal' ? ' active-signal' : '');
             
@@ -1270,12 +1091,11 @@
         function switchFixed(g) { currentFixedGroup = g; document.querySelectorAll('.fixed-btn').forEach(b => b.classList.remove('active')); document.getElementById(`fixedBtn${g}`).classList.add('active'); renderTableUI(); updateSimBallsColors(); }
         function switchMode(v) { if (currentSplit === v) return; currentSplit = v; document.querySelectorAll('#modeTabsContainer .mode-btn').forEach(b => b.classList.remove('active')); document.getElementById(`modeBtn${v}`).classList.add('active'); renderTableUI(); updateSimBallsColors(); }
         
-        function openCodeCountModal() { closeCustomNumpad(); document.getElementById('codeCountModalOverlay').style.display = 'flex'; }
+        function openCodeCountModal() { document.getElementById('codeCountModalOverlay').style.display = 'flex'; }
         function closeCodeCountModal() { document.getElementById('codeCountModalOverlay').style.display = 'none'; }
         function selectCodeCountValue(v) { currentCodeCount = v; document.getElementById('inputCodeCountDisplay').innerText = v; document.getElementById('inputRoundDisplay').innerText = codeRoundsMap[v][0]; closeCodeCountModal(); resetCompoundState(); }
         
         function openRoundModal() {
-            closeCustomNumpad();
             document.getElementById('roundOptionsGrid').innerHTML = (codeRoundsMap[currentCodeCount] || [4,5,6,7,8]).map(r => `<div class="round-option-item" onclick="document.getElementById('inputRoundDisplay').innerText=${r}; closeRoundModal(); resetCompoundState();">${r}</div>`).join('');
             document.getElementById('roundModalOverlay').style.display = 'flex';
         }
@@ -1285,7 +1105,6 @@
         function showToast(msg) { const t = document.getElementById('toastMsg'); t.innerText = msg; t.style.display = 'block'; setTimeout(() => t.style.display = 'none', 1800); }
 
         function onConfirmClick(isFromCompound = false) {
-            closeCustomNumpad();
             const amtInput = floorToInt(parseFloat(document.getElementById('inputAmount').value)), r = parseInt(document.getElementById('inputRoundDisplay').innerText, 10), rate = growthRates[currentCodeCount] || 1.448;
             if (isNaN(amtInput) || amtInput <= 0) return;
 
@@ -1314,7 +1133,6 @@
         }
 
         function onCompoundConfirmClick() {
-            closeCustomNumpad();
             const p = floorTo1Decimal(parseFloat(document.getElementById('compoundPrincipal').value)), t = parseInt(document.getElementById('compoundTimes').value, 10), r = floorTo1Decimal(parseFloat(document.getElementById('compoundRate').value)) / 100;
             if (isNaN(p) || p <= 0 || isNaN(t)) return;
             let cur = p;
@@ -1327,7 +1145,6 @@
 
         function switchLottery(code, name) {
             if (currentLotCode === code) return;
-            closeCustomNumpad();
             currentLotCode = code; document.getElementById('lotteryTitle').innerText = name;
             document.querySelectorAll('.tab-btn').forEach(b => b.classList.remove('active'));
             document.getElementById(`btn${code}`).classList.add('active');
@@ -1358,7 +1175,6 @@
 
         function showPositionModal(pos, title) {
             if (!globalFullData.length || currentMainTab === 'signal') return;
-            closeCustomNumpad();
             const box = document.getElementById('modalContentBox');
             if (currentSystem === 'hotcold') {
                 const { hot, warm, cold } = getHotColdListForPosition(globalFullData, pos);
@@ -1436,8 +1252,7 @@
         }
 
         initSimBalls(); fetchData(); fetchOnlineCount();
-        setInterval(fetchData, 10000);
-        setInterval(fetchOnlineCount, 5000);
+        setInterval(fetchData, 10000); setInterval(fetchOnlineCount, 5000);
     </script>
 </body>
 </html>
