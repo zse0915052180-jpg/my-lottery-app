@@ -342,7 +342,7 @@
         }
         .rank-header-item:active { background-color: #bae6fd; }
         .table-scroll-container {
-            max-height: 295px;
+            max-height: 195px;
             overflow-y: auto;
             border-radius: 4px;
         }
@@ -2007,7 +2007,7 @@
             
             if (currentMainTab === 'signal') return;
 
-            globalFullData.slice(0, 30).forEach((item, idx) => {
+            globalFullData.slice(0, 6).forEach((item, idx) => {
                 const past = globalFullData.slice(idx + 1), nums = item.number.replace(/\s+/g, '').split(',');
                 const boxes = nums.map((n, p) => {
                     const val = parseInt(n, 10); let cls = 'blue'; let textColorClass = '';
