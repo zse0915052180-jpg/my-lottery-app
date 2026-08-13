@@ -10,7 +10,7 @@
             font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Arial, sans-serif;
             background-color: #f1f5f9;
             color: #334155;
-            padding: 8px 4px 60px 4px; /* 底部保留空間給導覽列 */
+            padding: 8px 4px 60px 4px;
         }
         .container {
             width: 100%;
@@ -75,13 +75,8 @@
             border-radius: 50%;
             transition: transform 0.2s;
         }
-        .music-btn.playing {
-            animation: pulseNote 0.8s infinite alternate;
-        }
-        @keyframes pulseNote {
-            0% { transform: scale(1); }
-            100% { transform: scale(1.2); }
-        }
+        .music-btn.playing { animation: pulseNote 0.8s infinite alternate; }
+        @keyframes pulseNote { 0% { transform: scale(1); } 100% { transform: scale(1.2); } }
         .marquee-container {
             width: 80px;
             overflow: hidden;
@@ -92,26 +87,11 @@
             display: none;
             margin-left: 2px;
         }
-        .music-control-area.playing .marquee-container {
-            display: block;
-        }
-        .marquee-text {
-            display: inline-block;
-            padding-left: 100%;
-            animation: marqueeScroll 8s linear infinite;
-        }
-        @keyframes marqueeScroll {
-            0% { transform: translate(0, 0); }
-            100% { transform: translate(-100%, 0); }
-        }
+        .music-control-area.playing .marquee-container { display: block; }
+        .marquee-text { display: inline-block; padding-left: 100%; animation: marqueeScroll 8s linear infinite; }
+        @keyframes marqueeScroll { 0% { transform: translate(0, 0); } 100% { transform: translate(-100%, 0); } }
 
-        .title-right-group {
-            display: flex;
-            align-items: center;
-            gap: 4px;
-            flex-shrink: 0;
-        }
-
+        .title-right-group { display: flex; align-items: center; gap: 4px; flex-shrink: 0; }
         .online-badge {
             background: #f8fafc;
             border: 1px solid #cbd5e1;
@@ -125,9 +105,7 @@
             align-items: center;
             gap: 2px;
         }
-        .online-badge span {
-            color: #10b981;
-        }
+        .online-badge span { color: #10b981; }
 
         .lottery-tabs { display: flex; gap: 3px; flex-shrink: 0; }
         .tab-btn {
@@ -263,13 +241,7 @@
             box-shadow: 0 2px 4px rgba(250, 204, 21, 0.25);
         }
 
-        .mode-tabs {
-            display: flex;
-            gap: 4px;
-            justify-content: center;
-            flex-wrap: wrap; 
-            margin-bottom: 6px;
-        }
+        .mode-tabs { display: flex; gap: 4px; justify-content: center; flex-wrap: wrap; margin-bottom: 6px; }
         .mode-btn {
             background-color: #ffffff;
             color: #475569;
@@ -280,19 +252,9 @@
             border-radius: 4px;
             cursor: pointer;
         }
-        .mode-btn.active {
-            background-color: #d97706;
-            color: #ffffff;
-            border-color: #b45309;
-        }
+        .mode-btn.active { background-color: #d97706; color: #ffffff; border-color: #b45309; }
 
-        .fixed-tabs {
-            display: none;
-            gap: 4px;
-            justify-content: center;
-            flex-wrap: wrap;
-            margin-bottom: 6px;
-        }
+        .fixed-tabs { display: none; gap: 4px; justify-content: center; flex-wrap: wrap; margin-bottom: 6px; }
         .fixed-btn {
             background-color: #ffffff;
             color: #475569;
@@ -303,11 +265,7 @@
             border-radius: 4px;
             cursor: pointer;
         }
-        .fixed-btn.active {
-            background-color: #0284c7;
-            color: #ffffff;
-            border-color: #0369a1;
-        }
+        .fixed-btn.active { background-color: #0284c7; color: #ffffff; border-color: #0369a1; }
 
         .countdown-box {
             display: flex;
@@ -341,11 +299,7 @@
             border: 1px solid #bae6fd;
         }
         .rank-header-item:active { background-color: #bae6fd; }
-        .table-scroll-container {
-            max-height: 180px;
-            overflow-y: auto;
-            border-radius: 4px;
-        }
+        .table-scroll-container { max-height: 180px; overflow-y: auto; border-radius: 4px; }
         .table-scroll-container::-webkit-scrollbar { width: 3px; }
         .table-scroll-container::-webkit-scrollbar-thumb { background: #cbd5e1; border-radius: 3px; }
         .lottery-row { background-color: #ffffff; }
@@ -391,12 +345,7 @@
             justify-content: space-between;
             gap: 6px;
         }
-        .strategy-buttons-group {
-            display: flex;
-            gap: 6px;
-            overflow-x: auto;
-            align-items: center;
-        }
+        .strategy-buttons-group { display: flex; gap: 6px; overflow-x: auto; align-items: center; }
         .strategy-btn {
             background-color: #ffffff;
             color: #475569;
@@ -430,13 +379,8 @@
             box-shadow: 0 1px 2px rgba(0,0,0,0.05);
             display: none;
         }
-        .compound-pill-btn.show {
-            display: inline-block;
-        }
-        .compound-pill-btn:active {
-            transform: scale(0.95);
-            background-color: #bae6fd;
-        }
+        .compound-pill-btn.show { display: inline-block; }
+        .compound-pill-btn:active { transform: scale(0.95); background-color: #bae6fd; }
 
         .strategy-principal-box {
             display: none;
@@ -448,14 +392,8 @@
             padding: 2px 6px;
             flex-shrink: 0;
         }
-        .strategy-principal-box.show {
-            display: flex;
-        }
-        .strategy-principal-label {
-            font-size: 13px;
-            font-weight: 800;
-            color: #0284c7;
-        }
+        .strategy-principal-box.show { display: flex; }
+        .strategy-principal-label { font-size: 13px; font-weight: 800; color: #0284c7; }
         .strategy-principal-input {
             width: 75px;
             height: 26px;
@@ -493,19 +431,10 @@
             text-align: center;
             outline: none;
         }
-        .white-input::placeholder {
-            color: #94a3b8;
-            font-weight: 400;
-            font-size: 11px;
-        }
+        .white-input::placeholder { color: #94a3b8; font-weight: 400; font-size: 11px; }
         input[type=number]::-webkit-inner-spin-button, 
-        input[type=number]::-webkit-outer-spin-button { 
-            -webkit-appearance: none; 
-            margin: 0; 
-        }
-        input[type=number] {
-            -moz-appearance: textfield;
-        }
+        input[type=number]::-webkit-outer-spin-button { -webkit-appearance: none; margin: 0; }
+        input[type=number] { -moz-appearance: textfield; }
 
         .clickable-box { cursor: pointer; user-select: none; display: flex; align-items: center; justify-content: center; }
         .confirm-btn {
@@ -522,17 +451,8 @@
             box-shadow: 0 2px 4px rgba(16, 185, 129, 0.3);
             transition: transform 0.1s ease, background-color 0.1s ease, box-shadow 0.1s ease;
         }
-        .confirm-btn:active {
-            transform: scale(0.93);
-            background-color: #059669;
-            box-shadow: inset 0 2px 4px rgba(0, 0, 0, 0.2);
-        }
-        .confirm-btn.locked {
-            background-color: #059669 !important;
-            opacity: 0.45;
-            cursor: not-allowed;
-            box-shadow: none;
-        }
+        .confirm-btn:active { transform: scale(0.93); background-color: #059669; box-shadow: inset 0 2px 4px rgba(0, 0, 0, 0.2); }
+        .confirm-btn.locked { background-color: #059669 !important; opacity: 0.45; cursor: not-allowed; box-shadow: none; }
 
         .result-table-container { display: none; margin-top: 4px; border-radius: 6px; overflow: hidden; border: 1px solid #cbd5e1; }
         .calc-table { width: 100%; border-collapse: collapse; text-align: center; font-size: 12px; }
@@ -575,13 +495,7 @@
             box-shadow: 0 2px 4px rgba(14, 165, 233, 0.3);
         }
 
-        .sim-balls-grid {
-            display: grid;
-            grid-template-columns: repeat(5, 1fr);
-            gap: 6px 12px;
-            padding: 2px 2px;
-            justify-items: center;
-        }
+        .sim-balls-grid { display: grid; grid-template-columns: repeat(5, 1fr); gap: 6px 12px; padding: 2px 2px; justify-items: center; }
         .sim-ball-item {
             width: 42px;
             height: 42px;
@@ -598,11 +512,7 @@
             transition: all 0.2s ease;
         }
         .sim-ball-item:active { transform: scale(0.92); }
-        .simulation-panel.has-selection .sim-ball-item:not(.selected) {
-            opacity: 0.25;
-            box-shadow: none;
-            filter: grayscale(40%);
-        }
+        .simulation-panel.has-selection .sim-ball-item:not(.selected) { opacity: 0.25; box-shadow: none; filter: grayscale(40%); }
         .sim-ball-item.selected {
             border-color: #0ea5e9;
             box-shadow: 0 0 8px rgba(14, 165, 233, 0.8), 0 2px 4px rgba(0,0,0,0.2);
@@ -713,20 +623,22 @@
             padding: 10px;
             margin-bottom: 10px;
         }
-        .record-stats-row {
-            display: flex;
-            justify-content: space-between;
+        .record-stats-grid {
+            display: grid;
+            grid-template-columns: repeat(3, 1fr);
+            gap: 6px;
             background: #0f172a;
             color: #fff;
-            padding: 10px 12px;
+            padding: 8px;
             border-radius: 6px;
             margin-bottom: 8px;
-            font-size: 12px;
+            font-size: 11px;
             font-weight: 700;
+            text-align: center;
         }
         .record-stats-item span {
             display: block;
-            font-size: 14px;
+            font-size: 12.5px;
             margin-top: 2px;
         }
         .record-form-row {
@@ -739,14 +651,13 @@
             background: #ffffff;
             border: 1px solid #cbd5e1;
             border-radius: 6px;
-            font-size: 13px;
+            font-size: 12px;
             font-weight: 700;
             color: #0f172a;
             padding: 0 6px;
             outline: none;
+            flex: 1;
         }
-        .record-select { flex: 1; }
-        .record-input { flex: 2; }
         .record-add-btn {
             width: 100%;
             height: 34px;
@@ -761,18 +672,18 @@
         .record-list-table {
             width: 100%;
             border-collapse: collapse;
-            font-size: 12px;
+            font-size: 11.5px;
             background: #fff;
         }
         .record-list-table th {
             background-color: #f1f5f9;
             color: #0284c7;
-            padding: 6px;
+            padding: 6px 2px;
             border-bottom: 2px solid #cbd5e1;
             text-align: center;
         }
         .record-list-table td {
-            padding: 6px;
+            padding: 6px 2px;
             border-bottom: 1px solid #e2e8f0;
             text-align: center;
             font-weight: 700;
@@ -782,10 +693,10 @@
             background: #ef4444;
             color: white;
             border: none;
-            padding: 2px 8px;
+            padding: 2px 6px;
             border-radius: 4px;
             cursor: pointer;
-            font-size: 11px;
+            font-size: 10px;
         }
     </style>
 </head>
@@ -980,42 +891,48 @@
             </div>
         </div>
 
-        <!-- 【紀錄】頁面內容區域 (全新新增記帳系統) -->
+        <!-- 【紀錄】頁面內容區域 -->
         <div id="tabContent_record" style="display: none; padding: 4px 0;">
             <h3 style="color: #0284c7; margin-bottom: 8px; text-align: center; font-size: 13.5px;">💰 盈虧記帳管理</h3>
             
             <div class="record-card-box">
-                <div class="record-stats-row">
-                    <div class="record-stats-item">總淨利：<span id="accNetProfit" style="color: #38bdf8;">0</span></div>
-                    <div class="record-stats-item">總支出：<span id="accExpense" style="color: #f87171;">0</span></div>
-                    <div class="record-stats-item">總進項：<span id="accIncome" style="color: #34d399;">0</span></div>
+                <div class="record-stats-grid">
+                    <div class="record-stats-item">總儲值：<span id="accTotalDeposit" style="color: #60a5fa;">0</span></div>
+                    <div class="record-stats-item">總提款：<span id="accTotalWithdraw" style="color: #fbbf24;">0</span></div>
+                    <div class="record-stats-item">總回饋：<span id="accTotalReward" style="color: #a78bfa;">0</span></div>
+                    <div class="record-stats-item">總手續費：<span id="accTotalFee" style="color: #f87171;">0</span></div>
+                    <div class="record-stats-item" style="grid-column: span 2;">總淨利：<span id="accNetProfit" style="color: #38bdf8;">0</span></div>
                 </div>
 
                 <div class="record-form-row">
+                    <input type="date" id="accDateInput" class="record-input" style="flex: 1.2;">
                     <select id="accTypeSelect" class="record-select">
-                        <option value="win">贏 (進項+淨利+)</option>
-                        <option value="lose">輸 (支出+淨利-)</option>
-                        <option value="deposit">儲值 (不計淨利)</option>
-                        <option value="withdraw">提款 (不計淨利)</option>
-                        <option value="fee">手續費 (支出+淨利-)</option>
-                        <option value="reward">回饋 (進項+淨利+)</option>
+                        <option value="win">贏</option>
+                        <option value="lose">輸</option>
+                        <option value="deposit">儲值</option>
+                        <option value="withdraw">提款</option>
+                        <option value="fee">手續費</option>
+                        <option value="reward">回饋</option>
                     </select>
-                    <input type="number" id="accAmountInput" class="record-input" placeholder="請輸入金額">
                 </div>
-                <button class="record-add-btn" onclick="addAccountRecord()">新增記帳紀錄</button>
+                <div class="record-form-row">
+                    <input type="number" id="accAmountInput" class="record-input" placeholder="請輸入金額" style="flex: 2;">
+                    <button class="record-add-btn" style="flex: 1;" onclick="addAccountRecord()">新增</button>
+                </div>
             </div>
 
-            <div class="table-scroll-container" style="max-height: 240px; border: 1px solid #cbd5e1; border-radius: 6px;">
+            <div class="table-scroll-container" style="max-height: 220px; border: 1px solid #cbd5e1; border-radius: 6px;">
                 <table class="record-list-table">
                     <thead>
                         <tr>
-                            <th style="width: 25%;">類型</th>
+                            <th style="width: 25%;">日期</th>
+                            <th style="width: 20%;">類型</th>
                             <th style="width: 35%;">金額</th>
-                            <th style="width: 40%;">操作</th>
+                            <th style="width: 20%;">操作</th>
                         </tr>
                     </thead>
                     <tbody id="accTableBody">
-                        <tr><td colspan="3" style="color:#64748b; padding: 20px;">尚無記帳紀錄</td></tr>
+                        <tr><td colspan="4" style="color:#64748b; padding: 20px;">尚無記帳紀錄</td></tr>
                     </tbody>
                 </table>
             </div>
@@ -1106,6 +1023,13 @@
         // 記帳本資料陣列
         let accountRecords = [];
 
+        // 初始化預設日期為今天
+        window.addEventListener('DOMContentLoaded', () => {
+            const todayStr = new Date().toISOString().split('T')[0];
+            const dateInput = document.getElementById('accDateInput');
+            if (dateInput) dateInput.value = todayStr;
+        });
+
         const musicPlaylist = [
             { id: '_LbQyPyup24', title: '狂飆腎上腺素欲罷不能的旋律 ｜ 震碎靈魂的週末炸場專屬', artist: '台灣夜店DJ舞曲' },
             { id: '82Blqjragi0', title: '觸電般的靈魂震盪快感 ｜ 喚醒沉睡野性的午夜狂歡', artist: '台灣夜店DJ舞曲' },
@@ -1152,15 +1076,20 @@
 
         // 記帳系統新增與計算邏輯
         function addAccountRecord() {
+            const dateInput = document.getElementById('accDateInput').value;
             const typeSelect = document.getElementById('accTypeSelect').value;
             const amountInput = parseFloat(document.getElementById('accAmountInput').value);
 
+            if (!dateInput) {
+                showToast("請選擇日期！");
+                return;
+            }
             if (isNaN(amountInput) || amountInput <= 0) {
                 showToast("請輸入有效金額！");
                 return;
             }
 
-            accountRecords.unshift({ type: typeSelect, amount: amountInput });
+            accountRecords.unshift({ date: dateInput, type: typeSelect, amount: amountInput });
             document.getElementById('accAmountInput').value = "";
             renderAccountTable();
         }
@@ -1173,14 +1102,18 @@
         function renderAccountTable() {
             const tbody = document.getElementById('accTableBody');
             let netProfit = 0;
-            let totalExpense = 0;
-            let totalIncome = 0;
+            let totalDeposit = 0;
+            let totalWithdraw = 0;
+            let totalReward = 0;
+            let totalFee = 0;
 
             if (accountRecords.length === 0) {
-                tbody.innerHTML = `<tr><td colspan="3" style="color:#64748b; padding: 20px;">尚無記帳紀錄</td></tr>`;
+                tbody.innerHTML = `<tr><td colspan="4" style="color:#64748b; padding: 20px;">尚無記帳紀錄</td></tr>`;
                 document.getElementById('accNetProfit').innerText = '0';
-                document.getElementById('accExpense').innerText = '0';
-                document.getElementById('accIncome').innerText = '0';
+                document.getElementById('accTotalDeposit').innerText = '0';
+                document.getElementById('accTotalWithdraw').innerText = '0';
+                document.getElementById('accTotalReward').innerText = '0';
+                document.getElementById('accTotalFee').innerText = '0';
                 return;
             }
 
@@ -1189,39 +1122,37 @@
                 let typeText = "";
                 let amountDisplay = "";
 
-                // 根據類型分類計算
                 if (rec.type === 'win') {
                     typeText = '<span style="color:#10b981;">贏</span>';
                     amountDisplay = `+${rec.amount}`;
                     netProfit += rec.amount;
-                    totalIncome += rec.amount;
                 } else if (rec.type === 'lose') {
                     typeText = '<span style="color:#ef4444;">輸</span>';
                     amountDisplay = `-${rec.amount}`;
                     netProfit -= rec.amount;
-                    totalExpense += rec.amount;
                 } else if (rec.type === 'deposit') {
-                    typeText = '<span style="color:#3b82f6;">儲值</span>';
+                    typeText = '<span style="color:#60a5fa;">儲值</span>';
                     amountDisplay = `${rec.amount}`;
-                    // 儲值不計入總淨利、不計入進項與支出
+                    totalDeposit += rec.amount;
                 } else if (rec.type === 'withdraw') {
-                    typeText = '<span style="color:#f59e0b;">提款</span>';
+                    typeText = '<span style="color:#fbbf24;">提款</span>';
                     amountDisplay = `${rec.amount}`;
-                    // 提款不計入總淨利、不計入進項與支出
+                    totalWithdraw += rec.amount;
                 } else if (rec.type === 'fee') {
-                    typeText = '<span style="color:#64748b;">手續費</span>';
+                    typeText = '<span style="color:#f87171;">手續費</span>';
                     amountDisplay = `-${rec.amount}`;
                     netProfit -= rec.amount;
-                    totalExpense += rec.amount;
+                    totalFee += rec.amount;
                 } else if (rec.type === 'reward') {
-                    typeText = '<span style="color:#8b5cf6;">回饋</span>';
+                    typeText = '<span style="color:#a78bfa;">回饋</span>';
                     amountDisplay = `+${rec.amount}`;
                     netProfit += rec.amount;
-                    totalIncome += rec.amount;
+                    totalReward += rec.amount;
                 }
 
                 tbody.innerHTML += `
                     <tr>
+                        <td>${rec.date}</td>
                         <td>${typeText}</td>
                         <td>${amountDisplay}</td>
                         <td><button class="del-rec-btn" onclick="deleteAccountRecord(${idx})">刪除</button></td>
@@ -1230,8 +1161,10 @@
             });
 
             document.getElementById('accNetProfit').innerText = netProfit.toLocaleString();
-            document.getElementById('accExpense').innerText = totalExpense.toLocaleString();
-            document.getElementById('accIncome').innerText = totalIncome.toLocaleString();
+            document.getElementById('accTotalDeposit').innerText = totalDeposit.toLocaleString();
+            document.getElementById('accTotalWithdraw').innerText = totalWithdraw.toLocaleString();
+            document.getElementById('accTotalReward').innerText = totalReward.toLocaleString();
+            document.getElementById('accTotalFee').innerText = totalFee.toLocaleString();
         }
 
         function floorTo1Decimal(val) { return Math.floor(val * 10) / 10; }
