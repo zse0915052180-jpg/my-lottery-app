@@ -10,7 +10,7 @@
             font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Arial, sans-serif;
             background-color: #f1f5f9;
             color: #334155;
-            padding: 8px 4px 60px 4px;
+            padding: 8px 4px;
         }
         .container {
             width: 100%;
@@ -75,8 +75,13 @@
             border-radius: 50%;
             transition: transform 0.2s;
         }
-        .music-btn.playing { animation: pulseNote 0.8s infinite alternate; }
-        @keyframes pulseNote { 0% { transform: scale(1); } 100% { transform: scale(1.2); } }
+        .music-btn.playing {
+            animation: pulseNote 0.8s infinite alternate;
+        }
+        @keyframes pulseNote {
+            0% { transform: scale(1); }
+            100% { transform: scale(1.2); }
+        }
         .marquee-container {
             width: 80px;
             overflow: hidden;
@@ -87,11 +92,26 @@
             display: none;
             margin-left: 2px;
         }
-        .music-control-area.playing .marquee-container { display: block; }
-        .marquee-text { display: inline-block; padding-left: 100%; animation: marqueeScroll 8s linear infinite; }
-        @keyframes marqueeScroll { 0% { transform: translate(0, 0); } 100% { transform: translate(-100%, 0); } }
+        .music-control-area.playing .marquee-container {
+            display: block;
+        }
+        .marquee-text {
+            display: inline-block;
+            padding-left: 100%;
+            animation: marqueeScroll 8s linear infinite;
+        }
+        @keyframes marqueeScroll {
+            0% { transform: translate(0, 0); }
+            100% { transform: translate(-100%, 0); }
+        }
 
-        .title-right-group { display: flex; align-items: center; gap: 4px; flex-shrink: 0; }
+        .title-right-group {
+            display: flex;
+            align-items: center;
+            gap: 4px;
+            flex-shrink: 0;
+        }
+
         .online-badge {
             background: #f8fafc;
             border: 1px solid #cbd5e1;
@@ -105,7 +125,9 @@
             align-items: center;
             gap: 2px;
         }
-        .online-badge span { color: #10b981; }
+        .online-badge span {
+            color: #10b981;
+        }
 
         .lottery-tabs { display: flex; gap: 3px; flex-shrink: 0; }
         .tab-btn {
@@ -241,7 +263,13 @@
             box-shadow: 0 2px 4px rgba(250, 204, 21, 0.25);
         }
 
-        .mode-tabs { display: flex; gap: 4px; justify-content: center; flex-wrap: wrap; margin-bottom: 6px; }
+        .mode-tabs {
+            display: flex;
+            gap: 4px;
+            justify-content: center;
+            flex-wrap: wrap; 
+            margin-bottom: 6px;
+        }
         .mode-btn {
             background-color: #ffffff;
             color: #475569;
@@ -252,9 +280,19 @@
             border-radius: 4px;
             cursor: pointer;
         }
-        .mode-btn.active { background-color: #d97706; color: #ffffff; border-color: #b45309; }
+        .mode-btn.active {
+            background-color: #d97706;
+            color: #ffffff;
+            border-color: #b45309;
+        }
 
-        .fixed-tabs { display: none; gap: 4px; justify-content: center; flex-wrap: wrap; margin-bottom: 6px; }
+        .fixed-tabs {
+            display: none;
+            gap: 4px;
+            justify-content: center;
+            flex-wrap: wrap;
+            margin-bottom: 6px;
+        }
         .fixed-btn {
             background-color: #ffffff;
             color: #475569;
@@ -265,7 +303,11 @@
             border-radius: 4px;
             cursor: pointer;
         }
-        .fixed-btn.active { background-color: #0284c7; color: #ffffff; border-color: #0369a1; }
+        .fixed-btn.active {
+            background-color: #0284c7;
+            color: #ffffff;
+            border-color: #0369a1;
+        }
 
         .countdown-box {
             display: flex;
@@ -299,7 +341,11 @@
             border: 1px solid #bae6fd;
         }
         .rank-header-item:active { background-color: #bae6fd; }
-        .table-scroll-container { max-height: 180px; overflow-y: auto; border-radius: 4px; }
+        .table-scroll-container {
+            max-height: 180px;
+            overflow-y: auto;
+            border-radius: 4px;
+        }
         .table-scroll-container::-webkit-scrollbar { width: 3px; }
         .table-scroll-container::-webkit-scrollbar-thumb { background: #cbd5e1; border-radius: 3px; }
         .lottery-row { background-color: #ffffff; }
@@ -345,7 +391,12 @@
             justify-content: space-between;
             gap: 6px;
         }
-        .strategy-buttons-group { display: flex; gap: 6px; overflow-x: auto; align-items: center; }
+        .strategy-buttons-group {
+            display: flex;
+            gap: 6px;
+            overflow-x: auto;
+            align-items: center;
+        }
         .strategy-btn {
             background-color: #ffffff;
             color: #475569;
@@ -379,8 +430,13 @@
             box-shadow: 0 1px 2px rgba(0,0,0,0.05);
             display: none;
         }
-        .compound-pill-btn.show { display: inline-block; }
-        .compound-pill-btn:active { transform: scale(0.95); background-color: #bae6fd; }
+        .compound-pill-btn.show {
+            display: inline-block;
+        }
+        .compound-pill-btn:active {
+            transform: scale(0.95);
+            background-color: #bae6fd;
+        }
 
         .strategy-principal-box {
             display: none;
@@ -392,8 +448,14 @@
             padding: 2px 6px;
             flex-shrink: 0;
         }
-        .strategy-principal-box.show { display: flex; }
-        .strategy-principal-label { font-size: 13px; font-weight: 800; color: #0284c7; }
+        .strategy-principal-box.show {
+            display: flex;
+        }
+        .strategy-principal-label {
+            font-size: 13px;
+            font-weight: 800;
+            color: #0284c7;
+        }
         .strategy-principal-input {
             width: 75px;
             height: 26px;
@@ -431,11 +493,11 @@
             text-align: center;
             outline: none;
         }
-        .white-input::placeholder { color: #94a3b8; font-weight: 400; font-size: 11px; }
-        input[type=number]::-webkit-inner-spin-button, 
-        input[type=number]::-webkit-outer-spin-button { -webkit-appearance: none; margin: 0; }
-        input[type=number] { -moz-appearance: textfield; }
-
+        .white-input::placeholder {
+            color: #94a3b8;
+            font-weight: 400;
+            font-size: 11px;
+        }
         .clickable-box { cursor: pointer; user-select: none; display: flex; align-items: center; justify-content: center; }
         .confirm-btn {
             height: 32px;
@@ -451,8 +513,18 @@
             box-shadow: 0 2px 4px rgba(16, 185, 129, 0.3);
             transition: transform 0.1s ease, background-color 0.1s ease, box-shadow 0.1s ease;
         }
-        .confirm-btn:active { transform: scale(0.93); background-color: #059669; box-shadow: inset 0 2px 4px rgba(0, 0, 0, 0.2); }
-        .confirm-btn.locked { background-color: #059669 !important; opacity: 0.45; cursor: not-allowed; box-shadow: none; }
+        .confirm-btn:active {
+            transform: scale(0.93);
+            background-color: #059669;
+            box-shadow: inset 0 2px 4px rgba(0, 0, 0, 0.2);
+        }
+        
+        .confirm-btn.locked {
+            background-color: #059669 !important;
+            opacity: 0.45;
+            cursor: not-allowed;
+            box-shadow: none;
+        }
 
         .result-table-container { display: none; margin-top: 4px; border-radius: 6px; overflow: hidden; border: 1px solid #cbd5e1; }
         .calc-table { width: 100%; border-collapse: collapse; text-align: center; font-size: 12px; }
@@ -474,7 +546,11 @@
             flex-direction: column;
             gap: 6px;
         }
-        .sim-rank-row { display: flex; gap: 2px; justify-content: space-between; }
+        .sim-rank-row {
+            display: flex;
+            gap: 2px;
+            justify-content: space-between;
+        }
         .sim-rank-btn {
             flex: 1;
             background-color: #f8fafc;
@@ -495,7 +571,13 @@
             box-shadow: 0 2px 4px rgba(14, 165, 233, 0.3);
         }
 
-        .sim-balls-grid { display: grid; grid-template-columns: repeat(5, 1fr); gap: 6px 12px; padding: 2px 2px; justify-items: center; }
+        .sim-balls-grid {
+            display: grid;
+            grid-template-columns: repeat(5, 1fr);
+            gap: 6px 12px;
+            padding: 2px 2px;
+            justify-items: center;
+        }
         .sim-ball-item {
             width: 42px;
             height: 42px;
@@ -511,8 +593,15 @@
             border: 2px solid transparent;
             transition: all 0.2s ease;
         }
-        .sim-ball-item:active { transform: scale(0.92); }
-        .simulation-panel.has-selection .sim-ball-item:not(.selected) { opacity: 0.25; box-shadow: none; filter: grayscale(40%); }
+        .sim-ball-item:active {
+            transform: scale(0.92);
+        }
+        
+        .simulation-panel.has-selection .sim-ball-item:not(.selected) {
+            opacity: 0.25;
+            box-shadow: none;
+            filter: grayscale(40%);
+        }
         .sim-ball-item.selected {
             border-color: #0ea5e9;
             box-shadow: 0 0 8px rgba(14, 165, 233, 0.8), 0 2px 4px rgba(0,0,0,0.2);
@@ -520,7 +609,13 @@
             opacity: 1 !important;
         }
 
-        .sim-action-row { display: flex; align-items: center; justify-content: space-between; gap: 6px; margin-top: 2px; }
+        .sim-action-row {
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            gap: 6px;
+            margin-top: 2px;
+        }
         .sim-clear-btn {
             background-color: #ef4444;
             color: #ffffff;
@@ -571,9 +666,20 @@
             border: 1px solid #cbd5e1;
             margin-bottom: 5px;
         }
-        .custom-row-col { display: flex; flex-direction: column; gap: 2px; }
-        .custom-row-title { font-size: 10.5px; font-weight: 700; color: #0284c7; }
-        .color-selector-group { display: flex; gap: 4px; }
+        .custom-row-col {
+            display: flex;
+            flex-direction: column;
+            gap: 2px;
+        }
+        .custom-row-title {
+            font-size: 10.5px;
+            font-weight: 700;
+            color: #0284c7;
+        }
+        .color-selector-group {
+            display: flex;
+            gap: 4px;
+        }
         .color-circle {
             width: 18px;
             height: 18px;
@@ -583,372 +689,209 @@
             opacity: 0.4;
             transition: all 0.2s;
         }
-        .color-circle.selected { opacity: 1; border-color: #0f172a; transform: scale(1.1); }
+        .color-circle.selected {
+            opacity: 1;
+            border-color: #0f172a;
+            transform: scale(1.1);
+        }
         .color-circle.red { background-color: #ef4444; }
         .color-circle.green { background-color: #10b981; }
         .color-circle.blue { background-color: #3b82f6; }
         .color-circle.yellow { background-color: #f59e0b; }
         .color-circle.purple { background-color: #a855f7; }
-
-        /* 底部導覽列樣式 */
-        .footer-nav {
-            position: fixed;
-            bottom: 0;
-            left: 0;
-            width: 100%;
-            background: #0f172a;
-            display: flex;
-            justify-content: space-around;
-            padding: 6px 0;
-            border-top: 1px solid #334155;
-            z-index: 999;
-        }
-        .footer-nav-item {
-            flex: 1;
-            text-align: center;
-            color: #94a3b8;
-            font-size: 12px;
-            font-weight: 700;
-            cursor: pointer;
-            padding: 4px 0;
-            transition: color 0.2s;
-        }
-        .footer-nav-item.active { color: #38bdf8; }
-
-        /* 記帳本分頁專屬樣式 */
-        .record-card-box {
-            background: #f8fafc;
-            border: 1px solid #e2e8f0;
-            border-radius: 8px;
-            padding: 10px;
-            margin-bottom: 10px;
-        }
-        .record-stats-grid {
-            display: grid;
-            grid-template-columns: repeat(3, 1fr);
-            gap: 6px;
-            background: #0f172a;
-            color: #fff;
-            padding: 8px;
-            border-radius: 6px;
-            margin-bottom: 8px;
-            font-size: 11px;
-            font-weight: 700;
-            text-align: center;
-        }
-        .record-stats-item span {
-            display: block;
-            font-size: 12.5px;
-            margin-top: 2px;
-        }
-        .record-form-row {
-            display: flex;
-            gap: 6px;
-            margin-bottom: 6px;
-        }
-        .record-select, .record-input {
-            height: 34px;
-            background: #ffffff;
-            border: 1px solid #cbd5e1;
-            border-radius: 6px;
-            font-size: 12px;
-            font-weight: 700;
-            color: #0f172a;
-            padding: 0 6px;
-            outline: none;
-            flex: 1;
-        }
-        .record-add-btn {
-            width: 100%;
-            height: 34px;
-            background-color: #10b981;
-            color: #ffffff;
-            border: 1px solid #059669;
-            border-radius: 6px;
-            font-size: 13px;
-            font-weight: 700;
-            cursor: pointer;
-        }
-        .record-list-table {
-            width: 100%;
-            border-collapse: collapse;
-            font-size: 11.5px;
-            background: #fff;
-        }
-        .record-list-table th {
-            background-color: #f1f5f9;
-            color: #0284c7;
-            padding: 6px 2px;
-            border-bottom: 2px solid #cbd5e1;
-            text-align: center;
-        }
-        .record-list-table td {
-            padding: 6px 2px;
-            border-bottom: 1px solid #e2e8f0;
-            text-align: center;
-            font-weight: 700;
-            color: #334155;
-        }
-        .del-rec-btn {
-            background: #ef4444;
-            color: white;
-            border: none;
-            padding: 2px 6px;
-            border-radius: 4px;
-            cursor: pointer;
-            font-size: 10px;
-        }
     </style>
 </head>
 <body>
     <div class="container">
-        <!-- 【分析】頁面內容區域 -->
-        <div id="tabContent_func">
-            <div class="header-area">
-                <div class="title-left-group">
-                    <h2>📊 <span id="lotteryTitle">極速飛艇</span></h2>
-                    <div id="musicControlArea" class="music-control-area">
-                        <button id="musicToggleBtn" class="music-btn" onclick="toggleMusic()" title="點擊開關音樂">🎵</button>
-                        <div id="marqueeContainer" class="marquee-container">
-                            <div id="marqueeText" class="marquee-text">播放中...</div>
-                        </div>
-                    </div>
-                </div>
-
-                <div class="title-right-group">
-                    <div class="online-badge">
-                        在線 <span id="onlineCountVal">--</span>
-                    </div>
-                    <div class="lottery-tabs">
-                        <button id="btn10035" class="tab-btn active" onclick="switchLottery('10035', '極速飛艇')">極速飛艇</button>
-                        <button id="btn10057" class="tab-btn" onclick="switchLottery('10057', '幸運飛艇')">幸運飛艇</button>
+        <div class="header-area">
+            <div class="title-left-group">
+                <h2>📊 <span id="lotteryTitle">極速飛艇</span></h2>
+                <div id="musicControlArea" class="music-control-area">
+                    <button id="musicToggleBtn" class="music-btn" onclick="toggleMusic()" title="點擊開關音樂">🎵</button>
+                    <div id="marqueeContainer" class="marquee-container">
+                        <div id="marqueeText" class="marquee-text">播放中...</div>
                     </div>
                 </div>
             </div>
 
-            <div id="youtubePlayer" style="display:none;"></div>
-
-            <div class="info-bar">
-                <div class="main-nav-bar">
-                    <div class="main-nav-group" id="leftNavArea">
-                        <button id="sysBtnStandard" class="system-btn active" onclick="switchSystem('standard')">順/反</button>
-                        <button id="sysBtnFixed" class="system-btn" onclick="switchSystem('fixed')">固定號</button>
-                        <button id="sysBtnSize" class="system-btn" onclick="switchSystem('size')">大中小</button>
-                        <button id="sysBtnHotCold" class="system-btn" onclick="switchSystem('hotcold')">冷溫熱</button>
-                        <button id="sysBtnCustom" class="system-btn" onclick="switchSystem('custom')">自訂</button>
-                    </div>
-                    <div class="main-nav-group" style="gap: 6px;">
-                        <button id="mainNavRoute" class="main-nav-btn active-route" onclick="switchMainTab('route')">牌路</button>
-                        <button id="mainNavSignal" class="main-nav-btn" onclick="switchMainTab('signal')">報牌</button>
-                    </div>
+            <div class="title-right-group">
+                <div class="online-badge">
+                    在線 <span id="onlineCountVal">--</span>
                 </div>
-
-                <div id="modeTabsContainer" class="mode-tabs">
-                    <button id="modeBtn3" class="mode-btn" onclick="switchMode(3)">順三</button>
-                    <button id="modeBtn4" class="mode-btn" onclick="switchMode(4)">順四</button>
-                    <button id="modeBtn5" class="mode-btn active" onclick="switchMode(5)">順五</button>
-                    <button id="modeBtn6" class="mode-btn" onclick="switchMode(6)">順六</button>
-                    <button id="modeBtn7" class="mode-btn" onclick="switchMode(7)">順七</button>
-                    <button id="modeBtn8" class="mode-btn" onclick="switchMode(8)">順八</button>
+                <div class="lottery-tabs">
+                    <button id="btn10035" class="tab-btn active" onclick="switchLottery('10035', '極速飛艇')">極速飛艇</button>
+                    <button id="btn10057" class="tab-btn" onclick="switchLottery('10057', '幸運飛艇')">幸運飛艇</button>
                 </div>
+            </div>
+        </div>
 
-                <div id="fixedTabsContainer" class="fixed-tabs">
-                    <button id="fixedBtn1" class="fixed-btn active" onclick="switchFixed(1)">1~7</button>
-                    <button id="fixedBtn2" class="fixed-btn" onclick="switchFixed(2)">2~8</button>
-                    <button id="fixedBtn3" class="fixed-btn" onclick="switchFixed(3)">3~9</button>
-                    <button id="fixedBtn4" class="fixed-btn" onclick="switchFixed(4)">4~10</button>
+        <div id="youtubePlayer" style="display:none;"></div>
+
+        <div class="info-bar">
+            <div class="main-nav-bar">
+                <div class="main-nav-group" id="leftNavArea">
+                    <button id="sysBtnStandard" class="system-btn active" onclick="switchSystem('standard')">順/反</button>
+                    <button id="sysBtnFixed" class="system-btn" onclick="switchSystem('fixed')">固定號</button>
+                    <button id="sysBtnSize" class="system-btn" onclick="switchSystem('size')">大中小</button>
+                    <button id="sysBtnHotCold" class="system-btn" onclick="switchSystem('hotcold')">冷溫熱</button>
+                    <button id="sysBtnCustom" class="system-btn" onclick="switchSystem('custom')">自訂</button>
                 </div>
-                
-                <div class="countdown-box">
-                    <span id="nextPeriodText">下期: --</span>
-                    <span id="timerText" class="timer-highlight">同步中...</span>
+                <div class="main-nav-group" style="gap: 6px;">
+                    <button id="mainNavRoute" class="main-nav-btn active-route" onclick="switchMainTab('route')">牌路</button>
+                    <button id="mainNavSignal" class="main-nav-btn" onclick="switchMainTab('signal')">報牌</button>
                 </div>
             </div>
 
-            <div class="table-wrapper">
-                <div id="routeTableArea">
-                    <table id="routeHeaderTable" class="lottery-table">
+            <div id="modeTabsContainer" class="mode-tabs">
+                <button id="modeBtn3" class="mode-btn" onclick="switchMode(3)">順三</button>
+                <button id="modeBtn4" class="mode-btn" onclick="switchMode(4)">順四</button>
+                <button id="modeBtn5" class="mode-btn active" onclick="switchMode(5)">順五</button>
+                <button id="modeBtn6" class="mode-btn" onclick="switchMode(6)">順六</button>
+                <button id="modeBtn7" class="mode-btn" onclick="switchMode(7)">順七</button>
+                <button id="modeBtn8" class="mode-btn" onclick="switchMode(8)">順八</button>
+            </div>
+
+            <div id="fixedTabsContainer" class="fixed-tabs">
+                <button id="fixedBtn1" class="fixed-btn active" onclick="switchFixed(1)">1~7</button>
+                <button id="fixedBtn2" class="fixed-btn" onclick="switchFixed(2)">2~8</button>
+                <button id="fixedBtn3" class="fixed-btn" onclick="switchFixed(3)">3~9</button>
+                <button id="fixedBtn4" class="fixed-btn" onclick="switchFixed(4)">4~10</button>
+            </div>
+            
+            <div class="countdown-box">
+                <span id="nextPeriodText">下期: --</span>
+                <span id="timerText" class="timer-highlight">同步中...</span>
+            </div>
+        </div>
+
+        <div class="table-wrapper">
+            <div id="routeTableArea">
+                <table id="routeHeaderTable" class="lottery-table">
+                    <thead>
+                        <tr>
+                            <th class="period-header">期號</th>
+                            <th>
+                                <div class="rank-header-container">
+                                    <div class="rank-header-item" onclick="showPositionModal(0, '冠軍')">冠</div>
+                                    <div class="rank-header-item" onclick="showPositionModal(1, '亞軍')">亞</div>
+                                    <div class="rank-header-item" onclick="showPositionModal(2, '三')">三</div>
+                                    <div class="rank-header-item" onclick="showPositionModal(3, '四')">四</div>
+                                    <div class="rank-header-item" onclick="showPositionModal(4, '五')">五</div>
+                                    <div class="rank-header-item" onclick="showPositionModal(5, '六')">六</div>
+                                    <div class="rank-header-item" onclick="showPositionModal(6, '七')">七</div>
+                                    <div class="rank-header-item" onclick="showPositionModal(7, '八')">八</div>
+                                    <div class="rank-header-item" onclick="showPositionModal(8, '九')">九</div>
+                                    <div class="rank-header-item" onclick="showPositionModal(9, '十')">十</div>
+                                </div>
+                            </th>
+                        </tr>
+                    </thead>
+                </table>
+                <div class="table-scroll-container">
+                    <table class="lottery-table"><tbody id="tableBody"></tbody></table>
+                </div>
+            </div>
+
+            <div id="signalButtonArea" style="display: none;">
+                <div class="signal-btn-container">
+                    <button class="signal-sub-btn active" id="subBtn_宰相" onclick="switchSignalSub('宰相')">宰相</button>
+                    <button class="signal-sub-btn" id="subBtn_小幫手" onclick="switchSignalSub('小幫手')">小幫手</button>
+                    <button class="signal-sub-btn" id="subBtn_博士" onclick="switchSignalSub('博士')">博士</button>
+                    <button class="signal-sub-btn" id="subBtn_宗師" onclick="switchSignalSub('宗師')">宗師</button>
+                    <button class="signal-sub-btn" id="subBtn_王牌" onclick="switchSignalSub('王牌')">王牌</button>
+                </div>
+                <div class="table-scroll-container" style="max-height: 245px;">
+                    <table class="signal-table">
                         <thead>
                             <tr>
-                                <th class="period-header">期號</th>
-                                <th>
-                                    <div class="rank-header-container">
-                                        <div class="rank-header-item" onclick="showPositionModal(0, '冠軍')">冠</div>
-                                        <div class="rank-header-item" onclick="showPositionModal(1, '亞軍')">亞</div>
-                                        <div class="rank-header-item" onclick="showPositionModal(2, '三')">三</div>
-                                        <div class="rank-header-item" onclick="showPositionModal(3, '四')">四</div>
-                                        <div class="rank-header-item" onclick="showPositionModal(4, '五')">五</div>
-                                        <div class="rank-header-item" onclick="showPositionModal(5, '六')">六</div>
-                                        <div class="rank-header-item" onclick="showPositionModal(6, '七')">七</div>
-                                        <div class="rank-header-item" onclick="showPositionModal(7, '八')">八</div>
-                                        <div class="rank-header-item" onclick="showPositionModal(8, '九')">九</div>
-                                        <div class="rank-header-item" onclick="showPositionModal(9, '十')">十</div>
-                                    </div>
-                                </th>
+                                <th style="width: 28%;">期號</th>
+                                <th style="width: 22%;">名次</th>
+                                <th style="width: 30%;">號碼</th>
+                                <th style="width: 20%;">收/翻</th>
                             </tr>
                         </thead>
-                    </table>
-                    <div class="table-scroll-container">
-                        <table class="lottery-table"><tbody id="tableBody"></tbody></table>
-                    </div>
-                </div>
-
-                <div id="signalButtonArea" style="display: none;">
-                    <div class="signal-btn-container">
-                        <button class="signal-sub-btn active" id="subBtn_宰相" onclick="switchSignalSub('宰相')">宰相</button>
-                        <button class="signal-sub-btn" id="subBtn_小幫手" onclick="switchSignalSub('小幫手')">小幫手</button>
-                        <button class="signal-sub-btn" id="subBtn_博士" onclick="switchSignalSub('博士')">博士</button>
-                        <button class="signal-sub-btn" id="subBtn_宗師" onclick="switchSignalSub('宗師')">宗師</button>
-                        <button class="signal-sub-btn" id="subBtn_王牌" onclick="switchSignalSub('王牌')">王牌</button>
-                    </div>
-                    <div class="table-scroll-container" style="max-height: 245px;">
-                        <table class="signal-table">
-                            <thead>
-                               <tr>
-                                    <th style="width: 28%;">期號</th>
-                                    <th style="width: 22%;">名次</th>
-                                    <th style="width: 30%;">號碼</th>
-                                    <th style="width: 20%;">收/翻</th>
-                                </tr>
-                            </thead>
-                            <tbody id="signalTableBody"></tbody>
-                        </table>
-                    </div>
-                </div>
-            </div>
-
-            <div class="strategy-area">
-                <div class="strategy-buttons-group">
-                    <button id="stratBtnBet" class="strategy-btn active" onclick="switchStrategy('bet')">倍投</button>
-                    <button id="stratBtnCompound" class="strategy-btn" onclick="switchStrategy('compound')">複利計算</button>
-                    <button id="stratBtnSim" class="strategy-btn" onclick="switchStrategy('sim')">模擬操作</button>
-                </div>
-                <button id="compoundPillBtn" class="compound-pill-btn" onclick="onCompoundPillClick()">複利</button>
-                
-                <div id="simPrincipalBox" class="strategy-principal-box">
-                    <span class="strategy-principal-label">$</span>
-                    <input type="number" id="simPrincipalInput" class="strategy-principal-input" value="10000" placeholder="本金" oninput="formatPrincipalInput(this)">
-                </div>
-            </div>
-
-            <div class="calculator-area">
-                <!-- 倍投區塊 -->
-                <div id="betCalcInputs" class="calc-input-row">
-                    <div class="input-group"><span class="input-label">本金</span><input type="number" id="inputAmount" class="white-input" oninput="onInputAmountChange()"></div>
-                    <div class="input-group"><span class="input-label">碼數</span><div id="inputCodeCountDisplay" class="white-input clickable-box" onclick="openCodeCountModal()">3</div></div>
-                    <div class="input-group"><span class="input-label">關數</span><div id="inputRoundDisplay" class="white-input clickable-box" onclick="openRoundModal()">4</div></div>
-                    <button class="confirm-btn" onclick="onConfirmClick()">計算</button>
-                </div>
-
-                <!-- 複利計算區塊 -->
-                <div id="compoundCalcInputs" class="calc-input-row" style="display: none;">
-                    <div class="input-group"><span class="input-label">本金</span><input type="number" id="compoundPrincipal" class="white-input" value="10000" oninput="formatInputFloor1(this)"></div>
-                    <div class="input-group"><span class="input-label">操作次數</span><input type="number" id="compoundTimes" class="white-input" value="10"></div>
-                    <div class="input-group"><span class="input-label">獲利%</span><input type="number" id="compoundRate" class="white-input" value="3.2" oninput="formatInputFloor1(this)"></div>
-                    <button class="confirm-btn" onclick="onCompoundConfirmClick()">計算</button>
-                </div>
-
-                <!-- 模擬操作面板區塊 -->
-                <div id="simOperationPanel" class="simulation-panel" style="display: none;">
-                    <div class="sim-rank-row" id="simRankRow">
-                        <div class="sim-rank-btn active" onclick="selectSimRank(0, this)">冠</div>
-                        <div class="sim-rank-btn" onclick="selectSimRank(1, this)">亞</div>
-                        <div class="sim-rank-btn" onclick="selectSimRank(2, this)">三</div>
-                        <div class="sim-rank-btn" onclick="selectSimRank(3, this)">四</div>
-                        <div class="sim-rank-btn" onclick="selectSimRank(4, this)">五</div>
-                        <div class="sim-rank-btn" onclick="selectSimRank(5, this)">六</div>
-                        <div class="sim-rank-btn" onclick="selectSimRank(6, this)">七</div>
-                        <div class="sim-rank-btn" onclick="selectSimRank(7, this)">八</div>
-                        <div class="sim-rank-btn" onclick="selectSimRank(8, this)">九</div>
-                        <div class="sim-rank-btn" onclick="selectSimRank(9, this)">十</div>
-                    </div>
-
-                    <div class="sim-balls-grid" id="simBallsGrid"></div>
-
-                    <div class="sim-action-row">
-                        <div class="input-group" style="flex: 2;">
-                            <span class="input-label">金額</span>
-                            <input type="number" id="simAmountInput" class="white-input" placeholder="輸入金額" oninput="formatInputFloor1(this)">
-                        </div>
-                        <button class="sim-clear-btn" onclick="clearSimInput()">清除</button>
-                        <button id="simSubmitBtn" class="sim-submit-btn" onclick="submitSimOrder()">確認下注</button>
-                    </div>
-                </div>
-
-                <div id="resultTableContainer" class="result-table-container">
-                    <table class="calc-table">
-                        <thead><tr><th style="width:28%;">關數</th><th style="width:36%;">金額</th><th style="width:36%;">獲利</th></tr></thead>
-                        <tbody id="resultTableBody"></tbody>
-                    </table>
-                </div>
-
-                <div id="compoundTableContainer" class="result-table-container">
-                    <table class="calc-table">
-                        <thead><tr><th style="width:12%;">#</th><th style="width:32%;">單次獲利(元)</th><th style="width:32%;">總額(元)</th><th style="width:24%;">總獲利率</th></tr></thead>
-                        <tbody id="compoundTableBody"></tbody>
+                        <tbody id="signalTableBody"></tbody>
                     </table>
                 </div>
             </div>
         </div>
 
-        <!-- 【紀錄】頁面內容區域 -->
-        <div id="tabContent_record" style="display: none; padding: 4px 0;">
-            <h3 style="color: #0284c7; margin-bottom: 8px; text-align: center; font-size: 13.5px;">💰 盈虧記帳管理</h3>
+        <div class="strategy-area">
+            <div class="strategy-buttons-group">
+                <button id="stratBtnBet" class="strategy-btn active" onclick="switchStrategy('bet')">倍投</button>
+                <button id="stratBtnCompound" class="strategy-btn" onclick="switchStrategy('compound')">複利計算</button>
+                <button id="stratBtnSim" class="strategy-btn" onclick="switchStrategy('sim')">模擬操作</button>
+            </div>
+            <button id="compoundPillBtn" class="compound-pill-btn" onclick="onCompoundPillClick()">複利</button>
             
-            <div class="record-card-box">
-                <div class="record-stats-grid">
-                    <div class="record-stats-item">總儲值：<span id="accTotalDeposit" style="color: #60a5fa;">0</span></div>
-                    <div class="record-stats-item">總提款：<span id="accTotalWithdraw" style="color: #fbbf24;">0</span></div>
-                    <div class="record-stats-item">總回饋：<span id="accTotalReward" style="color: #a78bfa;">0</span></div>
-                    <div class="record-stats-item">總手續費：<span id="accTotalFee" style="color: #f87171;">0</span></div>
-                    <div class="record-stats-item" style="grid-column: span 2;">總淨利：<span id="accNetProfit" style="color: #38bdf8;">0</span></div>
+            <div id="simPrincipalBox" class="strategy-principal-box">
+                <span class="strategy-principal-label">$</span>
+                <input type="number" id="simPrincipalInput" class="strategy-principal-input" value="10000" placeholder="本金" oninput="formatPrincipalInput(this)">
+            </div>
+        </div>
+
+        <div class="calculator-area">
+            <!-- 倍投區塊 -->
+            <div id="betCalcInputs" class="calc-input-row">
+                <div class="input-group"><span class="input-label">本金</span><input type="number" id="inputAmount" class="white-input" oninput="onInputAmountChange()"></div>
+                <div class="input-group"><span class="input-label">碼數</span><div id="inputCodeCountDisplay" class="white-input clickable-box" onclick="openCodeCountModal()">3</div></div>
+                <div class="input-group"><span class="input-label">關數</span><div id="inputRoundDisplay" class="white-input clickable-box" onclick="openRoundModal()">4</div></div>
+                <button class="confirm-btn" onclick="onConfirmClick()">計算</button>
+            </div>
+
+            <!-- 複利計算區塊 -->
+            <div id="compoundCalcInputs" class="calc-input-row" style="display: none;">
+                <div class="input-group"><span class="input-label">本金</span><input type="number" id="compoundPrincipal" class="white-input" value="10000" oninput="formatInputFloor1(this)"></div>
+                <div class="input-group"><span class="input-label">操作次數</span><input type="number" id="compoundTimes" class="white-input" value="10"></div>
+                <div class="input-group"><span class="input-label">獲利%</span><input type="number" id="compoundRate" class="white-input" value="3.2" oninput="formatInputFloor1(this)"></div>
+                <button class="confirm-btn" onclick="onCompoundConfirmClick()">計算</button>
+            </div>
+
+            <!-- 模擬操作面板區塊 -->
+            <div id="simOperationPanel" class="simulation-panel" style="display: none;">
+                <!-- 名次按鈕列 -->
+                <div class="sim-rank-row" id="simRankRow">
+                    <div class="sim-rank-btn active" onclick="selectSimRank(0, this)">冠</div>
+                    <div class="sim-rank-btn" onclick="selectSimRank(1, this)">亞</div>
+                    <div class="sim-rank-btn" onclick="selectSimRank(2, this)">三</div>
+                    <div class="sim-rank-btn" onclick="selectSimRank(3, this)">四</div>
+                    <div class="sim-rank-btn" onclick="selectSimRank(4, this)">五</div>
+                    <div class="sim-rank-btn" onclick="selectSimRank(5, this)">六</div>
+                    <div class="sim-rank-btn" onclick="selectSimRank(6, this)">七</div>
+                    <div class="sim-rank-btn" onclick="selectSimRank(7, this)">八</div>
+                    <div class="sim-rank-btn" onclick="selectSimRank(8, this)">九</div>
+                    <div class="sim-rank-btn" onclick="selectSimRank(9, this)">十</div>
                 </div>
 
-                <div class="record-form-row">
-                    <input type="date" id="accDateInput" class="record-input" style="flex: 1.2;">
-                    <select id="accTypeSelect" class="record-select">
-                        <option value="win">贏</option>
-                        <option value="lose">輸</option>
-                        <option value="deposit">儲值</option>
-                        <option value="withdraw">提款</option>
-                        <option value="fee">手續費</option>
-                        <option value="reward">回饋</option>
-                    </select>
-                </div>
-                <div class="record-form-row">
-                    <input type="number" id="accAmountInput" class="record-input" placeholder="請輸入金額" style="flex: 2;">
-                    <button class="record-add-btn" style="flex: 1;" onclick="addAccountRecord()">新增</button>
+                <!-- 1~10 號碼球網格 -->
+                <div class="sim-balls-grid" id="simBallsGrid"></div>
+
+                <!-- 金額與確認列 -->
+                <div class="sim-action-row">
+                    <div class="input-group" style="flex: 2;">
+                        <span class="input-label">金額</span>
+                        <input type="number" id="simAmountInput" class="white-input" placeholder="輸入金額" oninput="formatInputFloor1(this)">
+                    </div>
+                    <button class="sim-clear-btn" onclick="clearSimInput()">清除</button>
+                    <button id="simSubmitBtn" class="sim-submit-btn" onclick="submitSimOrder()">確認下注</button>
                 </div>
             </div>
 
-            <div class="table-scroll-container" style="max-height: 220px; border: 1px solid #cbd5e1; border-radius: 6px;">
-                <table class="record-list-table">
-                    <thead>
-                        <tr>
-                            <th style="width: 25%;">日期</th>
-                            <th style="width: 20%;">類型</th>
-                            <th style="width: 35%;">金額</th>
-                            <th style="width: 20%;">操作</th>
-                        </tr>
-                    </thead>
-                    <tbody id="accTableBody">
-                        <tr><td colspan="4" style="color:#64748b; padding: 20px;">尚無記帳紀錄</td></tr>
-                    </tbody>
+            <div id="resultTableContainer" class="result-table-container">
+                <table class="calc-table">
+                    <thead><tr><th style="width:28%;">關數</th><th style="width:36%;">金額</th><th style="width:36%;">獲利</th></tr></thead>
+                    <tbody id="resultTableBody"></tbody>
+                </table>
+            </div>
+
+            <div id="compoundTableContainer" class="result-table-container">
+                <table class="calc-table">
+                    <thead><tr><th style="width:12%;">#</th><th style="width:32%;">單次獲利(元)</th><th style="width:32%;">總額(元)</th><th style="width:24%;">總獲利率</th></tr></thead>
+                    <tbody id="compoundTableBody"></tbody>
                 </table>
             </div>
         </div>
     </div>
-
-    <!-- 底部切換條 (Footer Nav) -->
-    <div class="footer-nav">
-        <div id="footerNavFunc" class="footer-nav-item active" onclick="switchFooterTab('func')">
-            📊 分析
-        </div>
-        <div id="footerNavRecord" class="footer-nav-item" onclick="switchFooterTab('record')">
-            📋 紀錄
-        </div>
-    </div>
-
     <div id="toastMsg" class="toast-msg"></div>
     <div id="modalOverlay" class="modal-overlay" onclick="closeModalDirect()">
         <div class="modal-card" onclick="event.stopPropagation()">
@@ -1006,7 +949,7 @@
         let isDrawState = false;        
         let hasSubmittedOrder = false; 
         let lastBetTotalCost = 0;      
-        let activeBetOrder = null;      
+        let activeBetOrder = null;     
 
         let compoundClickCount = 0;
         let lastCalculatedProfit = 0;
@@ -1019,16 +962,6 @@
             { numbers: "", color: "yellow" },
             { numbers: "", color: "purple" }
         ];
-
-        // 記帳本資料陣列
-        let accountRecords = [];
-
-        // 初始化預設日期為今天
-        window.addEventListener('DOMContentLoaded', () => {
-            const todayStr = new Date().toISOString().split('T')[0];
-            const dateInput = document.getElementById('accDateInput');
-            if (dateInput) dateInput.value = todayStr;
-        });
 
         const musicPlaylist = [
             { id: '_LbQyPyup24', title: '狂飆腎上腺素欲罷不能的旋律 ｜ 震碎靈魂的週末炸場專屬', artist: '台灣夜店DJ舞曲' },
@@ -1054,121 +987,13 @@
             });
         }
 
-        // 底部導覽列切換函數 (分析 / 紀錄)
-        function switchFooterTab(tabName) {
-            const funcArea = document.getElementById('tabContent_func');
-            const recordArea = document.getElementById('tabContent_record');
-            const navFunc = document.getElementById('footerNavFunc');
-            const navRecord = document.getElementById('footerNavRecord');
-
-            if (tabName === 'func') {
-                funcArea.style.display = 'block';
-                recordArea.style.display = 'none';
-                navFunc.classList.add('active');
-                navRecord.classList.remove('active');
-            } else if (tabName === 'record') {
-                funcArea.style.display = 'none';
-                recordArea.style.display = 'block';
-                navRecord.classList.add('active');
-                navFunc.classList.remove('active');
-            }
+        function floorTo1Decimal(val) {
+            return Math.floor(val * 10) / 10;
         }
 
-        // 記帳系統新增與計算邏輯
-        function addAccountRecord() {
-            const dateInput = document.getElementById('accDateInput').value;
-            const typeSelect = document.getElementById('accTypeSelect').value;
-            const amountInput = parseFloat(document.getElementById('accAmountInput').value);
-
-            if (!dateInput) {
-                showToast("請選擇日期！");
-                return;
-            }
-            if (isNaN(amountInput) || amountInput <= 0) {
-                showToast("請輸入有效金額！");
-                return;
-            }
-
-            accountRecords.unshift({ date: dateInput, type: typeSelect, amount: amountInput });
-            document.getElementById('accAmountInput').value = "";
-            renderAccountTable();
+        function floorToInt(val) {
+            return Math.floor(val);
         }
-
-        function deleteAccountRecord(index) {
-            accountRecords.splice(index, 1);
-            renderAccountTable();
-        }
-
-        function renderAccountTable() {
-            const tbody = document.getElementById('accTableBody');
-            let netProfit = 0;
-            let totalDeposit = 0;
-            let totalWithdraw = 0;
-            let totalReward = 0;
-            let totalFee = 0;
-
-            if (accountRecords.length === 0) {
-                tbody.innerHTML = `<tr><td colspan="4" style="color:#64748b; padding: 20px;">尚無記帳紀錄</td></tr>`;
-                document.getElementById('accNetProfit').innerText = '0';
-                document.getElementById('accTotalDeposit').innerText = '0';
-                document.getElementById('accTotalWithdraw').innerText = '0';
-                document.getElementById('accTotalReward').innerText = '0';
-                document.getElementById('accTotalFee').innerText = '0';
-                return;
-            }
-
-            tbody.innerHTML = "";
-            accountRecords.forEach((rec, idx) => {
-                let typeText = "";
-                let amountDisplay = "";
-
-                if (rec.type === 'win') {
-                    typeText = '<span style="color:#10b981;">贏</span>';
-                    amountDisplay = `+${rec.amount}`;
-                    netProfit += rec.amount;
-                } else if (rec.type === 'lose') {
-                    typeText = '<span style="color:#ef4444;">輸</span>';
-                    amountDisplay = `-${rec.amount}`;
-                    netProfit -= rec.amount;
-                } else if (rec.type === 'deposit') {
-                    typeText = '<span style="color:#60a5fa;">儲值</span>';
-                    amountDisplay = `${rec.amount}`;
-                    totalDeposit += rec.amount;
-                } else if (rec.type === 'withdraw') {
-                    typeText = '<span style="color:#fbbf24;">提款</span>';
-                    amountDisplay = `${rec.amount}`;
-                    totalWithdraw += rec.amount;
-                } else if (rec.type === 'fee') {
-                    typeText = '<span style="color:#f87171;">手續費</span>';
-                    amountDisplay = `-${rec.amount}`;
-                    netProfit -= rec.amount;
-                    totalFee += rec.amount;
-                } else if (rec.type === 'reward') {
-                    typeText = '<span style="color:#a78bfa;">回饋</span>';
-                    amountDisplay = `+${rec.amount}`;
-                    netProfit += rec.amount;
-                    totalReward += rec.amount;
-                }
-
-                tbody.innerHTML += `
-                    <tr>
-                        <td>${rec.date}</td>
-                        <td>${typeText}</td>
-                        <td>${amountDisplay}</td>
-                        <td><button class="del-rec-btn" onclick="deleteAccountRecord(${idx})">刪除</button></td>
-                    </tr>
-                `;
-            });
-
-            document.getElementById('accNetProfit').innerText = netProfit.toLocaleString();
-            document.getElementById('accTotalDeposit').innerText = totalDeposit.toLocaleString();
-            document.getElementById('accTotalWithdraw').innerText = totalWithdraw.toLocaleString();
-            document.getElementById('accTotalReward').innerText = totalReward.toLocaleString();
-            document.getElementById('accTotalFee').innerText = totalFee.toLocaleString();
-        }
-
-        function floorTo1Decimal(val) { return Math.floor(val * 10) / 10; }
-        function floorToInt(val) { return Math.floor(val); }
 
         function formatInputFloor1(inputElem) {
             let val = parseFloat(inputElem.value);
@@ -1183,14 +1008,18 @@
             }
         }
 
-        function formatPrincipalInput(inputElem) { formatInputFloor1(inputElem); }
+        function formatPrincipalInput(inputElem) {
+            formatInputFloor1(inputElem);
+        }
 
         function onInputAmountChange() {
             let inputElem = document.getElementById('inputAmount');
             let val = parseFloat(inputElem.value);
             if (!isNaN(val)) {
                 let floored = floorToInt(val);
-                if (inputElem.value.includes('.')) { inputElem.value = floored; }
+                if (inputElem.value.includes('.')) {
+                    inputElem.value = floored;
+                }
             }
             resetCompoundState();
         }
@@ -1200,7 +1029,10 @@
             compoundClickCount = 0;
             lastCalculatedProfit = 0;
             const btn = document.getElementById('compoundPillBtn');
-            if (btn) { btn.innerText = '複利'; btn.classList.remove('show'); }
+            if (btn) {
+                btn.innerText = '複利';
+                btn.classList.remove('show');
+            }
         }
 
         function onCompoundPillClick() {
@@ -1268,8 +1100,21 @@
             7: [2, 3]
         };
 
-        const growthRates = { 3: 1.448, 4: 1.71, 5: 2.065, 6: 2.62163, 7: 3.5926 };
-        const profitMultipliers = { 3: 6.7, 4: 5.7, 5: 4.7, 6: 3.7, 7: 2.7 };
+        const growthRates = {
+            3: 1.448,
+            4: 1.71,
+            5: 2.065,
+            6: 2.62163,
+            7: 3.5926
+        };
+
+        const profitMultipliers = {
+            3: 6.7,
+            4: 5.7,
+            5: 4.7,
+            6: 3.7,
+            7: 2.7
+        };
 
         function getSimBallColorClass(num, pos) {
             if (currentSystem === 'custom') {
@@ -1277,7 +1122,11 @@
                     if (!rule.numbers.trim()) continue;
                     let matchNums = rule.numbers.replace(/[,，]/g, ' ').split(/\s+/).map(s => parseInt(s.trim(), 10)).filter(n => !isNaN(n));
                     if (matchNums.includes(num)) {
-                        return rule.color;
+                        if (rule.color === 'red') return 'red';
+                        if (rule.color === 'green') return 'green';
+                        if (rule.color === 'blue') return 'blue';
+                        if (rule.color === 'yellow') return 'yellow';
+                        if (rule.color === 'purple') return 'purple';
                     }
                 }
                 return 'blue';
@@ -1403,14 +1252,18 @@
             const amtStr = document.getElementById('simAmountInput').value;
             const principalInputElem = document.getElementById('simPrincipalInput');
             
-            if (selectedSimBalls.length === 0 || !amtStr || parseFloat(amtStr) <= 0) { return; }
+            if (selectedSimBalls.length === 0 || !amtStr || parseFloat(amtStr) <= 0) {
+                return; 
+            }
 
             const singleAmt = floorTo1Decimal(parseFloat(amtStr));
             const count = selectedSimBalls.length;
             const totalCost = floorTo1Decimal(count * singleAmt);
 
             let currentPrincipal = floorTo1Decimal(parseFloat(principalInputElem.value) || 0);
-            if (currentPrincipal < totalCost) { return; }
+            if (currentPrincipal < totalCost) {
+                return; 
+            }
 
             currentPrincipal = floorTo1Decimal(currentPrincipal - totalCost);
             principalInputElem.value = currentPrincipal;
@@ -1497,7 +1350,9 @@
                 document.getElementById('betCalcInputs').style.display = 'flex';
                 if (document.getElementById('resultTableBody').children.length > 0) {
                     document.getElementById('resultTableContainer').style.display = 'block';
-                    if (isTableCalculated) { document.getElementById('compoundPillBtn').style.display = 'inline-block'; }
+                    if (isTableCalculated) {
+                        document.getElementById('compoundPillBtn').style.display = 'inline-block';
+                    }
                 }
             } else if (type === 'compound') {
                 document.getElementById('stratBtnCompound').classList.add('active');
@@ -1595,11 +1450,15 @@
                     let nums = item.number.replace(/\s+/g, '').split(',');
                     let rankIdx = rankShortNames.indexOf(pred.rank);
                     let actualVal = parseInt(nums[rankIdx], 10);
-                    if (pred.nums.includes(actualVal)) { winCount++; }
+                    if (pred.nums.includes(actualVal)) {
+                        winCount++;
+                    }
                 }
                 let winRate = Math.floor((winCount / limit) * 100);
                 let btn = document.getElementById(`subBtn_${subName}`);
-                if (btn) { btn.innerText = `${subName} ${winRate}%`; }
+                if (btn) {
+                    btn.innerText = `${subName} ${winRate}%`;
+                }
             });
         }
 
@@ -1782,7 +1641,9 @@
         function syncInputsToRules() {
             for (let i = 0; i < 5; i++) {
                 let inputElem = document.getElementById(`customNums_${i}`);
-                if (inputElem) { customRules[i].numbers = inputElem.value; }
+                if (inputElem) {
+                    customRules[i].numbers = inputElem.value;
+                }
             }
         }
 
@@ -1818,7 +1679,9 @@
             openCustomModal(); 
         }
 
-        function closeCustomModal() { document.getElementById('customModalOverlay').style.display = 'none'; }
+        function closeCustomModal() {
+            document.getElementById('customModalOverlay').style.display = 'none';
+        }
 
         function saveCustomRules() {
             syncInputsToRules();
