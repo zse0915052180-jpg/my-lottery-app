@@ -498,13 +498,11 @@
             font-weight: 400;
             font-size: 11px;
         }
-        /* 移除數字輸入框上下箭頭（Chrome, Safari, Edge, Opera） */
         input[type=number]::-webkit-inner-spin-button, 
         input[type=number]::-webkit-outer-spin-button { 
             -webkit-appearance: none; 
             margin: 0; 
         }
-        /* 移除數字輸入框上下箭頭（Firefox） */
         input[type=number] {
             -moz-appearance: textfield;
         }
@@ -529,7 +527,6 @@
             background-color: #059669;
             box-shadow: inset 0 2px 4px rgba(0, 0, 0, 0.2);
         }
-        
         .confirm-btn.locked {
             background-color: #059669 !important;
             opacity: 0.45;
@@ -557,11 +554,7 @@
             flex-direction: column;
             gap: 6px;
         }
-        .sim-rank-row {
-            display: flex;
-            gap: 2px;
-            justify-content: space-between;
-        }
+        .sim-rank-row { display: flex; gap: 2px; justify-content: space-between; }
         .sim-rank-btn {
             flex: 1;
             background-color: #f8fafc;
@@ -604,10 +597,7 @@
             border: 2px solid transparent;
             transition: all 0.2s ease;
         }
-        .sim-ball-item:active {
-            transform: scale(0.92);
-        }
-        
+        .sim-ball-item:active { transform: scale(0.92); }
         .simulation-panel.has-selection .sim-ball-item:not(.selected) {
             opacity: 0.25;
             box-shadow: none;
@@ -620,13 +610,7 @@
             opacity: 1 !important;
         }
 
-        .sim-action-row {
-            display: flex;
-            align-items: center;
-            justify-content: space-between;
-            gap: 6px;
-            margin-top: 2px;
-        }
+        .sim-action-row { display: flex; align-items: center; justify-content: space-between; gap: 6px; margin-top: 2px; }
         .sim-clear-btn {
             background-color: #ef4444;
             color: #ffffff;
@@ -677,20 +661,9 @@
             border: 1px solid #cbd5e1;
             margin-bottom: 5px;
         }
-        .custom-row-col {
-            display: flex;
-            flex-direction: column;
-            gap: 2px;
-        }
-        .custom-row-title {
-            font-size: 10.5px;
-            font-weight: 700;
-            color: #0284c7;
-        }
-        .color-selector-group {
-            display: flex;
-            gap: 4px;
-        }
+        .custom-row-col { display: flex; flex-direction: column; gap: 2px; }
+        .custom-row-title { font-size: 10.5px; font-weight: 700; color: #0284c7; }
+        .color-selector-group { display: flex; gap: 4px; }
         .color-circle {
             width: 18px;
             height: 18px;
@@ -700,11 +673,7 @@
             opacity: 0.4;
             transition: all 0.2s;
         }
-        .color-circle.selected {
-            opacity: 1;
-            border-color: #0f172a;
-            transform: scale(1.1);
-        }
+        .color-circle.selected { opacity: 1; border-color: #0f172a; transform: scale(1.1); }
         .color-circle.red { background-color: #ef4444; }
         .color-circle.green { background-color: #10b981; }
         .color-circle.blue { background-color: #3b82f6; }
@@ -734,14 +703,95 @@
             padding: 4px 0;
             transition: color 0.2s;
         }
-        .footer-nav-item.active {
-            color: #38bdf8;
+        .footer-nav-item.active { color: #38bdf8; }
+
+        /* 記帳本分頁專屬樣式 */
+        .record-card-box {
+            background: #f8fafc;
+            border: 1px solid #e2e8f0;
+            border-radius: 8px;
+            padding: 10px;
+            margin-bottom: 10px;
+        }
+        .record-stats-row {
+            display: flex;
+            justify-content: space-between;
+            background: #0f172a;
+            color: #fff;
+            padding: 10px 12px;
+            border-radius: 6px;
+            margin-bottom: 8px;
+            font-size: 12px;
+            font-weight: 700;
+        }
+        .record-stats-item span {
+            display: block;
+            font-size: 14px;
+            margin-top: 2px;
+        }
+        .record-form-row {
+            display: flex;
+            gap: 6px;
+            margin-bottom: 6px;
+        }
+        .record-select, .record-input {
+            height: 34px;
+            background: #ffffff;
+            border: 1px solid #cbd5e1;
+            border-radius: 6px;
+            font-size: 13px;
+            font-weight: 700;
+            color: #0f172a;
+            padding: 0 6px;
+            outline: none;
+        }
+        .record-select { flex: 1; }
+        .record-input { flex: 2; }
+        .record-add-btn {
+            width: 100%;
+            height: 34px;
+            background-color: #10b981;
+            color: #ffffff;
+            border: 1px solid #059669;
+            border-radius: 6px;
+            font-size: 13px;
+            font-weight: 700;
+            cursor: pointer;
+        }
+        .record-list-table {
+            width: 100%;
+            border-collapse: collapse;
+            font-size: 12px;
+            background: #fff;
+        }
+        .record-list-table th {
+            background-color: #f1f5f9;
+            color: #0284c7;
+            padding: 6px;
+            border-bottom: 2px solid #cbd5e1;
+            text-align: center;
+        }
+        .record-list-table td {
+            padding: 6px;
+            border-bottom: 1px solid #e2e8f0;
+            text-align: center;
+            font-weight: 700;
+            color: #334155;
+        }
+        .del-rec-btn {
+            background: #ef4444;
+            color: white;
+            border: none;
+            padding: 2px 8px;
+            border-radius: 4px;
+            cursor: pointer;
+            font-size: 11px;
         }
     </style>
 </head>
 <body>
     <div class="container">
-        <!-- 【功能】頁面內容區域 -->
+        <!-- 【分析】頁面內容區域 -->
         <div id="tabContent_func">
             <div class="header-area">
                 <div class="title-left-group">
@@ -889,7 +939,6 @@
 
                 <!-- 模擬操作面板區塊 -->
                 <div id="simOperationPanel" class="simulation-panel" style="display: none;">
-                    <!-- 名次按鈕列 -->
                     <div class="sim-rank-row" id="simRankRow">
                         <div class="sim-rank-btn active" onclick="selectSimRank(0, this)">冠</div>
                         <div class="sim-rank-btn" onclick="selectSimRank(1, this)">亞</div>
@@ -903,10 +952,8 @@
                         <div class="sim-rank-btn" onclick="selectSimRank(9, this)">十</div>
                     </div>
 
-                    <!-- 1~10 號碼球網格 -->
                     <div class="sim-balls-grid" id="simBallsGrid"></div>
 
-                    <!-- 金額與確認列 -->
                     <div class="sim-action-row">
                         <div class="input-group" style="flex: 2;">
                             <span class="input-label">金額</span>
@@ -933,17 +980,52 @@
             </div>
         </div>
 
-        <!-- 【紀錄】頁面內容區域 (目前先留白，供您後續增加) -->
-        <div id="tabContent_record" style="display: none; padding: 20px 0; text-align: center;">
-            <h3 style="color: #0284c7; margin-bottom: 10px;">📝 記帳表紀錄</h3>
-            <p style="color: #64748b; font-size: 13px;">（此處為預留區塊，您可以自行在此填入或擴充您的記帳表單）</p>
+        <!-- 【紀錄】頁面內容區域 (全新新增記帳系統) -->
+        <div id="tabContent_record" style="display: none; padding: 4px 0;">
+            <h3 style="color: #0284c7; margin-bottom: 8px; text-align: center; font-size: 13.5px;">💰 盈虧記帳管理</h3>
+            
+            <div class="record-card-box">
+                <div class="record-stats-row">
+                    <div class="record-stats-item">總淨利：<span id="accNetProfit" style="color: #38bdf8;">0</span></div>
+                    <div class="record-stats-item">總支出：<span id="accExpense" style="color: #f87171;">0</span></div>
+                    <div class="record-stats-item">總進項：<span id="accIncome" style="color: #34d399;">0</span></div>
+                </div>
+
+                <div class="record-form-row">
+                    <select id="accTypeSelect" class="record-select">
+                        <option value="win">贏 (進項+淨利+)</option>
+                        <option value="lose">輸 (支出+淨利-)</option>
+                        <option value="deposit">儲值 (不計淨利)</option>
+                        <option value="withdraw">提款 (不計淨利)</option>
+                        <option value="fee">手續費 (支出+淨利-)</option>
+                        <option value="reward">回饋 (進項+淨利+)</option>
+                    </select>
+                    <input type="number" id="accAmountInput" class="record-input" placeholder="請輸入金額">
+                </div>
+                <button class="record-add-btn" onclick="addAccountRecord()">新增記帳紀錄</button>
+            </div>
+
+            <div class="table-scroll-container" style="max-height: 240px; border: 1px solid #cbd5e1; border-radius: 6px;">
+                <table class="record-list-table">
+                    <thead>
+                        <tr>
+                            <th style="width: 25%;">類型</th>
+                            <th style="width: 35%;">金額</th>
+                            <th style="width: 40%;">操作</th>
+                        </tr>
+                    </thead>
+                    <tbody id="accTableBody">
+                        <tr><td colspan="3" style="color:#64748b; padding: 20px;">尚無記帳紀錄</td></tr>
+                    </tbody>
+                </table>
+            </div>
         </div>
     </div>
 
     <!-- 底部切換條 (Footer Nav) -->
     <div class="footer-nav">
         <div id="footerNavFunc" class="footer-nav-item active" onclick="switchFooterTab('func')">
-            ⚙️ 功能
+            📊 分析
         </div>
         <div id="footerNavRecord" class="footer-nav-item" onclick="switchFooterTab('record')">
             📋 紀錄
@@ -1007,7 +1089,7 @@
         let isDrawState = false;        
         let hasSubmittedOrder = false; 
         let lastBetTotalCost = 0;      
-        let activeBetOrder = null;     
+        let activeBetOrder = null;      
 
         let compoundClickCount = 0;
         let lastCalculatedProfit = 0;
@@ -1020,6 +1102,9 @@
             { numbers: "", color: "yellow" },
             { numbers: "", color: "purple" }
         ];
+
+        // 記帳本資料陣列
+        let accountRecords = [];
 
         const musicPlaylist = [
             { id: '_LbQyPyup24', title: '狂飆腎上腺素欲罷不能的旋律 ｜ 震碎靈魂的週末炸場專屬', artist: '台灣夜店DJ舞曲' },
@@ -1045,7 +1130,7 @@
             });
         }
 
-        // 底部導覽列切換函數
+        // 底部導覽列切換函數 (分析 / 紀錄)
         function switchFooterTab(tabName) {
             const funcArea = document.getElementById('tabContent_func');
             const recordArea = document.getElementById('tabContent_record');
@@ -1065,13 +1150,92 @@
             }
         }
 
-        function floorTo1Decimal(val) {
-            return Math.floor(val * 10) / 10;
+        // 記帳系統新增與計算邏輯
+        function addAccountRecord() {
+            const typeSelect = document.getElementById('accTypeSelect').value;
+            const amountInput = parseFloat(document.getElementById('accAmountInput').value);
+
+            if (isNaN(amountInput) || amountInput <= 0) {
+                showToast("請輸入有效金額！");
+                return;
+            }
+
+            accountRecords.unshift({ type: typeSelect, amount: amountInput });
+            document.getElementById('accAmountInput').value = "";
+            renderAccountTable();
         }
 
-        function floorToInt(val) {
-            return Math.floor(val);
+        function deleteAccountRecord(index) {
+            accountRecords.splice(index, 1);
+            renderAccountTable();
         }
+
+        function renderAccountTable() {
+            const tbody = document.getElementById('accTableBody');
+            let netProfit = 0;
+            let totalExpense = 0;
+            let totalIncome = 0;
+
+            if (accountRecords.length === 0) {
+                tbody.innerHTML = `<tr><td colspan="3" style="color:#64748b; padding: 20px;">尚無記帳紀錄</td></tr>`;
+                document.getElementById('accNetProfit').innerText = '0';
+                document.getElementById('accExpense').innerText = '0';
+                document.getElementById('accIncome').innerText = '0';
+                return;
+            }
+
+            tbody.innerHTML = "";
+            accountRecords.forEach((rec, idx) => {
+                let typeText = "";
+                let amountDisplay = "";
+
+                // 根據類型分類計算
+                if (rec.type === 'win') {
+                    typeText = '<span style="color:#10b981;">贏</span>';
+                    amountDisplay = `+${rec.amount}`;
+                    netProfit += rec.amount;
+                    totalIncome += rec.amount;
+                } else if (rec.type === 'lose') {
+                    typeText = '<span style="color:#ef4444;">輸</span>';
+                    amountDisplay = `-${rec.amount}`;
+                    netProfit -= rec.amount;
+                    totalExpense += rec.amount;
+                } else if (rec.type === 'deposit') {
+                    typeText = '<span style="color:#3b82f6;">儲值</span>';
+                    amountDisplay = `${rec.amount}`;
+                    // 儲值不計入總淨利、不計入進項與支出
+                } else if (rec.type === 'withdraw') {
+                    typeText = '<span style="color:#f59e0b;">提款</span>';
+                    amountDisplay = `${rec.amount}`;
+                    // 提款不計入總淨利、不計入進項與支出
+                } else if (rec.type === 'fee') {
+                    typeText = '<span style="color:#64748b;">手續費</span>';
+                    amountDisplay = `-${rec.amount}`;
+                    netProfit -= rec.amount;
+                    totalExpense += rec.amount;
+                } else if (rec.type === 'reward') {
+                    typeText = '<span style="color:#8b5cf6;">回饋</span>';
+                    amountDisplay = `+${rec.amount}`;
+                    netProfit += rec.amount;
+                    totalIncome += rec.amount;
+                }
+
+                tbody.innerHTML += `
+                    <tr>
+                        <td>${typeText}</td>
+                        <td>${amountDisplay}</td>
+                        <td><button class="del-rec-btn" onclick="deleteAccountRecord(${idx})">刪除</button></td>
+                    </tr>
+                `;
+            });
+
+            document.getElementById('accNetProfit').innerText = netProfit.toLocaleString();
+            document.getElementById('accExpense').innerText = totalExpense.toLocaleString();
+            document.getElementById('accIncome').innerText = totalIncome.toLocaleString();
+        }
+
+        function floorTo1Decimal(val) { return Math.floor(val * 10) / 10; }
+        function floorToInt(val) { return Math.floor(val); }
 
         function formatInputFloor1(inputElem) {
             let val = parseFloat(inputElem.value);
@@ -1086,18 +1250,14 @@
             }
         }
 
-        function formatPrincipalInput(inputElem) {
-            formatInputFloor1(inputElem);
-        }
+        function formatPrincipalInput(inputElem) { formatInputFloor1(inputElem); }
 
         function onInputAmountChange() {
             let inputElem = document.getElementById('inputAmount');
             let val = parseFloat(inputElem.value);
             if (!isNaN(val)) {
                 let floored = floorToInt(val);
-                if (inputElem.value.includes('.')) {
-                    inputElem.value = floored;
-                }
+                if (inputElem.value.includes('.')) { inputElem.value = floored; }
             }
             resetCompoundState();
         }
@@ -1107,10 +1267,7 @@
             compoundClickCount = 0;
             lastCalculatedProfit = 0;
             const btn = document.getElementById('compoundPillBtn');
-            if (btn) {
-                btn.innerText = '複利';
-                btn.classList.remove('show');
-            }
+            if (btn) { btn.innerText = '複利'; btn.classList.remove('show'); }
         }
 
         function onCompoundPillClick() {
@@ -1178,21 +1335,8 @@
             7: [2, 3]
         };
 
-        const growthRates = {
-            3: 1.448,
-            4: 1.71,
-            5: 2.065,
-            6: 2.62163,
-            7: 3.5926
-        };
-
-        const profitMultipliers = {
-            3: 6.7,
-            4: 5.7,
-            5: 4.7,
-            6: 3.7,
-            7: 2.7
-        };
+        const growthRates = { 3: 1.448, 4: 1.71, 5: 2.065, 6: 2.62163, 7: 3.5926 };
+        const profitMultipliers = { 3: 6.7, 4: 5.7, 5: 4.7, 6: 3.7, 7: 2.7 };
 
         function getSimBallColorClass(num, pos) {
             if (currentSystem === 'custom') {
@@ -1200,11 +1344,7 @@
                     if (!rule.numbers.trim()) continue;
                     let matchNums = rule.numbers.replace(/[,，]/g, ' ').split(/\s+/).map(s => parseInt(s.trim(), 10)).filter(n => !isNaN(n));
                     if (matchNums.includes(num)) {
-                        if (rule.color === 'red') return 'red';
-                        if (rule.color === 'green') return 'green';
-                        if (rule.color === 'blue') return 'blue';
-                        if (rule.color === 'yellow') return 'yellow';
-                        if (rule.color === 'purple') return 'purple';
+                        return rule.color;
                     }
                 }
                 return 'blue';
@@ -1330,18 +1470,14 @@
             const amtStr = document.getElementById('simAmountInput').value;
             const principalInputElem = document.getElementById('simPrincipalInput');
             
-            if (selectedSimBalls.length === 0 || !amtStr || parseFloat(amtStr) <= 0) {
-                return; 
-            }
+            if (selectedSimBalls.length === 0 || !amtStr || parseFloat(amtStr) <= 0) { return; }
 
             const singleAmt = floorTo1Decimal(parseFloat(amtStr));
             const count = selectedSimBalls.length;
             const totalCost = floorTo1Decimal(count * singleAmt);
 
             let currentPrincipal = floorTo1Decimal(parseFloat(principalInputElem.value) || 0);
-            if (currentPrincipal < totalCost) {
-                return; 
-            }
+            if (currentPrincipal < totalCost) { return; }
 
             currentPrincipal = floorTo1Decimal(currentPrincipal - totalCost);
             principalInputElem.value = currentPrincipal;
@@ -1428,9 +1564,7 @@
                 document.getElementById('betCalcInputs').style.display = 'flex';
                 if (document.getElementById('resultTableBody').children.length > 0) {
                     document.getElementById('resultTableContainer').style.display = 'block';
-                    if (isTableCalculated) {
-                        document.getElementById('compoundPillBtn').style.display = 'inline-block';
-                    }
+                    if (isTableCalculated) { document.getElementById('compoundPillBtn').style.display = 'inline-block'; }
                 }
             } else if (type === 'compound') {
                 document.getElementById('stratBtnCompound').classList.add('active');
@@ -1528,15 +1662,11 @@
                     let nums = item.number.replace(/\s+/g, '').split(',');
                     let rankIdx = rankShortNames.indexOf(pred.rank);
                     let actualVal = parseInt(nums[rankIdx], 10);
-                    if (pred.nums.includes(actualVal)) {
-                        winCount++;
-                    }
+                    if (pred.nums.includes(actualVal)) { winCount++; }
                 }
                 let winRate = Math.floor((winCount / limit) * 100);
                 let btn = document.getElementById(`subBtn_${subName}`);
-                if (btn) {
-                    btn.innerText = `${subName} ${winRate}%`;
-                }
+                if (btn) { btn.innerText = `${subName} ${winRate}%`; }
             });
         }
 
@@ -1719,9 +1849,7 @@
         function syncInputsToRules() {
             for (let i = 0; i < 5; i++) {
                 let inputElem = document.getElementById(`customNums_${i}`);
-                if (inputElem) {
-                    customRules[i].numbers = inputElem.value;
-                }
+                if (inputElem) { customRules[i].numbers = inputElem.value; }
             }
         }
 
@@ -1757,9 +1885,7 @@
             openCustomModal(); 
         }
 
-        function closeCustomModal() {
-            document.getElementById('customModalOverlay').style.display = 'none';
-        }
+        function closeCustomModal() { document.getElementById('customModalOverlay').style.display = 'none'; }
 
         function saveCustomRules() {
             syncInputsToRules();
