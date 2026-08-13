@@ -1,121 +1,59 @@
 <!DOCTYPE html>
 <html lang="zh-TW">
 <head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
-    <title>歷史頭尾數據動態對比看板 - 策略計算風</title>
+    <!-- ... (請保留您原有的 CSS 樣式，並確認已加入底部導覽列 CSS) ... -->
     <style>
-        /* ... (保持您原有的所有CSS樣式不變，僅在下方補充新增的記帳樣式) ... */
-        
-        /* 記帳頁面樣式 */
-        .record-summary-box { background: #f8fafc; padding: 10px; border-radius: 8px; margin-bottom: 10px; border: 1px solid #e2e8f0; display: grid; grid-template-columns: 1fr 1fr; gap: 8px; }
-        .stat-item { font-size: 11px; font-weight: 700; color: #475569; }
-        .stat-val { font-size: 13px; color: #0284c7; }
-        .add-record-btn { width: 100%; height: 36px; background: #0ea5e9; color: white; border: none; border-radius: 6px; font-weight: 700; cursor: pointer; margin-bottom: 10px; }
-        .record-list { border-top: 1px solid #e2e8f0; }
-        .record-item { display: flex; justify-content: space-between; align-items: center; padding: 8px 0; border-bottom: 1px solid #f1f5f9; font-size: 11px; }
-        .record-del { color: #ef4444; cursor: pointer; font-weight: 700; }
-        
-        /* 底部導覽列樣式 */
-        .footer-nav { position: fixed; bottom: 0; left: 0; width: 100%; background: #0f172a; display: flex; justify-content: space-around; padding: 8px 0; z-index: 1001; }
-        .footer-nav-item { flex: 1; text-align: center; color: #94a3b8; font-size: 12px; font-weight: 700; cursor: pointer; }
-        .footer-nav-item.active { color: #38bdf8; }
+        /* [這裡請放入您原本的完整 CSS] */
+        /* ... 務必包含我上次提供的 .footer-nav 樣式 ... */
     </style>
 </head>
 <body>
     <div class="container">
-        <!-- 功能分頁 -->
+        
+        <!-- 【功能】頁面內容區域 (這裡放置您原本的看板與計算畫面) -->
         <div id="tabContent_func">
-            <!-- (此處內容與之前完全相同，為節省篇幅略過，請保持您原有的 HTML) -->
-            <!-- ... (請將原本的內容放在這) ... -->
+            <!-- 從 <div class="header-area"> 到 </div> (包含計算器的那個區塊) -->
+            <!-- 這是您原本的功能畫面核心內容 -->
+            <!-- ... 請將您原有的 HTML 內容全部貼在這裡 ... -->
         </div>
 
-        <!-- 紀錄分頁 -->
+        <!-- 【紀錄】頁面內容區域 -->
         <div id="tabContent_record" style="display: none;">
             <div class="record-summary-box">
-                <div class="stat-item">儲值: <span class="stat-val" id="statDeposit">0</span></div>
-                <div class="stat-item">提款: <span class="stat-val" id="statWithdraw">0</span></div>
-                <div class="stat-item">輸贏: <span class="stat-val" id="statWinLoss">0</span></div>
-                <div class="stat-item">回饋: <span class="stat-val" id="statBonus">0</span></div>
-                <div class="stat-item">手續費: <span class="stat-val" id="statFee">0</span></div>
-                <div class="stat-item" style="grid-column: span 2; border-top: 1px solid #cbd5e1; padding-top: 5px; color: #0f172a;">淨利: <span class="stat-val" id="statNet" style="font-size:16px;">0</span></div>
+                <!-- ... (記帳統計面板內容) ... -->
             </div>
             <button class="add-record-btn" onclick="openAddRecordModal()">+ 新增紀錄</button>
             <div class="record-list" id="recordList"></div>
         </div>
     </div>
 
-    <!-- 底部導覽列 -->
+    <!-- 底部導覽列 (固定在最下方) -->
     <div class="footer-nav">
         <div id="footerNavFunc" class="footer-nav-item active" onclick="switchFooterTab('func')">⚙️ 功能</div>
         <div id="footerNavRecord" class="footer-nav-item" onclick="switchFooterTab('record')">📋 紀錄</div>
     </div>
 
-    <!-- 新增紀錄 Modal -->
-    <div id="addRecordModal" class="modal-overlay" onclick="closeAddRecordModal()">
-        <div class="modal-card" onclick="event.stopPropagation()">
-            <div class="modal-title">新增記帳紀錄</div>
-            <select id="recType" class="white-input" style="margin-bottom: 8px;">
-                <option value="儲值">儲值</option><option value="提款">提款</option>
-                <option value="輸贏">輸贏</option><option value="回饋">回饋</option>
-                <option value="手續費">手續費</option>
-            </select>
-            <input type="number" id="recAmount" class="white-input" placeholder="金額" style="margin-bottom: 8px;">
-            <button class="confirm-btn" style="width:100%" onclick="saveRecord()">保存</button>
-        </div>
-    </div>
-
+    <!-- ... (您的 Modal 與 Script 區塊) ... -->
     <script>
-        // 紀錄功能邏輯
-        let records = JSON.parse(localStorage.getItem('myRecords') || '[]');
-
+        // 確保切換邏輯正確
         function switchFooterTab(tab) {
-            document.getElementById('tabContent_func').style.display = (tab === 'func' ? 'block' : 'none');
-            document.getElementById('tabContent_record').style.display = (tab === 'record' ? 'block' : 'none');
-            document.getElementById('footerNavFunc').className = 'footer-nav-item' + (tab === 'func' ? ' active' : '');
-            document.getElementById('footerNavRecord').className = 'footer-nav-item' + (tab === 'record' ? ' active' : '');
-        }
-
-        function openAddRecordModal() { document.getElementById('addRecordModal').style.display = 'flex'; }
-        function closeAddRecordModal() { document.getElementById('addRecordModal').style.display = 'none'; }
-
-        function saveRecord() {
-            const type = document.getElementById('recType').value;
-            const amt = parseFloat(document.getElementById('recAmount').value);
-            if(isNaN(amt)) return;
-            records.push({ type, amt, date: new Date().toLocaleDateString() });
-            localStorage.setItem('myRecords', JSON.stringify(records));
-            renderRecords();
-            closeAddRecordModal();
-        }
-
-        function deleteRecord(idx) {
-            records.splice(idx, 1);
-            localStorage.setItem('myRecords', JSON.stringify(records));
-            renderRecords();
-        }
-
-        function renderRecords() {
-            const list = document.getElementById('recordList');
-            list.innerHTML = '';
-            let d=0, w=0, wl=0, b=0, f=0;
-            records.forEach((r, i) => {
-                if(r.type === '儲值') d += r.amt;
-                if(r.type === '提款') w += r.amt;
-                if(r.type === '輸贏') wl += r.amt;
-                if(r.type === '回饋') b += r.amt;
-                if(r.type === '手續費') f += r.amt;
-                list.innerHTML += `<div class="record-item"><span>${r.date} ${r.type}</span><span>$${r.amt} <span class="record-del" onclick="deleteRecord(${i})">✕</span></span></div>`;
-            });
-            document.getElementById('statDeposit').innerText = d;
-            document.getElementById('statWithdraw').innerText = w;
-            document.getElementById('statWinLoss').innerText = wl;
-            document.getElementById('statBonus').innerText = b;
-            document.getElementById('statFee').innerText = f;
-            document.getElementById('statNet').innerText = (d + b + wl - w - f);
+            const funcArea = document.getElementById('tabContent_func');
+            const recordArea = document.getElementById('tabContent_record');
+            
+            if (tab === 'func') {
+                funcArea.style.display = 'block';
+                recordArea.style.display = 'none';
+                document.getElementById('footerNavFunc').classList.add('active');
+                document.getElementById('footerNavRecord').classList.remove('active');
+            } else {
+                funcArea.style.display = 'none';
+                recordArea.style.display = 'block';
+                document.getElementById('footerNavFunc').classList.remove('active');
+                document.getElementById('footerNavRecord').classList.add('active');
+            }
         }
         
-        renderRecords(); // 初始化
+        // ... (其他原有 JS) ...
     </script>
 </body>
 </html>
