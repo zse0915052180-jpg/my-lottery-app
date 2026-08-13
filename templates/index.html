@@ -10,7 +10,7 @@
             font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Arial, sans-serif;
             background-color: #f1f5f9;
             color: #334155;
-            padding: 8px 4px;
+            padding: 8px 4px 60px 4px; /* 底部保留空間給導覽列 */
         }
         .container {
             width: 100%;
@@ -498,6 +498,17 @@
             font-weight: 400;
             font-size: 11px;
         }
+        /* 移除數字輸入框上下箭頭（Chrome, Safari, Edge, Opera） */
+        input[type=number]::-webkit-inner-spin-button, 
+        input[type=number]::-webkit-outer-spin-button { 
+            -webkit-appearance: none; 
+            margin: 0; 
+        }
+        /* 移除數字輸入框上下箭頭（Firefox） */
+        input[type=number] {
+            -moz-appearance: textfield;
+        }
+
         .clickable-box { cursor: pointer; user-select: none; display: flex; align-items: center; justify-content: center; }
         .confirm-btn {
             height: 32px;
@@ -699,199 +710,246 @@
         .color-circle.blue { background-color: #3b82f6; }
         .color-circle.yellow { background-color: #f59e0b; }
         .color-circle.purple { background-color: #a855f7; }
+
+        /* 底部導覽列樣式 */
+        .footer-nav {
+            position: fixed;
+            bottom: 0;
+            left: 0;
+            width: 100%;
+            background: #0f172a;
+            display: flex;
+            justify-content: space-around;
+            padding: 6px 0;
+            border-top: 1px solid #334155;
+            z-index: 999;
+        }
+        .footer-nav-item {
+            flex: 1;
+            text-align: center;
+            color: #94a3b8;
+            font-size: 12px;
+            font-weight: 700;
+            cursor: pointer;
+            padding: 4px 0;
+            transition: color 0.2s;
+        }
+        .footer-nav-item.active {
+            color: #38bdf8;
+        }
     </style>
 </head>
 <body>
     <div class="container">
-        <div class="header-area">
-            <div class="title-left-group">
-                <h2>📊 <span id="lotteryTitle">極速飛艇</span></h2>
-                <div id="musicControlArea" class="music-control-area">
-                    <button id="musicToggleBtn" class="music-btn" onclick="toggleMusic()" title="點擊開關音樂">🎵</button>
-                    <div id="marqueeContainer" class="marquee-container">
-                        <div id="marqueeText" class="marquee-text">播放中...</div>
+        <!-- 【功能】頁面內容區域 -->
+        <div id="tabContent_func">
+            <div class="header-area">
+                <div class="title-left-group">
+                    <h2>📊 <span id="lotteryTitle">極速飛艇</span></h2>
+                    <div id="musicControlArea" class="music-control-area">
+                        <button id="musicToggleBtn" class="music-btn" onclick="toggleMusic()" title="點擊開關音樂">🎵</button>
+                        <div id="marqueeContainer" class="marquee-container">
+                            <div id="marqueeText" class="marquee-text">播放中...</div>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="title-right-group">
+                    <div class="online-badge">
+                        在線 <span id="onlineCountVal">--</span>
+                    </div>
+                    <div class="lottery-tabs">
+                        <button id="btn10035" class="tab-btn active" onclick="switchLottery('10035', '極速飛艇')">極速飛艇</button>
+                        <button id="btn10057" class="tab-btn" onclick="switchLottery('10057', '幸運飛艇')">幸運飛艇</button>
                     </div>
                 </div>
             </div>
 
-            <div class="title-right-group">
-                <div class="online-badge">
-                    在線 <span id="onlineCountVal">--</span>
+            <div id="youtubePlayer" style="display:none;"></div>
+
+            <div class="info-bar">
+                <div class="main-nav-bar">
+                    <div class="main-nav-group" id="leftNavArea">
+                        <button id="sysBtnStandard" class="system-btn active" onclick="switchSystem('standard')">順/反</button>
+                        <button id="sysBtnFixed" class="system-btn" onclick="switchSystem('fixed')">固定號</button>
+                        <button id="sysBtnSize" class="system-btn" onclick="switchSystem('size')">大中小</button>
+                        <button id="sysBtnHotCold" class="system-btn" onclick="switchSystem('hotcold')">冷溫熱</button>
+                        <button id="sysBtnCustom" class="system-btn" onclick="switchSystem('custom')">自訂</button>
+                    </div>
+                    <div class="main-nav-group" style="gap: 6px;">
+                        <button id="mainNavRoute" class="main-nav-btn active-route" onclick="switchMainTab('route')">牌路</button>
+                        <button id="mainNavSignal" class="main-nav-btn" onclick="switchMainTab('signal')">報牌</button>
+                    </div>
                 </div>
-                <div class="lottery-tabs">
-                    <button id="btn10035" class="tab-btn active" onclick="switchLottery('10035', '極速飛艇')">極速飛艇</button>
-                    <button id="btn10057" class="tab-btn" onclick="switchLottery('10057', '幸運飛艇')">幸運飛艇</button>
+
+                <div id="modeTabsContainer" class="mode-tabs">
+                    <button id="modeBtn3" class="mode-btn" onclick="switchMode(3)">順三</button>
+                    <button id="modeBtn4" class="mode-btn" onclick="switchMode(4)">順四</button>
+                    <button id="modeBtn5" class="mode-btn active" onclick="switchMode(5)">順五</button>
+                    <button id="modeBtn6" class="mode-btn" onclick="switchMode(6)">順六</button>
+                    <button id="modeBtn7" class="mode-btn" onclick="switchMode(7)">順七</button>
+                    <button id="modeBtn8" class="mode-btn" onclick="switchMode(8)">順八</button>
                 </div>
-            </div>
-        </div>
 
-        <div id="youtubePlayer" style="display:none;"></div>
-
-        <div class="info-bar">
-            <div class="main-nav-bar">
-                <div class="main-nav-group" id="leftNavArea">
-                    <button id="sysBtnStandard" class="system-btn active" onclick="switchSystem('standard')">順/反</button>
-                    <button id="sysBtnFixed" class="system-btn" onclick="switchSystem('fixed')">固定號</button>
-                    <button id="sysBtnSize" class="system-btn" onclick="switchSystem('size')">大中小</button>
-                    <button id="sysBtnHotCold" class="system-btn" onclick="switchSystem('hotcold')">冷溫熱</button>
-                    <button id="sysBtnCustom" class="system-btn" onclick="switchSystem('custom')">自訂</button>
+                <div id="fixedTabsContainer" class="fixed-tabs">
+                    <button id="fixedBtn1" class="fixed-btn active" onclick="switchFixed(1)">1~7</button>
+                    <button id="fixedBtn2" class="fixed-btn" onclick="switchFixed(2)">2~8</button>
+                    <button id="fixedBtn3" class="fixed-btn" onclick="switchFixed(3)">3~9</button>
+                    <button id="fixedBtn4" class="fixed-btn" onclick="switchFixed(4)">4~10</button>
                 </div>
-                <div class="main-nav-group" style="gap: 6px;">
-                    <button id="mainNavRoute" class="main-nav-btn active-route" onclick="switchMainTab('route')">牌路</button>
-                    <button id="mainNavSignal" class="main-nav-btn" onclick="switchMainTab('signal')">報牌</button>
-                </div>
-            </div>
-
-            <div id="modeTabsContainer" class="mode-tabs">
-                <button id="modeBtn3" class="mode-btn" onclick="switchMode(3)">順三</button>
-                <button id="modeBtn4" class="mode-btn" onclick="switchMode(4)">順四</button>
-                <button id="modeBtn5" class="mode-btn active" onclick="switchMode(5)">順五</button>
-                <button id="modeBtn6" class="mode-btn" onclick="switchMode(6)">順六</button>
-                <button id="modeBtn7" class="mode-btn" onclick="switchMode(7)">順七</button>
-                <button id="modeBtn8" class="mode-btn" onclick="switchMode(8)">順八</button>
-            </div>
-
-            <div id="fixedTabsContainer" class="fixed-tabs">
-                <button id="fixedBtn1" class="fixed-btn active" onclick="switchFixed(1)">1~7</button>
-                <button id="fixedBtn2" class="fixed-btn" onclick="switchFixed(2)">2~8</button>
-                <button id="fixedBtn3" class="fixed-btn" onclick="switchFixed(3)">3~9</button>
-                <button id="fixedBtn4" class="fixed-btn" onclick="switchFixed(4)">4~10</button>
-            </div>
-            
-            <div class="countdown-box">
-                <span id="nextPeriodText">下期: --</span>
-                <span id="timerText" class="timer-highlight">同步中...</span>
-            </div>
-        </div>
-
-        <div class="table-wrapper">
-            <div id="routeTableArea">
-                <table id="routeHeaderTable" class="lottery-table">
-                    <thead>
-                        <tr>
-                            <th class="period-header">期號</th>
-                            <th>
-                                <div class="rank-header-container">
-                                    <div class="rank-header-item" onclick="showPositionModal(0, '冠軍')">冠</div>
-                                    <div class="rank-header-item" onclick="showPositionModal(1, '亞軍')">亞</div>
-                                    <div class="rank-header-item" onclick="showPositionModal(2, '三')">三</div>
-                                    <div class="rank-header-item" onclick="showPositionModal(3, '四')">四</div>
-                                    <div class="rank-header-item" onclick="showPositionModal(4, '五')">五</div>
-                                    <div class="rank-header-item" onclick="showPositionModal(5, '六')">六</div>
-                                    <div class="rank-header-item" onclick="showPositionModal(6, '七')">七</div>
-                                    <div class="rank-header-item" onclick="showPositionModal(7, '八')">八</div>
-                                    <div class="rank-header-item" onclick="showPositionModal(8, '九')">九</div>
-                                    <div class="rank-header-item" onclick="showPositionModal(9, '十')">十</div>
-                                </div>
-                            </th>
-                        </tr>
-                    </thead>
-                </table>
-                <div class="table-scroll-container">
-                    <table class="lottery-table"><tbody id="tableBody"></tbody></table>
+                
+                <div class="countdown-box">
+                    <span id="nextPeriodText">下期: --</span>
+                    <span id="timerText" class="timer-highlight">同步中...</span>
                 </div>
             </div>
 
-            <div id="signalButtonArea" style="display: none;">
-                <div class="signal-btn-container">
-                    <button class="signal-sub-btn active" id="subBtn_宰相" onclick="switchSignalSub('宰相')">宰相</button>
-                    <button class="signal-sub-btn" id="subBtn_小幫手" onclick="switchSignalSub('小幫手')">小幫手</button>
-                    <button class="signal-sub-btn" id="subBtn_博士" onclick="switchSignalSub('博士')">博士</button>
-                    <button class="signal-sub-btn" id="subBtn_宗師" onclick="switchSignalSub('宗師')">宗師</button>
-                    <button class="signal-sub-btn" id="subBtn_王牌" onclick="switchSignalSub('王牌')">王牌</button>
-                </div>
-                <div class="table-scroll-container" style="max-height: 245px;">
-                    <table class="signal-table">
+            <div class="table-wrapper">
+                <div id="routeTableArea">
+                    <table id="routeHeaderTable" class="lottery-table">
                         <thead>
                             <tr>
-                                <th style="width: 28%;">期號</th>
-                                <th style="width: 22%;">名次</th>
-                                <th style="width: 30%;">號碼</th>
-                                <th style="width: 20%;">收/翻</th>
+                                <th class="period-header">期號</th>
+                                <th>
+                                    <div class="rank-header-container">
+                                        <div class="rank-header-item" onclick="showPositionModal(0, '冠軍')">冠</div>
+                                        <div class="rank-header-item" onclick="showPositionModal(1, '亞軍')">亞</div>
+                                        <div class="rank-header-item" onclick="showPositionModal(2, '三')">三</div>
+                                        <div class="rank-header-item" onclick="showPositionModal(3, '四')">四</div>
+                                        <div class="rank-header-item" onclick="showPositionModal(4, '五')">五</div>
+                                        <div class="rank-header-item" onclick="showPositionModal(5, '六')">六</div>
+                                        <div class="rank-header-item" onclick="showPositionModal(6, '七')">七</div>
+                                        <div class="rank-header-item" onclick="showPositionModal(7, '八')">八</div>
+                                        <div class="rank-header-item" onclick="showPositionModal(8, '九')">九</div>
+                                        <div class="rank-header-item" onclick="showPositionModal(9, '十')">十</div>
+                                    </div>
+                                </th>
                             </tr>
                         </thead>
-                        <tbody id="signalTableBody"></tbody>
+                    </table>
+                    <div class="table-scroll-container">
+                        <table class="lottery-table"><tbody id="tableBody"></tbody></table>
+                    </div>
+                </div>
+
+                <div id="signalButtonArea" style="display: none;">
+                    <div class="signal-btn-container">
+                        <button class="signal-sub-btn active" id="subBtn_宰相" onclick="switchSignalSub('宰相')">宰相</button>
+                        <button class="signal-sub-btn" id="subBtn_小幫手" onclick="switchSignalSub('小幫手')">小幫手</button>
+                        <button class="signal-sub-btn" id="subBtn_博士" onclick="switchSignalSub('博士')">博士</button>
+                        <button class="signal-sub-btn" id="subBtn_宗師" onclick="switchSignalSub('宗師')">宗師</button>
+                        <button class="signal-sub-btn" id="subBtn_王牌" onclick="switchSignalSub('王牌')">王牌</button>
+                    </div>
+                    <div class="table-scroll-container" style="max-height: 245px;">
+                        <table class="signal-table">
+                            <thead>
+                               <tr>
+                                    <th style="width: 28%;">期號</th>
+                                    <th style="width: 22%;">名次</th>
+                                    <th style="width: 30%;">號碼</th>
+                                    <th style="width: 20%;">收/翻</th>
+                                </tr>
+                            </thead>
+                            <tbody id="signalTableBody"></tbody>
+                        </table>
+                    </div>
+                </div>
+            </div>
+
+            <div class="strategy-area">
+                <div class="strategy-buttons-group">
+                    <button id="stratBtnBet" class="strategy-btn active" onclick="switchStrategy('bet')">倍投</button>
+                    <button id="stratBtnCompound" class="strategy-btn" onclick="switchStrategy('compound')">複利計算</button>
+                    <button id="stratBtnSim" class="strategy-btn" onclick="switchStrategy('sim')">模擬操作</button>
+                </div>
+                <button id="compoundPillBtn" class="compound-pill-btn" onclick="onCompoundPillClick()">複利</button>
+                
+                <div id="simPrincipalBox" class="strategy-principal-box">
+                    <span class="strategy-principal-label">$</span>
+                    <input type="number" id="simPrincipalInput" class="strategy-principal-input" value="10000" placeholder="本金" oninput="formatPrincipalInput(this)">
+                </div>
+            </div>
+
+            <div class="calculator-area">
+                <!-- 倍投區塊 -->
+                <div id="betCalcInputs" class="calc-input-row">
+                    <div class="input-group"><span class="input-label">本金</span><input type="number" id="inputAmount" class="white-input" oninput="onInputAmountChange()"></div>
+                    <div class="input-group"><span class="input-label">碼數</span><div id="inputCodeCountDisplay" class="white-input clickable-box" onclick="openCodeCountModal()">3</div></div>
+                    <div class="input-group"><span class="input-label">關數</span><div id="inputRoundDisplay" class="white-input clickable-box" onclick="openRoundModal()">4</div></div>
+                    <button class="confirm-btn" onclick="onConfirmClick()">計算</button>
+                </div>
+
+                <!-- 複利計算區塊 -->
+                <div id="compoundCalcInputs" class="calc-input-row" style="display: none;">
+                    <div class="input-group"><span class="input-label">本金</span><input type="number" id="compoundPrincipal" class="white-input" value="10000" oninput="formatInputFloor1(this)"></div>
+                    <div class="input-group"><span class="input-label">操作次數</span><input type="number" id="compoundTimes" class="white-input" value="10"></div>
+                    <div class="input-group"><span class="input-label">獲利%</span><input type="number" id="compoundRate" class="white-input" value="3.2" oninput="formatInputFloor1(this)"></div>
+                    <button class="confirm-btn" onclick="onCompoundConfirmClick()">計算</button>
+                </div>
+
+                <!-- 模擬操作面板區塊 -->
+                <div id="simOperationPanel" class="simulation-panel" style="display: none;">
+                    <!-- 名次按鈕列 -->
+                    <div class="sim-rank-row" id="simRankRow">
+                        <div class="sim-rank-btn active" onclick="selectSimRank(0, this)">冠</div>
+                        <div class="sim-rank-btn" onclick="selectSimRank(1, this)">亞</div>
+                        <div class="sim-rank-btn" onclick="selectSimRank(2, this)">三</div>
+                        <div class="sim-rank-btn" onclick="selectSimRank(3, this)">四</div>
+                        <div class="sim-rank-btn" onclick="selectSimRank(4, this)">五</div>
+                        <div class="sim-rank-btn" onclick="selectSimRank(5, this)">六</div>
+                        <div class="sim-rank-btn" onclick="selectSimRank(6, this)">七</div>
+                        <div class="sim-rank-btn" onclick="selectSimRank(7, this)">八</div>
+                        <div class="sim-rank-btn" onclick="selectSimRank(8, this)">九</div>
+                        <div class="sim-rank-btn" onclick="selectSimRank(9, this)">十</div>
+                    </div>
+
+                    <!-- 1~10 號碼球網格 -->
+                    <div class="sim-balls-grid" id="simBallsGrid"></div>
+
+                    <!-- 金額與確認列 -->
+                    <div class="sim-action-row">
+                        <div class="input-group" style="flex: 2;">
+                            <span class="input-label">金額</span>
+                            <input type="number" id="simAmountInput" class="white-input" placeholder="輸入金額" oninput="formatInputFloor1(this)">
+                        </div>
+                        <button class="sim-clear-btn" onclick="clearSimInput()">清除</button>
+                        <button id="simSubmitBtn" class="sim-submit-btn" onclick="submitSimOrder()">確認下注</button>
+                    </div>
+                </div>
+
+                <div id="resultTableContainer" class="result-table-container">
+                    <table class="calc-table">
+                        <thead><tr><th style="width:28%;">關數</th><th style="width:36%;">金額</th><th style="width:36%;">獲利</th></tr></thead>
+                        <tbody id="resultTableBody"></tbody>
+                    </table>
+                </div>
+
+                <div id="compoundTableContainer" class="result-table-container">
+                    <table class="calc-table">
+                        <thead><tr><th style="width:12%;">#</th><th style="width:32%;">單次獲利(元)</th><th style="width:32%;">總額(元)</th><th style="width:24%;">總獲利率</th></tr></thead>
+                        <tbody id="compoundTableBody"></tbody>
                     </table>
                 </div>
             </div>
         </div>
 
-        <div class="strategy-area">
-            <div class="strategy-buttons-group">
-                <button id="stratBtnBet" class="strategy-btn active" onclick="switchStrategy('bet')">倍投</button>
-                <button id="stratBtnCompound" class="strategy-btn" onclick="switchStrategy('compound')">複利計算</button>
-                <button id="stratBtnSim" class="strategy-btn" onclick="switchStrategy('sim')">模擬操作</button>
-            </div>
-            <button id="compoundPillBtn" class="compound-pill-btn" onclick="onCompoundPillClick()">複利</button>
-            
-            <div id="simPrincipalBox" class="strategy-principal-box">
-                <span class="strategy-principal-label">$</span>
-                <input type="number" id="simPrincipalInput" class="strategy-principal-input" value="10000" placeholder="本金" oninput="formatPrincipalInput(this)">
-            </div>
-        </div>
-
-        <div class="calculator-area">
-            <!-- 倍投區塊 -->
-            <div id="betCalcInputs" class="calc-input-row">
-                <div class="input-group"><span class="input-label">本金</span><input type="number" id="inputAmount" class="white-input" oninput="onInputAmountChange()"></div>
-                <div class="input-group"><span class="input-label">碼數</span><div id="inputCodeCountDisplay" class="white-input clickable-box" onclick="openCodeCountModal()">3</div></div>
-                <div class="input-group"><span class="input-label">關數</span><div id="inputRoundDisplay" class="white-input clickable-box" onclick="openRoundModal()">4</div></div>
-                <button class="confirm-btn" onclick="onConfirmClick()">計算</button>
-            </div>
-
-            <!-- 複利計算區塊 -->
-            <div id="compoundCalcInputs" class="calc-input-row" style="display: none;">
-                <div class="input-group"><span class="input-label">本金</span><input type="number" id="compoundPrincipal" class="white-input" value="10000" oninput="formatInputFloor1(this)"></div>
-                <div class="input-group"><span class="input-label">操作次數</span><input type="number" id="compoundTimes" class="white-input" value="10"></div>
-                <div class="input-group"><span class="input-label">獲利%</span><input type="number" id="compoundRate" class="white-input" value="3.2" oninput="formatInputFloor1(this)"></div>
-                <button class="confirm-btn" onclick="onCompoundConfirmClick()">計算</button>
-            </div>
-
-            <!-- 模擬操作面板區塊 -->
-            <div id="simOperationPanel" class="simulation-panel" style="display: none;">
-                <!-- 名次按鈕列 -->
-                <div class="sim-rank-row" id="simRankRow">
-                    <div class="sim-rank-btn active" onclick="selectSimRank(0, this)">冠</div>
-                    <div class="sim-rank-btn" onclick="selectSimRank(1, this)">亞</div>
-                    <div class="sim-rank-btn" onclick="selectSimRank(2, this)">三</div>
-                    <div class="sim-rank-btn" onclick="selectSimRank(3, this)">四</div>
-                    <div class="sim-rank-btn" onclick="selectSimRank(4, this)">五</div>
-                    <div class="sim-rank-btn" onclick="selectSimRank(5, this)">六</div>
-                    <div class="sim-rank-btn" onclick="selectSimRank(6, this)">七</div>
-                    <div class="sim-rank-btn" onclick="selectSimRank(7, this)">八</div>
-                    <div class="sim-rank-btn" onclick="selectSimRank(8, this)">九</div>
-                    <div class="sim-rank-btn" onclick="selectSimRank(9, this)">十</div>
-                </div>
-
-                <!-- 1~10 號碼球網格 -->
-                <div class="sim-balls-grid" id="simBallsGrid"></div>
-
-                <!-- 金額與確認列 -->
-                <div class="sim-action-row">
-                    <div class="input-group" style="flex: 2;">
-                        <span class="input-label">金額</span>
-                        <input type="number" id="simAmountInput" class="white-input" placeholder="輸入金額" oninput="formatInputFloor1(this)">
-                    </div>
-                    <button class="sim-clear-btn" onclick="clearSimInput()">清除</button>
-                    <button id="simSubmitBtn" class="sim-submit-btn" onclick="submitSimOrder()">確認下注</button>
-                </div>
-            </div>
-
-            <div id="resultTableContainer" class="result-table-container">
-                <table class="calc-table">
-                    <thead><tr><th style="width:28%;">關數</th><th style="width:36%;">金額</th><th style="width:36%;">獲利</th></tr></thead>
-                    <tbody id="resultTableBody"></tbody>
-                </table>
-            </div>
-
-            <div id="compoundTableContainer" class="result-table-container">
-                <table class="calc-table">
-                    <thead><tr><th style="width:12%;">#</th><th style="width:32%;">單次獲利(元)</th><th style="width:32%;">總額(元)</th><th style="width:24%;">總獲利率</th></tr></thead>
-                    <tbody id="compoundTableBody"></tbody>
-                </table>
-            </div>
+        <!-- 【紀錄】頁面內容區域 (目前先留白，供您後續增加) -->
+        <div id="tabContent_record" style="display: none; padding: 20px 0; text-align: center;">
+            <h3 style="color: #0284c7; margin-bottom: 10px;">📝 記帳表紀錄</h3>
+            <p style="color: #64748b; font-size: 13px;">（此處為預留區塊，您可以自行在此填入或擴充您的記帳表單）</p>
         </div>
     </div>
+
+    <!-- 底部切換條 (Footer Nav) -->
+    <div class="footer-nav">
+        <div id="footerNavFunc" class="footer-nav-item active" onclick="switchFooterTab('func')">
+            ⚙️ 功能
+        </div>
+        <div id="footerNavRecord" class="footer-nav-item" onclick="switchFooterTab('record')">
+            📋 紀錄
+        </div>
+    </div>
+
     <div id="toastMsg" class="toast-msg"></div>
     <div id="modalOverlay" class="modal-overlay" onclick="closeModalDirect()">
         <div class="modal-card" onclick="event.stopPropagation()">
@@ -985,6 +1043,26 @@
                     'onReady': () => { isPlayerReady = true; }
                 }
             });
+        }
+
+        // 底部導覽列切換函數
+        function switchFooterTab(tabName) {
+            const funcArea = document.getElementById('tabContent_func');
+            const recordArea = document.getElementById('tabContent_record');
+            const navFunc = document.getElementById('footerNavFunc');
+            const navRecord = document.getElementById('footerNavRecord');
+
+            if (tabName === 'func') {
+                funcArea.style.display = 'block';
+                recordArea.style.display = 'none';
+                navFunc.classList.add('active');
+                navRecord.classList.remove('active');
+            } else if (tabName === 'record') {
+                funcArea.style.display = 'none';
+                recordArea.style.display = 'block';
+                navRecord.classList.add('active');
+                navFunc.classList.remove('active');
+            }
         }
 
         function floorTo1Decimal(val) {
